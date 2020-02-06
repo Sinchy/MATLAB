@@ -39,29 +39,33 @@ M2Q14   = 'M2Q14'; % Splines with smoothness 2 (5th order) over 14 data points.
 
 StartTime = 3; %Initial time step, must (>=3)
 dt = 0.002; %Time step
-itmax = 100; %Maximum simulation Maximum, (StartTime+itmax<=5028)
+itmax = 200; %Maximum simulation Maximum, (StartTime+itmax<=5028)
 MaxTime = 5028; %Maximum Maximum in JHUTDB coarse HIT
-npoints = 50; %Bubble/Particle number
+npoints_p = 100; %Particle number
+npoints_b = 0; % bubble number
+npoints = npoints_p + npoints_b;
 
 nu = 0.000185; %Kinematic viscosity
 g = 0; %Gravitational acceleration
 
-rho_p = 25; % Particle density
+rho_p = 17.57; % Particle density
 rho_b = 25; % Bubble density
-rho_f = 10; % Fluid density
+rho_f = 1; % Fluid density
 
 beta = linspace(0,0,npoints)';
-beta(1:(npoints/2)) = 3*rho_f/(rho_f+2*rho_p);
-beta((npoints/2):npoints) = 3*rho_f/(rho_f+2*rho_b);
+beta(1:(npoints_p)) = 3*rho_f/(rho_f+2*rho_p);
+beta((npoints_p + 1):npoints_p + npoints_b) = 3*rho_f/(rho_f+2*rho_b);
 
 rp_p = 0.001; % Particle radius
 rp_b = 0.001; % Bubble radius
 
 rp = linspace(0,0,npoints)';
-rp(1:(npoints/2)) = rp_p;
-rp((npoints/2):npoints) = rp_b;
+rp(1:(npoints_p)) = rp_p;
+rp((npoints_p + 1):npoints_p + npoints_b) = rp_b;
 
 tau = rp.*rp./beta/3/nu; % Relaxation time
+
+file_path = 'Particles.txt';
 
 %==================================================================
 %======================         Main         ======================
@@ -69,7 +73,7 @@ tau = rp.*rp./beta/3/nu; % Relaxation time
 
 %-----------------------------------------------------------------
 %--------------------------- File Head ---------------------------
-fid = fopen('Particles.txt','a+');
+fid = fopen(file_path,'a+');
 nParticles = fid;
 
 % Check Total Time Length
@@ -102,7 +106,15 @@ for i = 1:itmax
     % Flow velocity at current step (n)
     % Note: Since particle locations change every step, we have to inquire
     % new local flow velocity every time
-    TemFlow = getVelocity (authkey, dataset, time, Lag6, NoTInt, npoints, TemPos);
+    to_get_data = 1;
+    while(to_get_data)
+        try
+            TemFlow = getVelocity (authkey, dataset, time, Lag6, NoTInt, npoints, TemPos);
+            to_get_data = 0; %if data is obtained then exit the loop
+        catch
+            to_get_data = 1;
+        end
+    end
     
     % Calculate force on particles
     % pu/pt = (partial u/partial t)
@@ -121,8 +133,15 @@ for i = 1:itmax
     v_sub = TemVel + Acc_1*dt;
     
     %---------------------- (2) Second Sub Time Step ----------------------
-    uf_sub = getVelocity (authkey, dataset, (time+dt), Lag6, NoTInt, npoints, x_sub);
-    
+        to_get_data = 1;
+    while(to_get_data)
+        try
+            uf_sub = getVelocity (authkey, dataset, (time+dt), Lag6, NoTInt, npoints, x_sub);
+            to_get_data = 0; %if data is obtained then exit the loop
+        catch
+            to_get_data = 1;
+        end
+    end
     pu_pt = MyTempoDeri(authkey, dataset, (time+dt), dt, Lag6, NoTInt, npoints, x_sub);
     
     Convect = MyConvection(authkey, dataset, (time+dt),  FD4Lag4, NoTInt, npoints, x_sub,uf_sub);
@@ -154,4 +173,4 @@ end
 
 fclose(nParticles);
 
-MyTrajectory;
+%MyTrajectory;

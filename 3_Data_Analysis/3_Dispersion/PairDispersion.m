@@ -5,14 +5,14 @@ num_tracks = size(C, 1);
 
 %find pairs at the beginning of each track (which can be extend to any
 %time) but this would generate a huge number of pairs
-sample_rate = 1;
+sample_rate = 100;
 total_tracks = round(num_tracks/sample_rate);
 pairs = cell(total_tracks, 1);
 id = 1;
 total_pair = 0;
 f = waitbar(0,'Please wait...');
 for i = 1 : sample_rate : num_tracks
-    waitbar(i/total_tracks, f, 'processing...');
+    waitbar(i/num_tracks, f, 'processing...');
    track =  tracks(tracks(:, 5) == C(i), :);
 %    if track(1,4) ~= 1
 %        continue;
@@ -24,7 +24,7 @@ for i = 1 : sample_rate : num_tracks
 %    pair_trkID = points(abs(points(:, 1) - point0(1,1)) > d_0(1) & abs(points(:, 1) - point0(1,1)) < d_0(2), 5);
    num_pair = length(pair_trkID);
    if num_pair > 0
-       total_pair = total_pair + num_pair
+       total_pair = total_pair + num_pair;
    end
    pairs{id} = [ones(num_pair, 1) * track(1, 5) pair_trkID ones(num_pair, 1) * track(1, 4)];
    id = id + 1;
@@ -58,5 +58,6 @@ for i = 1 : len - 1
         R(i) = mean(disp);
     end
 end
+R = nonzeros(R);
 end
 

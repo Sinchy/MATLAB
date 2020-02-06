@@ -1,4 +1,4 @@
-function [MSD, MSDl, MSDu, datapoints] = MSDCurve(tracks, taos, framerate, TL)
+function [MSD, MSDl, MSDu, datapoints] = MSDCurve(tracks, taos, framerate)
 % taos stores the points that need to be calculated on the curve
 len = length(taos);
 MSD = zeros(len, 3);
@@ -10,7 +10,7 @@ datapoints = zeros(len, 1);
 % delta_vel = var(vel);
 
 % for bubble
-delta_vel = 3.2783e4; % variance of fluid velocity
+% delta_vel = 3.2783e4; % variance of fluid velocity
 
 for i = 1 : len
     round(i/len * 100)
@@ -30,9 +30,9 @@ for i = 1 : len
         break;
     end
 end
-    MSD = MSD ./ delta_vel; 
-    MSDl = MSDl ./ delta_vel; 
-    MSDu = MSDu ./ delta_vel; 
+%     MSD = MSD ./ delta_vel; 
+%     MSDl = MSDl ./ delta_vel; 
+%     MSDu = MSDu ./ delta_vel; 
 %     loglog(taos, MSD(:, 1));
 %     hold on
 %     loglog(taos, MSDl(:,1), '-m');
@@ -47,17 +47,17 @@ axes1 = axes('Parent',figure1,...
 hold(axes1,'on');
 
 % Create multiple lines using matrix input to loglog
-loglog1 = loglog(taos/TL,MSD(:, 1),'Marker','o','LineWidth',2,'Parent',axes1,...
+loglog1 = loglog(taos,MSD(:, 1),'Marker','o','LineWidth',2,'Parent',axes1,...
     'Color',[1 0 1]);
 set(loglog1(1),'Color',[0 0.447 0.741]);
 % set(loglog1(2),'Marker','none','LineWidth',0.5);
 
 % Create ylabel
-ylabel({'$\sigma(\Delta_\tau x)^2 / \sigma(u_f)^2$ (s$^2$)'},...
+ylabel({'$\sigma(\Delta_\tau x)^2$'},...
     'Interpreter','latex');
 
 % Create xlabel
-xlabel({'$\tau/T_L$'},'Interpreter','latex');
+xlabel({'$\tau$'},'Interpreter','latex');
 
 % Uncomment the following line to preserve the X-limits of the axes
 % xlim(axes1,[0.0001 10]);

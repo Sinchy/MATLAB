@@ -1,4 +1,5 @@
-
+itmax = 200;
+npoints = 100;
 ntime = itmax + 1;
 
 xpar = zeros(ntime,npoints);

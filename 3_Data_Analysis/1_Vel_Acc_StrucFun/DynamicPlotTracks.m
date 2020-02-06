@@ -1,4 +1,4 @@
-function DynamicPlotTracks(tracks, frame_rate)
+function DynamicPlotTracks(tracks, frame_rate, slice)
 %num_track = size(tracks, 1);
 num_frame = max(tracks(:, 4));
 start_frame = min(tracks(:,4));
@@ -27,6 +27,16 @@ for i = start_frame : num_frame
         end
     end
     data = tracks(start : ed, 1 : 3);
+    if exist('slice', 'var')
+        slice_thick = 1;
+        if slice == 'XY' 
+            data(abs(data(:,3)) > slice_thick, :) = 0;
+        elseif slice == 'XZ'
+            data(abs(data(:,2)) > slice_thick, :) = 0;
+        else
+            data(abs(data(:,1)) > slice_thick, :) = 0;
+        end
+    end
     %data( ~any(data,2), : ) = []; % delete zeros point
     X = data(:, 1); Y = data(:, 2); Z = data(:, 3);
     
