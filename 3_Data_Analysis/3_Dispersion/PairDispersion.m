@@ -47,8 +47,10 @@ for i = 1 : num_pair
     len2 = size(track2, 1);
     len = min(len1, len2);
     disp_vec = track1(1 : len, 1:3) - track2(1 : len, 1:3);
-    disp_vec = disp_vec - disp_vec(1, 1:3);
-    disp_matrix(i, 1 : len) = vecnorm(disp_vec, 2, 2) .^ 2;
+    disp_sca = vecnorm(disp_vec, 2, 2);
+    disp_matrix(i, 1 : len) = (disp_sca - disp_sca(1)) .^ 2;
+%     disp_vec = disp_vec - disp_vec(1, 1:3);
+%     disp_matrix(i, 1 : len) = vecnorm(disp_vec, 2, 2) .^ 2;
 end
 len = max(tracks(:,4)) - min(tracks(:,4)) + 1;
 R = zeros(len - 1, 1);

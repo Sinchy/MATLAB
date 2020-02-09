@@ -32,8 +32,10 @@ for i = 1 : num_bb
       len_tr = size(tr_tr, 1);
       len = min(len_tr, len_bb);
       dp = tr_tr(1:len, 1:3) - bb_tr(1:len, 1:3);
+%       dp_r = vecnorm(dp, 2, 2);
+%       disp(j, 1:len - 1) = (dp_r(2:end) - dp_r(1)).^2;
       dp = dp - dp(1, 1:3);
-      disp(j, 1:len - 1) = vecnorm(dp(2:end, :), 2, 2);
+      disp(j, 1:len - 1) = vecnorm(dp(2:end, :), 2, 2).^2;
    end
    disp_matrix{i} = disp;
 end

@@ -5,10 +5,12 @@ c = double(imread([path 'cam' num2str(cam) '/cam' num2str(cam) 'frame' num2str(f
 img1 = zeros(h, w);
 for i = frame_range(1):frame_range(2)
     c = double(imread([path 'cam' num2str(cam) '/cam' num2str(cam) 'frame' num2str(i,'%06.0f') '.tif']));
+%     c = imcomplement(c);
     img1 = max(img1,c);
 end
 img1 =  uint8(img1);
-% figure; 
+%  figure; 
+%  imshow(uint8(img1(494:567, 755:821)));
 imshow(uint8(img1));
 load(beforeVSCpath);
 addpath ~/Documents/Code/MATLAB/Post_analysis/
@@ -18,6 +20,7 @@ tracks_interest = tracks( tracks(:, 4) >= frame_range(1) & tracks(:, 4) <= frame
 pos2d_old = calibProj_Tsai(camParaCalib(cam), tracks_interest(:,1:3));
 hold on
 plot(pos2d_old(:,1), pos2d_old(:,2), 'b.', 'MarkerSize',12);
+% plot(pos2d_old(:,1) - 755, pos2d_old(:,2) -494, 'b*', 'MarkerSize',12);
 % plot(pos2d_old(1,1), pos2d_old(1,2), 'y*');
 if exist('afterVSCpath', 'var')
     load(afterVSCpath);
