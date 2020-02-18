@@ -5,7 +5,7 @@ function [MSD, ci, datapoints, disp_matrix] = MeanSquareDisplacement(tracks, tao
 tracks = sortrows(tracks, 5);
 track_ID = unique(tracks(:,5));
 num_track = length(track_ID);
-tracks = [tracks(:, 1:11), inf * ones(size(tracks, 1), 3) ]; % create three more columns for storing delta_tao_x
+datatracks = [tracks(:, 1:11), inf * ones(size(tracks, 1), 3) ]; % create three more columns for storing delta_tao_x
 
 % MSD_eachTr = zeros(num_track, 3); % for each track, calculate the MSD
 MSD_eachTr = [0 0 0];
@@ -64,23 +64,32 @@ end
 % end
 
 % subtracting the global mean
-tracks(tracks(:, 12) == inf, :) = [];
-datapoints = size(tracks, 1);
-% disp_matrix = tracks(:, 9 : 11);
-disp_matrix = tracks;
-for i = 1 : 3
-    del_tao_x = tracks(:, 11 + i);
-    if ~isempty(del_tao_x) && size(del_tao_x, 1) >= 20 
-    %     MSD(i) = var(del_tao_x);
-        pd = fitdist(del_tao_x,'Normal');
-        MSD(i) = pd.var;
-        stdci = pd.paramci;
-        ci(:, i) = stdci(:, 2) .^ 2; % the confidence interval for variance.
-    else
-        MSD = [];
-        ci = [];
+if size(tracks, 2) > 11
+    tracks(tracks(:, 12) == inf, :) = [];
+    datapoints = size(tracks, 1);
+    % disp_matrix = tracks(:, 9 : 11);
+    disp_matrix = tracks;
+    for i = 1 : 3
+        del_tao_x = tracks(:, 11 + i);
+        if ~isempty(del_tao_x) && size(del_tao_x, 1) >= 20 
+        %     MSD(i) = var(del_tao_x);
+            pd = fitdist(del_tao_x,'Normal');
+            MSD(i) = pd.var;
+            stdci = pd.paramci;
+            ci(:, i) = stdci(:, 2) .^ 2; % the confidence interval for variance.
+        else
+            MSD = [];
+            ci = [];
+            datapoints = [];
+            disp_matrix = [];
+        end
     end
-end
+else
+   MSD = [];
+   ci = [];
+   datapoints = [];
+   disp_matrix = [];
+end 
 
 % track-wise average
 % tracks(tracks(:, 6) == inf, :) = [];

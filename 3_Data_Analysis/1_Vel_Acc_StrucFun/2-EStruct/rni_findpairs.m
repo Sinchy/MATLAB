@@ -10,7 +10,7 @@ function [statistics_struct, statistics_corr]=rni_findpairs(data_map,redge_log,r
 % or3d(1:ia(1),13)=1:(ia(1));
 
 % eulrot=sortrows(eulrot,4);
-[~, ia1, ~] = unique(data_map.Data.eulrot(:,4),'first');
+[frame_no, ia1, ~] = unique(data_map.Data.eulrot(:,4),'first');
 % clear or3d; % free the memory
 % eulrot(:, 9:end) = []; % delete rows that would not be used
     
@@ -24,21 +24,27 @@ count_lin = zeros(length(redge_lin)-1,1);
 RLL = zeros(length(redge_lin)-1,1);
 RNN= zeros(length(redge_lin)-1,1);
 
-% addpath SoundZone_Tools-master;
-% fprintf('\t Completion for calculating structure function: ');
-% showTimeToCompletion; startTime=tic;
+addpath SoundZone_Tools-master;
+fprintf('\t Completion for calculating structure function: ');
+showTimeToCompletion; startTime=tic;
 
 total_num = length(ia1)-1;
-% percent = parfor_progress(total_num);
-%parpool(4);
-parfor i=1:1:length(ia1)-1
-    X=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,1:3);
+percent = parfor_progress(total_num);
+parpool(4);
+% parfor i=1:1:length(ia1)-1
+parfor i=1:1:length(frame_no)-1
+%     i
+%     X=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,1:3);
+    data = data_map.Data.eulrot(data_map.Data.eulrot(:,4) == frame_no(i), [1:3 12:14]);
+    X = data(:, 1:3);
 %     partID=eulrot(ia1(i):ia1(i+1)-1,5);
 %     frm=eulrot(ia1(i):ia1(i+1)-1,4);
 %     linenum=eulrot(ia1(i):ia1(i+1)-1,12);
     %trajremain=eulrot(ia1(i):ia1(i+1)-1,13);
     
-    u=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,12:14);
+%     u=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,12:14);
+    u = data(:, 4:6);
+    data = [];
 %     a=eulrot(ia1(i):ia1(i+1)-1,9:11);
     
     %% find pairs
@@ -170,8 +176,8 @@ parfor i=1:1:length(ia1)-1
 %         r_pairs(pointer:pointer+size(ind,1)-1,:)=out(ind,:);
 %         pointer=pointer+size(ind,1);
 %     end
-%     percent = parfor_progress;
-%     showTimeToCompletion( percent / 100, [], [], startTime );
+    percent = parfor_progress;
+    showTimeToCompletion( percent / 100, [], [], startTime );
 
 end
 statistics_struct=[DLL,DNN,DLLL,count_log];

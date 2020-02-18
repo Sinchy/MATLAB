@@ -1,4 +1,4 @@
-function [R, disp_matrix] = BubbleTracerPairDispersion(bubble_info, bubble_tracks, bubble_tracer_pair, tracer_tracks, initial_separation)
+function [R, disp_matrix] = BubbleTracerPairDispersion(bubble_info, bubble_tracks, bubble_tracer_pair, tracer_tracks, location, initial_separation)
 num_bb = size(bubble_tracer_pair, 1);
 
 [~, ~, ic] = unique(bubble_info(:,1));
@@ -15,7 +15,7 @@ for i = 1 : num_bb
    frame_end = bb_tr(end, 4);
    
    tracer_id = unique(bb_tr_pair(:, 3));
-   data_id = bb_tr_pair(1, 1);
+%    data_id = bb_tr_pair(1, 1);
    tracer_tr = tracer_tracks{i};
    tracer_tr(tracer_tr(:,4) < frame_st | tracer_tr(:,4) > frame_end, :) = [];
    num_tr = size(tracer_id, 1);
@@ -28,6 +28,22 @@ for i = 1 : num_bb
           if IS < initial_separation(1) || IS > initial_separation(2)
              continue; 
           end
+      end
+      
+      if exist('location', 'var')
+          %check the initial separation
+          pos_vec = tr_tr(1, 1:3) - bb_tr(1, 1:3);
+        if strcmp(location, 'back')
+            % calculate the angle of particle relative to the moving
+            % direction of the bubble
+            if dot(pos_vec, bb_tr(1, 6:8)) >= 0
+                continue;
+            end
+        elseif strcmp(location, 'front')
+            if dot(pos_vec, bb_tr(1, 6:8)) <= 0
+                continue;
+            end
+        end
       end
       len_tr = size(tr_tr, 1);
       len = min(len_tr, len_bb);

@@ -2,16 +2,18 @@ function [statistics_struct, statistics_corr] = CalStructFun(datapath, framerate
 
 addpath 1-Basics/   2-EStruct/;
 if ~exist('filter_data_path', 'var')
-    [data, ~] = ashwanth_rni_vel_acc(datapath, 6, 14, framerate);
+    [filter_data, ~] = ashwanth_rni_vel_acc(datapath, 6, 14, framerate);
+%     filter_data=sortrows(filter_data,4); % sort the data to make it prepared for function rni_findpairs
 else
     load(filter_data_path); % load data directly
+%     filter_data=sortrows(file.filter_data,4); % sort the data to make it prepared for function rni_findpairs
 end
-data=sortrows(data,4); % sort the data to make it prepared for function rni_findpairs
+
 % using map to get the data in order to save memory
     fileID = fopen([datapath save_name 'filter_data_bin.mat'], 'w');
-    fwrite(fileID, data, 'double'); % save the data
+    fwrite(fileID, filter_data, 'double'); % save the data
     fclose(fileID); 
-    [row, col] = size(data);
+    [row, col] = size(filter_data);
     % map a variable is to save memory and enable to get more workers for
     % parallelization
      data_map = memmapfile([datapath save_name 'filter_data_bin.mat'], 'Format',{'double',[row col],'eulrot'}); 
@@ -20,17 +22,17 @@ data=sortrows(data,4); % sort the data to make it prepared for function rni_find
 % redges_log = 10.^(0:0.05:4); %10.^(-1:0.05:2)  tank:10.^(-1:0.05:2.5)
 %% fluctuation velocity
 
-u_fluc = sqrt((std(data(:,12)).^2 + std(data(:,13)).^2 + std(data(:,14)).^2)/3); % mm
+u_fluc = sqrt((std(filter_data(:,12)).^2 + std(filter_data(:,13)).^2 + std(filter_data(:,14)).^2)/3); % mm
 u_fluc = u_fluc/1e3;          % m
 
-ux_rms = rms(data(:,12))/1e3;
-uy_rms = rms(data(:,13))/1e3;
-uz_rms = rms(data(:,14))/1e3;
+ux_rms = rms(filter_data(:,12))/1e3;
+uy_rms = rms(filter_data(:,13))/1e3;
+uz_rms = rms(filter_data(:,14))/1e3;
 
 s_log = size(redges_log,2)-1;
 s_lin = size(redges_lin,2)-1;
 
-data = []; % clear the data
+filter_data = []; % clear the data
 %% STRUCTURE FUNCTIONS
     [statistics_struct, statistics_corr] = rni_findpairs(data_map, redges_log, redges_lin);
     %% Energy dissipation rate from DLL and DLLL

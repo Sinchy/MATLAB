@@ -39,9 +39,9 @@ M2Q14   = 'M2Q14'; % Splines with smoothness 2 (5th order) over 14 data points.
 
 StartTime = 3; %Initial time step, must (>=3)
 dt = 0.002; %Time step
-itmax = 200; %Maximum simulation Maximum, (StartTime+itmax<=5028)
+itmax = 5000; %Maximum simulation Maximum, (StartTime+itmax<=5028)
 MaxTime = 5028; %Maximum Maximum in JHUTDB coarse HIT
-npoints_p = 100; %Particle number
+npoints_p = 10000; %Particle number
 npoints_b = 0; % bubble number
 npoints = npoints_p + npoints_b;
 
@@ -65,7 +65,7 @@ rp((npoints_p + 1):npoints_p + npoints_b) = rp_b;
 
 tau = rp.*rp./beta/3/nu; % Relaxation time
 
-file_path = 'Particles.txt';
+file_path = '/home/tanshiyong/Documents/Documents/2.Particles/Simulation/Particles.txt';
 
 %==================================================================
 %======================         Main         ======================

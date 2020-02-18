@@ -1,13 +1,16 @@
-function [R, pairs, disp_matrix] = PairDispersion(tracks, d_0, pairs)
+function [R, pairs, disp_matrix] = PairDispersion_gamma(tracks, d_0, pairs)
 % tracks need to be equal frame rate
 
 if ~exist('pairs', 'var')
+    gamma_thred = 0.1;
+    num_stat = 3000;
+
     [C,~,~] = unique(tracks(:,5));
     num_tracks = size(C, 1);
 
     %find pairs at the beginning of each track (which can be extend to any
     %time) but this would generate a huge number of pairs
-    sample_rate = 100;
+    sample_rate = 1;
     total_tracks = round(num_tracks/sample_rate);
     pairs = cell(total_tracks, 1);
     id = 1;
@@ -25,10 +28,18 @@ if ~exist('pairs', 'var')
        % distance in one direction, x
     %    pair_trkID = points(abs(points(:, 1) - point0(1,1)) > d_0(1) & abs(points(:, 1) - point0(1,1)) < d_0(2), 5);
        num_pair = length(pair_trkID);
+       pairs_sub = [ones(num_pair, 1) * track(1, 5) pair_trkID ones(num_pair, 1) * track(1, 4)];
+       %calculate gamma
+       [gama, ~] = CalRatioSepTEddyT(tracks, pairs_sub);
+       pairs_sub = pairs_sub(gama < gamma_thred, :);
+       num_pair = size(pairs_sub, 1);
        if num_pair > 0
-           total_pair = total_pair + num_pair;
+           total_pair = total_pair + num_pair
+           pairs{id} = pairs_sub;
+           if total_pair > num_stat
+               break;
+           end
        end
-       pairs{id} = [ones(num_pair, 1) * track(1, 5) pair_trkID ones(num_pair, 1) * track(1, 4)];
        id = id + 1;
     end
     pairs = cell2mat(pairs);
