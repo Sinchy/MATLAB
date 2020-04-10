@@ -2,7 +2,7 @@ function [R, pairs, disp_matrix] = PairDispersion_gamma(tracks, d_0, pairs)
 % tracks need to be equal frame rate
 
 if ~exist('pairs', 'var')
-    gamma_thred = 0.1;
+    gamma_thred = 0.01;
     num_stat = 3000;
 
     [C,~,~] = unique(tracks(:,5));
@@ -69,7 +69,7 @@ end
 len = max(tracks(:,4)) - min(tracks(:,4)) + 1;
 R = zeros(len - 1, 1);
 for i = 1 : len - 1
-    disp = nonzeros(disp_matrix(:, i + 1));
+    disp = nonzeros(disp_matrix(:, i));
     if ~isempty(disp)
         R(i) = mean(disp);
     end

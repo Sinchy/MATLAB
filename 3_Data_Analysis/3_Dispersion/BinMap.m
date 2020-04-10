@@ -10,9 +10,12 @@ for i = 1 : nbin
     x_u = dx(i + 1);
     xx = (x_l + x_u) / 2;
     yy = y(x > x_l & x < x_u);
-    [C,~,ic] = unique(yy);
-    a_counts = accumarray(ic,1); 
-    map = [map; [ones(length(C),1) * xx, C, a_counts / sum(a_counts)]];
+%     [C,~,ic] = unique(yy);
+%     a_counts = accumarray(ic,1); 
+    [cn, cr] = hist(yy);
+    
+%     map = [map; [ones(length(C),1) * xx, C, a_counts / sum(a_counts)]];
+    map = [map; [ones(length(cr),1) * xx, cr', cn' / sum(cn)]];
 end
 createfigure(map(:,1), map(:,2), [] , map(:,3));
 end
@@ -38,8 +41,10 @@ scatter(X1,Y1,S1,C1,'MarkerFaceColor','flat','MarkerEdgeColor','none');
 
 box(axes1,'on');
 % Set the remaining axes properties
-set(axes1,'ColorScale','log','FontSize',18,'LineWidth',2,'XMinorTick','on',...
-    'YMinorTick','on','YScale','log');
+% set(axes1,'ColorScale','log','FontSize',18,'LineWidth',2,'XMinorTick','on',...
+%    'YMinorTick','on','YScale','log');
+set(axes1,'FontSize',18,'LineWidth',2,'XMinorTick','on',...
+    'YMinorTick','on');
 % Create colorbar
 colorbar(axes1,'LineWidth',2);
 end

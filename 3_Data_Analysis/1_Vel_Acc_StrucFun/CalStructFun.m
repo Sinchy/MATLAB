@@ -16,7 +16,7 @@ end
     [row, col] = size(filter_data);
     % map a variable is to save memory and enable to get more workers for
     % parallelization
-     data_map = memmapfile([datapath save_name 'filter_data_bin.mat'], 'Format',{'double',[row col],'eulrot'}); 
+     data_map = memmapfile([datapath save_name 'filter_data_bin.mat'], 'Format',{'double',[row col],'tracks'}); 
      
 % redges_lin = 0.1:0.3:60; % tunnel 0.1:0.5:100, tank:0.1:1:300
 % redges_log = 10.^(0:0.05:4); %10.^(-1:0.05:2)  tank:10.^(-1:0.05:2.5)
