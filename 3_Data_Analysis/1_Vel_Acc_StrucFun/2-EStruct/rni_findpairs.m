@@ -27,7 +27,7 @@ ALL = zeros(length(redge_log)-1,1);
 % RNN= zeros(length(redge_lin)-1,1);
 
 
-addpath /home/tanshiyong/Documents/Code/MATLAB/3_Data_Analysis/1_Vel_Acc_StrucFun/SoundZone_Tools-master/;
+% addpath /home/tanshiyong/Documents/Code/MATLAB/3_Data_Analysis/1_Vel_Acc_StrucFun/SoundZone_Tools-master/;
 fprintf('\t Completion for calculating structure function: ');
 showTimeToCompletion; startTime=tic;
 
@@ -42,12 +42,13 @@ total_num = length(ia1)-1;
     frame_no = frame_no(seq_frame);
 
 % for i=1:1:length(frame_no)-1
-percent = parfor_progress(100);
-parfor i=1:1:100
+percent = parfor_progress(length(frame_no));
+parfor i=1:1:length(frame_no)-1
 % for i=1:1:1
 %     i
 %     X=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,1:3);
-    data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14 9:11]);
+%     data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14 9:11]);
+    data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14]);
     X = data(:, 1:3);
 %     partID=eulrot(ia1(i):ia1(i+1)-1,5);
 %     frm=eulrot(ia1(i):ia1(i+1)-1,4);
@@ -57,7 +58,7 @@ parfor i=1:1:100
 %     u=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,12:14);
  
     u = data(:, 4:6);
-    a = data(:, 7:9);
+%     a = data(:, 7:9);
     data = [];
 %     a=eulrot(ia1(i):ia1(i+1)-1,9:11);
     
@@ -162,8 +163,8 @@ parfor i=1:1:100
     dun = sqrt(sum(du .^ 2,2)-dul.^2);
     du = [];
     
-    % a
-    da = (vecnorm(a(rowIdx,:) - a(colIdx,:),2,2)/1e3);
+%     % a
+%     da = (vecnorm(a(rowIdx,:) - a(colIdx,:),2,2)/1e3);
     
     [bin_log,c_log]=histc(distd',redge_log);
     hasdata = all(c_log>0, 2);
@@ -184,8 +185,8 @@ parfor i=1:1:100
     DLL = DLL+DLL_tmp;
     
     %ALL
-    ALL_tmp = accumarray(c_log(hasdata,:), da(hasdata,:).^2, [length(bin_log)-1,1],@sum);
-    ALL = ALL + ALL_tmp;
+%     ALL_tmp = accumarray(c_log(hasdata,:), da(hasdata,:).^2, [length(bin_log)-1,1],@sum);
+%     ALL = ALL + ALL_tmp;
 
     %DNN
     DNN_tmp = accumarray(c_log(hasdata,:), dun(hasdata,:).^2, [length(bin_log)-1,1],@sum);
@@ -213,8 +214,8 @@ parfor i=1:1:100
     showTimeToCompletion( percent / 100, [], [], startTime );
 
 end
-statistics_struct=[DLL,DNN,DLLL,ALL, count_log];
+% statistics_struct=[DLL,DNN,DLLL,ALL, count_log];
 % statistics_corr=[RLL,RNN,count_lin];
-
+statistics_struct=[DLL,DNN,DLLL,count_log];
 
 end

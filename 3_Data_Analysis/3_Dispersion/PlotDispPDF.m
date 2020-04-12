@@ -10,8 +10,8 @@ set(gca, 'YScale', 'log')
 hold on
 Markers = {'v','o','>','+','*','x','d','^','s','<'};
 red = [1, 0, 0];
-pink = [0.00,0.00,1.00];
-colors_p = [linspace(red(1),pink(1),10)', linspace(red(2),pink(2),10)', linspace(red(3),pink(3),10)'];
+blue = [0.00,0.00,1.00];
+colors_p = [linspace(red(1),blue(1),10)', linspace(red(2),blue(2),10)', linspace(red(3),blue(3),10)'];
 P = zeros(num_frame, 3);
 for i = 1 : num_frame
     disp = disp_matrix(:, frame(i) : frame(i) + dt);

@@ -18,14 +18,14 @@ end
 if ~exist('pairs', 'var') || num_pairs < num_stat
 %     if num_pairs < num_stat
     %     tr_len = 1000;
-    disp_rate = 0.07;
+    disp_rate = 0.135;
     t0 = CalT0(disp_rate, mean(d_0));
-    tr_len = t0 * 4000 * 20;
-     tr_len = 2000;
-%     if tr_len > 1500
-%         tr_len = 1500;
-%     end
-
+    tr_len = t0 * 150 * 100;
+%      tr_len = 2000;
+    if tr_len > 1500
+        tr_len = 1500;
+    end
+%       tr_len = 1400;
     [frame_no, ~, ~] = unique(data_map.Data.tracks(:,4),'first');
     num_frame = length(frame_no);
     seq_frame = randperm(num_frame);
@@ -62,6 +62,7 @@ if ~exist('pairs', 'var') || num_pairs < num_stat
         %check track length
         trackID = unique([new_pairs(:,1); new_pairs(:,2)]);
         tracks = GetSpecificTracksFromData(data_map, trackID);
+        tracks(tracks(:, 4) < frame_no(i), :) = []; % count the len from current frame on
         [trackID,~,trIndex] = unique(tracks(:,5));
         track_len = accumarray(trIndex,1);
         short_track_ID = trackID(track_len < tr_len);
@@ -102,14 +103,14 @@ for i = 1 : num_pair
     len2 = size(track2, 1);
     len = min(len1, len2);
     disp_vec = track1(1 : len, 1:3) - track2(1 : len, 1:3);
-    vel_vec = track1(1 : len, 6:8) - track2(1 : len, 6:8);
+%     vel_vec = track1(1 : len, 6:8) - track2(1 : len, 6:8);
 %     disp_sca = vecnorm(disp_vec, 2, 2);
 %     disp_matrix(i, 1 : len - 1) = (disp_sca(2:end) - disp_sca(1)) .^ 2;
 %     disp_sca = disp_vec * disp_vec(1,:)'; % corelation with the initial separation
-    disp_sca = vel_vec * disp_vec(1,:)';
-    disp_matrix(i, 1 : len) = disp_sca;
-%     disp_vec = disp_vec - disp_vec(1, 1:3);
-%     disp_matrix(i, 1 : len - 1) = vecnorm(disp_vec(2:end, 1:3), 2, 2) .^ 2;
+%     disp_sca = vel_vec * disp_vec(1,:)';
+%     disp_matrix(i, 1 : len) = disp_sca;
+    disp_vec = disp_vec - disp_vec(1, 1:3);
+    disp_matrix(i, 1 : len - 1) = vecnorm(disp_vec(2:end, 1:3), 2, 2) .^ 2;
 end
 len = max(tracks(:,4)) - min(tracks(:,4)) + 1;
 R = zeros(len - 1, 1);
