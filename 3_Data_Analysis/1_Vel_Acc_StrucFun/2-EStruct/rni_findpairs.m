@@ -42,14 +42,15 @@ total_num = length(ia1)-1;
     frame_no = frame_no(seq_frame);
 
 % for i=1:1:length(frame_no)-1
-percent = parfor_progress(length(frame_no));
-parfor i=1:1:length(frame_no)-1
+percent = parfor_progress(100);
+parfor i=1:1:500
 % for i=1:1:1
 %     i
 %     X=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,1:3);
 %     data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14 9:11]);
     data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14]);
     X = data(:, 1:3);
+    
 %     partID=eulrot(ia1(i):ia1(i+1)-1,5);
 %     frm=eulrot(ia1(i):ia1(i+1)-1,4);
 %     linenum=eulrot(ia1(i):ia1(i+1)-1,12);

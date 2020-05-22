@@ -1,6 +1,6 @@
 function PlotAlignedPairTracks(tracks, pairs)
 
-addpath /home/tanshiyong/Documents/Code/MATLAB/0_Math;
+addpath ~/Documents/Code/MATLAB/0_Math;
 
 num_pairs = size(pairs, 1);
 

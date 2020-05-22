@@ -1,0 +1,10 @@
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [0.1 4]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\0-4kol_2.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [5 10]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\5-10kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [10 15]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\10-15kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [15 20]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\15-20kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [20 25]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\20-25kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [25 30]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\25-30kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [45 50]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\45-50kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [95 100]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\95-100kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [195 200]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\195-200kol.mat');
+[R, pairs, disp_matrix] = PairDispersion2(data_map, [295 300]*.05, 0.075, 'C:\Users\stan26\Documents\Documents\1.Bubbles\Data_analysis\Dispersion\Pair_dispersion\Single_phase\071718Run4\295-300kol.mat');
