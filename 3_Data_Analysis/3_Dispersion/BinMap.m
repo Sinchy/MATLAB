@@ -12,12 +12,17 @@ for i = 1 : nbin
     yy = y(x > x_l & x < x_u);
 %     [C,~,ic] = unique(yy);
 %     a_counts = accumarray(ic,1); 
-    [cn, cr] = hist(yy);
+    h = histogram(yy);
+    cn = h.Values;
+    cr = h.BinEdges(2:end);
+    y_mean(i) = mean(yy);
     
 %     map = [map; [ones(length(C),1) * xx, C, a_counts / sum(a_counts)]];
     map = [map; [ones(length(cr),1) * xx, cr', cn' / sum(cn)]];
 end
 createfigure(map(:,1), map(:,2), [] , map(:,3));
+hold on
+plot(dx(2:end), y_mean)
 end
 
 function createfigure(X1, Y1, S1, C1)

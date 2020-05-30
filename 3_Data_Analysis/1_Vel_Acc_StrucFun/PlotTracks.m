@@ -21,8 +21,8 @@ if color
         end
     end
 %     col = (tracks(:,6).^2 + tracks(:,7).^2 + tracks(:,8).^2).^.5;
-%      col = vecnorm(tracks(:,6:8),2,2);
-col = tracks(:,8);
+     col = vecnorm(tracks(:,6:8),2,2);
+% col = tracks(:,8);
 %  col = abs(tracks(:,14));
      col_st = nonzeros(col);
      col_st(isoutlier(col_st,'gesd')) = [];

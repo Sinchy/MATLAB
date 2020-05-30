@@ -1,4 +1,4 @@
-function [exponent, u_samples] = MontCarloLagrangianStrFunIntermittency(L0, disp_rate, disp_matrix)
+function [exponent, dispersion_scaling, r_samples, u_samples] = MontCarloLagrangianStrFunIntermittency(L0, disp_rate)
 num_order = 10;
 % p = 1:1:num_order;
 exponent = zeros(num_order, 3);
@@ -87,7 +87,7 @@ para = [         0.000108736519074  -6.959137216787811   1.000000000000000
 %    0.023355496372770  -9.637438549488461   1.666666666666667
 %    0.044748207099577 -12.121212121186009   2.000000000000000];
 
-num_samples = 3561;
+num_samples = 50000;
 % del_u_0 = (disp_rate * L0) ^ (1/3);
 
     num_point = 5;
@@ -104,23 +104,21 @@ t = (100:100:500)'/4000;
 uL = ((disp_rate * L0) ^ (2/3)) ^ .5 ;
 
 
-% r_samples = zeros(num_samples, num_point);
+r_samples = zeros(num_samples, num_point);
 u_samples = zeros(num_samples, num_point);
     for i = 1 : num_point
 %         t(i) = T0  /num_point * i;
 
 %% generate samples for r at time t(i)
-%         rr = 0:L0/100:L0*3.5;
-%         pp_r = RichardsonPDF(disp_rate, rr, para(i,:), t(i));
-%         r_samples(:, i) = randpdf(pp_r, rr, [num_samples 1]);
-        r_samples = nonzeros(disp_matrix(:,t(i)*4000));
-        num_samples = length(r_samples);
+        rr = 0:L0/100:L0*3.5;
+        pp_r = RichardsonPDF(disp_rate, rr, para(i,:), t(i));
+        r_samples(:, i) = randpdf(pp_r, rr, [num_samples 1]);
         
         %% Eulerian velocity PDF
         uu = 0:uL/100:uL * 3.5;
         
         for j = 1 : num_samples
-            pp_u = PDFVelocityIncrement(L0, disp_rate, r_samples(j), uu);
+            pp_u = PDFVelocityIncrement(L0, disp_rate, r_samples(j, i), uu);
             u_samples(j, i) = randpdf(pp_u, uu, [1 1]);
         end
 %         for j = 1 : 50
@@ -135,14 +133,12 @@ u_samples = zeros(num_samples, num_point);
 
 for p = 1:1:num_order
 
-    for i = 1: num_point
-        strFun_p(i) = mean(nonzeros(u_samples(:,i)) .^p);
-    end
-%     dispersion_p = mean(r_samples .^p);
+    strFun_p = mean(u_samples .^p);
+    dispersion_p = mean(r_samples .^p);
     fp = CalculateScaling(t, strFun_p', 1);
     exponent(p, :) = fp;
-%     fp = CalculateScaling(t, dispersion_p', 1);
-%     dispersion_scaling(p, :) = fp;
+    fp = CalculateScaling(t, dispersion_p', 1);
+    dispersion_scaling(p, :) = fp;
 end
  
 end

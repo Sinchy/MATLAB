@@ -103,15 +103,20 @@ function p = PDFVelocityIncrement(L0, disp_rate, r, del_u)
 M = 0.3;
 
 n_x = length(r);
-% n_y = length(del_u);
+n_y = length(del_u);
+
+n_x = max(n_x, n_y);
 
 p = zeros(1, n_x);
 if isscalar(del_u)
    del_u = ones(1, n_x) * del_u; 
 end
+if isscalar(r)
+    r = ones(1, n_x) * r; 
+end
 r(r > L0) = L0; % any separation larger than integral length scale would be the same Gaussian.
 for i = 1 :  n_x
-    if r(i) < L0 * .9
+    if r(i) < L0 * 1
         n = ceil(log(L0 / r(i)) / log(2));
         r_lo = L0 / 2 ^ n;
         del_u_0 = (disp_rate * L0) ^ (1/3);

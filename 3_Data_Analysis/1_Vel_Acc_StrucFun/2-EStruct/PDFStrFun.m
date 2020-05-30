@@ -1,12 +1,12 @@
-function [sample_strfun] = PDFStrFun(data_map,redge_log)
+function [sample_strfun] = PDFStrFun(data_map,redge_lin)
 [frame_no, ~, ~] = unique(data_map.Data.tracks(:,4),'first');
 
 num_frame = length(frame_no);
 seq_frame = randperm(num_frame);
 frame_no = frame_no(seq_frame);
 
-num_bin = length(redge_log)-1;
-num_sample = 10000;
+num_bin = length(redge_lin)-1;
+num_sample = 5000;
 max_num_sample_perframe = 100;
 sample_count = zeros(num_bin, 1);
 sample_strfun = zeros(num_bin, num_sample);
@@ -36,7 +36,7 @@ for i = 1 : length(frame_no)
 %     dun = sqrt(sum(du .^ 2,2)-dul.^2);
     du = [];
     
-    [~,c_log]=histc(distd',redge_log);
+    [~,c_log]=histc(distd',redge_lin);
     c_log(c_log == 0) = num_bin + 1;
 %     hasdata = all(c_log>0, 2);
     

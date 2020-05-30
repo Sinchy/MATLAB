@@ -17,13 +17,13 @@ for i = 1 : num_pair
     len = min(len1, len2);
     direction = track1(1 : len, 1:3) - track2(1 : len, 1:3);
     r_matrix(i, 1:len) = vecnorm(direction, 2, 2);
-%     direction = direction ./ vecnorm(direction, 2, 2);
+    direction = direction ./ vecnorm(direction, 2, 2);
     veldiff_vec = (track1(1 : len, 6:8) - track2(1 : len, 6:8)) / 1e3;
     veldiff_sca = vecnorm(veldiff_vec, 2, 2).^2;
     veldiff_matrix(i, 1 : len ) = veldiff_sca;
-%     veldiff_lgtn = dot(veldiff_vec, direction, 2) / 1e3;
+%     veldiff_lgtn = dot(veldiff_vec, direction, 2);
 %     veldiff_sca = veldiff_sca - veldiff_sca(1);
-%     veldiff_matrix(i, 1 : len) = veldiff_lgtn .^ 2;
+%     veldiff_matrix(i, 1 : len) = veldiff_lgtn;
 
 %     veldiff_vec = veldiff_vec - veldiff_vec(1, :);
 %     veldiff_matrix(i, 1 : len - 1) = vecnorm(veldiff_vec(2:end,:), 2, 2) .^2;
