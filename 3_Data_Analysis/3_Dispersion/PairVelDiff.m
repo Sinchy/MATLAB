@@ -1,4 +1,4 @@
-function [vel_diff, veldiff_matrix, r] = PairVelDiff(pairs, data_map)
+function [vel_diff, veldiff_matrix, r_matrix] = PairVelDiff(pairs, data_map)
 
 trackID = unique([pairs(:,1); pairs(:,2)]);
 tracks = GetSpecificTracksFromData(data_map, trackID);

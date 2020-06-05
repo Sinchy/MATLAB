@@ -1,23 +1,24 @@
-function [y_mean, n_sample] = BinMap(x, y, dx)
-xmin = min(x);
-%dx = (max(x) - xmin) / nbin;
-nbin = length(dx) - 1;
-map = [];
-
+nbin = size(sample_strfun_shorten, 1);
 figure;
+map = [];
+y_mean = [];
 for i = 1 : nbin
 %     x_l = xmin + (i - 1) * dx;
 %     x_u = xmin + i * dx;
-    x_l = dx(i);
-    x_u = dx(i + 1);
-    xx = (x_l + x_u) / 2;
-    yy = y(x > x_l & x < x_u);
+%     x_l = dx(i);
+%     x_u = dx(i + 1);
+     xx = (redge(i) + redge(i+1)) / 2 /0.05;
+%     yy = y(x > x_l & x < x_u);
 %     [C,~,ic] = unique(yy);
 %     a_counts = accumarray(ic,1); 
+yy = nonzeros(sample_strfun_shorten(i,:).^2);
+if isempty(yy)
+    map = [map; [xx, 0, 0]];
+        continue;
+end
     h = histogram(yy);
     cn = h.Values;
     cr = h.BinEdges(2:end);
-    n_sample(i) = length(yy);
     if length(yy) > 1
         y_mean(i,:) =  MeanWithConfidenceInterval(yy);
     else
@@ -27,10 +28,11 @@ for i = 1 : nbin
 %     map = [map; [ones(length(C),1) * xx, C, a_counts / sum(a_counts)]];
     map = [map; [ones(length(cr),1) * xx, cr', cn' / sum(cn)]];
 end
+
 createfigure(map(:,1), map(:,2), [] , map(:,3));
 hold on
-errorbar(dx(2:end), y_mean(:,1), y_mean(:,2), y_mean(:,3))
-end
+errorbar(redge(2:end)/0.05, y_mean(:,1), y_mean(:,2), y_mean(:,3))
+
 
 function createfigure(X1, Y1, S1, C1)
 %CREATEFIGURE(X1, Y1, S1, C1)

@@ -1,4 +1,4 @@
-function [exponent, dispersion_scaling] = LagrangianStrFunIntermittency(L0, disp_rate)
+function [exponent, dispersion_scaling,Euveldiff, lgveldiff] = LagrangianStrFunIntermittency(L0, disp_rate)
 num_order = 10;
 % p = 1:1:num_order;
 exponent = zeros(num_order, 3);
@@ -75,15 +75,31 @@ for p = 1:1:num_order
     
     strFun = zeros(num_point, 1);
     dispersion = zeros(num_point, 1);
-    fun = @(del_u, r, t, pm) RichardsonPDF(disp_rate, r, pm, t) .* del_u .^ p .* PDFVelocityIncrement(L0, disp_rate, r, del_u);
+    
+%     uu = uL/100:uL/100:2*uL;
+%     r = L0/100:L0/100:L0;
+%     for i = 1 : 100
+%         
+% %         for j = 1 : 200
+% %             Euveldiff(i,j) =  PDFVelocityIncrement(L0, disp_rate, r(i), uL/100 * j);
+% % 
+% %         end
+% %         Eu_cp(i) = trapz(uu, Euveldiff(i,:));
+%         Eu_cp(i) = integral(@(uu) PDFVelocityIncrement(L0, disp_rate, r(i), uu), 0, inf);
+%         alpha(i) = 1 / Eu_cp(i);
+%     end
+%     
+    fun = @(del_u, r, t, pm) RichardsonPDF(disp_rate, r, pm, t) .* del_u .^ p .* 2 .* PDFVelocityIncrement(L0, disp_rate, r, del_u);
     dispersionfun = @(r, t, pm) r.^p .* RichardsonPDF(disp_rate, r, pm, t);
     for i = 1 : num_point
 %         t(i) = T0  /num_point * i;
-
-%         for j = 1 : 50
-%             lgveldiff(i,j) = integral(@(r) fun(uL/50 * j, r, t(i), para(i, :)), 0, L0);
-%             Euveldiff(i,j) =  PDFVelocityIncrement(L0, disp_rate, (0.55 * disp_rate * t(i)^3)^.5, uL/50 * j);
-%         end
+    if p == 1
+        for j = 1 : 200
+            Euveldiff(i,j) = PDFVelocityIncrement(L0, disp_rate, (0.55 * disp_rate * t(i)^3)^.5, uL/100 * j);
+            lgveldiff(i,j) = integral(@(r) RichardsonPDF(disp_rate, r, para(i, :), t(i)) .* 2 .* PDFVelocityIncrement(L0, disp_rate, r, uL/100 * j), 0, inf);
+%             lgveldiff(i,j) = integral(@(r) fun(uL/100 * j, r, t(i), para(i, :)), 0, L0);
+        end
+    end
         strFun(i) = integral2(@(r, del_u) fun(del_u, r, t(i), para(i, :)), 0, inf, 0, inf);
         
         dispersion(i) = integral(@(r) dispersionfun( r, t(i), para(i, :)), 0, inf);
@@ -95,6 +111,13 @@ for p = 1:1:num_order
 end
  
 end
+% 
+% function p = CorrectedPDFVelocityIncrement(L0, disp_rate, r, del_u)
+%     cp_eu_v = integral(@(uu) PDFVelocityIncrement(L0, disp_rate, r, uu), 0, inf);
+%     alpha = 1/cp_eu_v;
+%     p = alpha * PDFVelocityIncrement(L0, disp_rate, r, del_u);
+% 
+% end
 
 function p = PDFVelocityIncrement(L0, disp_rate, r, del_u)
 % p-model in P. Kailasnath, K.R. Sreenivasan 1993
