@@ -15,9 +15,13 @@ if ~isstruct(Re_struct)
     n1 = n_tr/20 : n_tr/20 : n_tr;
     n2 = n_tr: n_max/100 : n_max;
 
-    k1 = log(15 * C2 * C3 * Re^(1/2).* n1.^(-2)/(a * b))./log((15 * C2 / b)^(-1/2) *  C3 * Re^(1/2));
-    % k2 = 1 - log(a * b ^ (3/2))./(1/2 * log(b) + 1/2 * log( C3 * Re) - 2/3 * log(n2));
-    k2 = 1 - log(a * b ^ (3/2))./log(b^(1/2) * Re^(1/2) * n2.^(-2/3));
+%     k1 = log(15 * C2 * C3 * Re^(1/2).* n1.^(-2)/(a * b))./log((15 * C2 / b)^(-1/2) *  C3 * Re^(1/2));
+%     % k2 = 1 - log(a * b ^ (3/2))./(1/2 * log(b) + 1/2 * log( C3 * Re) - 2/3 * log(n2));
+%     k2 = 1 - log(a * b ^ (3/2))./log(b^(1/2) * Re^(1/2) * n2.^(-2/3));
+    kapa = 15 * C2 / b;
+    k1 = 1 + (3/2 * log(kapa) - log(a) - 2 * log(n1)) ./ (1/2 * log(Re) - 1/2 * log(kapa));
+%     k2 = 1 -  3/2 * log(a * b) ./ (1/2 * log(Re) - 2/3 * log(n2) + 1/2 * log(a*b));
+    k2 = 1 -   log(a * b ^ (3/2)) ./ (1/2 * log(Re) - 2/3 * log(n2) + 1/2 * log(b));
 
     n = [n1, n2];
     k = [k1, k2];

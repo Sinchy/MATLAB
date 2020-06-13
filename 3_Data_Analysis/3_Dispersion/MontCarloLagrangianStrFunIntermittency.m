@@ -110,12 +110,13 @@ u_samples = zeros(num_samples, num_point);
 %         t(i) = T0  /num_point * i;
 
 %% generate samples for r at time t(i)
-        rr = 0:L0/10000:L0*4;
+        rr = 0:L0/100:L0*4;
         pp_r = RichardsonPDF(disp_rate, rr, para(i,:), t(i));
         r_samples(:, i) = randpdf(pp_r, rr, [num_samples 1]);
         
         %% Eulerian velocity PDF
-        uu = 0:uL/10000:uL * 4;
+        uu = 0:uL/100:uL * 4;
+    
         
         for j = 1 : num_samples
             pp_u = PDFVelocityIncrement(L0, disp_rate, r_samples(j, i), uu);

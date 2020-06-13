@@ -2,7 +2,7 @@ function PlotDispPDF(disp_matrix, frame)
 % num_frame = size(disp_matrix, 2);
 num_frame = length(frame);
 % df = floor(num_frame / num_sect);
-dt = 0;
+dt = 10;
 figure;
 axes1 = axes;
 hold(axes1,'on');
@@ -21,7 +21,7 @@ for i = 1 : num_frame
 %     h = histogram((disp / (mean(disp))).^(1/2), 10.^[-10:.1:2], 'Normalization', 'pdf', 'Visible', 'off');
 % h = histogram((disp / (mean(disp))).^(1/2), 0:0.1:8, 'Normalization', 'probability', 'Visible', 'off');
 %     [cn, cr] = hist((disp / (mean(disp))).^(1/2), 15);
-    h = histogram((disp).^(1/2), 20, 'Normalization', 'pdf', 'Visible', 'off');
+    h = histogram((disp).^(1/2),  'Normalization', 'pdf', 'Visible', 'off');
 %     h = histogram((disp),10.^[-10:0.1:2], 'Normalization', 'probability', 'Visible', 'off');
 %     [cn, cr] = hist((disp / (mean(disp))), 0:.5:10);
 %     [cn, cr] = hist((disp).^(1/2) / 1e3, 15);
