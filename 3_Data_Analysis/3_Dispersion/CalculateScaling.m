@@ -1,6 +1,6 @@
 function fp = CalculateScaling(tn, Rn, all)
 if ~all
-    fit_len = 30;
+    fit_len = 100;
 
     len = length(Rn);
     if len < fit_len

@@ -2,7 +2,7 @@ function [R, pairs, disp_matrix] = PairDispersion2(data_map, d_0, disp_rate, pat
 % tracks need to be equal frame rate
 
 % if ~exist('pairs', 'var')
-num_stat = 50000;
+num_stat = 10000;
 pairs_label = zeros(num_stat, 2);
 % num_frame_finished = 1000; %frames to finish searching
 
@@ -27,7 +27,7 @@ if ~exist('pairs', 'var') || num_pairs < num_stat
     %     tr_len = 1000;
 %     disp_rate = 0.0018;
     t0 = CalT0(disp_rate, mean(d_0));
-    tr_len = t0 * 4000 * 5;
+    tr_len = t0 * 4000 * 10;
 %      tr_len = 2000;
     if tr_len > 1500
         tr_len = 1500;

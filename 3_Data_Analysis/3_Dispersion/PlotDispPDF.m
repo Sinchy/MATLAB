@@ -2,7 +2,8 @@ function PlotDispPDF(disp_matrix, frame)
 % num_frame = size(disp_matrix, 2);
 num_frame = length(frame);
 % df = floor(num_frame / num_sect);
-dt = 10;
+dt = [50 100 150 200 250];
+% dt = 50;
 figure;
 axes1 = axes;
 hold(axes1,'on');
@@ -14,7 +15,7 @@ blue = [0.00,0.00,1.00];
 colors_p = [linspace(red(1),blue(1),num_frame)', linspace(red(2),blue(2),num_frame)', linspace(red(3),blue(3),num_frame)'];
 % P = zeros(num_frame, 3);
 for i = 1 : num_frame
-    disp = disp_matrix(:, frame(i) : frame(i) + dt);
+    disp = disp_matrix(:, frame(i)- dt(i)/2 : frame(i) + dt(i)/2);
     disp = nonzeros(disp(:));
 %     disp = disp .^ .5;
 %     [cn, cr] = hist((disp / (mean(disp))).^(1/3), 50);

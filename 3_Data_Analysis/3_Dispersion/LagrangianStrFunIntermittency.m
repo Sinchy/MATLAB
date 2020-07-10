@@ -1,4 +1,4 @@
-function [exponent, dispersion_scaling,Euveldiff, lgveldiff] = LagrangianStrFunIntermittency(L0, disp_rate)
+function [exponent, dispersion_scaling] = LagrangianStrFunIntermittency(L0, disp_rate, para)
 num_order = 10;
 % p = 1:1:num_order;
 exponent = zeros(num_order, 3);
@@ -12,11 +12,17 @@ dispersion_scaling = zeros(num_order, 3);
 %    0.000475938485406  -0.600000000000000   1.900000000000000];
 
 %linear scale from 1 to 1.5, dispersion works!!
-para = [         0.000108736519074  -6.959137216787811   1.000000000000000
-   0.000759058352805  -7.249799510371584   1.125000000000000
-   0.002303637880891  -7.637458427837277   1.250000000000000
-   0.005018539270529  -8.121816303077411   1.375000000000000
-   0.009154288265817  -8.703414485743236   1.500000000000000];
+% para = [         0.000108736519074  -6.959137216787811   1.000000000000000
+%    0.000759058352805  -7.249799510371584   1.125000000000000
+%    0.002303637880891  -7.637458427837277   1.250000000000000
+%    0.005018539270529  -8.121816303077411   1.375000000000000
+%    0.009154288265817  -8.703414485743236   1.500000000000000];
+
+% para =[   0.000209662860044  -6.826924810390576   0.666666666666667
+%    0.001424828065436  -6.765200578575894   0.725000000000000
+%    0.004194302847071  -6.746588832008111   0.783333333333333
+%    0.008853209808678  -6.764433595439441   0.841666666666667
+%    0.015654454860683  -6.813959362106901   0.900000000000000];
 
 % parabolic increase
 % para = [   0.000209662860058  -6.826924810425981   0.666666666666667
@@ -70,8 +76,19 @@ for p = 1:1:num_order
 %     t = T0/10:T0/10:T0;
 %     t = zeros(num_point, 1);
 %     t = (100:200:1000)'/4000;
-    t = (100:100:500)'/4000;
+%     t = (100:100:500)'/4000;
+% t_min = 0.0001;
+% t_max = 1;
+% t = ( t_min: (t_max-t_min)/4 : t_max)';%/4000;
 %     t = (170:(900 - 170)/4:900)'/4000;
+t_min = 100/4000;
+t_max = 10000/4000;
+    % t = ( t_min: (t_max-t_min)/4 : t_max)';%/4000;
+
+    del_t = t_max - t_min;
+    t_end = 15000/4000;
+    t_st = t_end - del_t;
+    t = ( t_st: (t_end-t_st)/4 : t_end)';
     
     strFun = zeros(num_point, 1);
     dispersion = zeros(num_point, 1);
@@ -93,19 +110,19 @@ for p = 1:1:num_order
     dispersionfun = @(r, t, pm) r.^p .* RichardsonPDF(disp_rate, r, pm, t);
     for i = 1 : num_point
 %         t(i) = T0  /num_point * i;
-    if p == 1
-        for j = 1 : 200
-            Euveldiff(i,j) = PDFVelocityIncrement(L0, disp_rate, (0.55 * disp_rate * t(i)^3)^.5, uL/100 * j);
-            lgveldiff(i,j) = integral(@(r) RichardsonPDF(disp_rate, r, para(i, :), t(i)) .* 2 .* PDFVelocityIncrement(L0, disp_rate, r, uL/100 * j), 0, inf);
-%             lgveldiff(i,j) = integral(@(r) fun(uL/100 * j, r, t(i), para(i, :)), 0, L0);
-        end
-    end
-        strFun(i) = integral2(@(r, del_u) fun(del_u, r, t(i), para(i, :)), 0, inf, 0, inf);
+%     if p == 1
+%         for j = 1 : 200
+%             Euveldiff(i,j) = PDFVelocityIncrement(L0, disp_rate, (0.55 * disp_rate * t(i)^3)^.5, uL/100 * j);
+%             lgveldiff(i,j) = integral(@(r) RichardsonPDF(disp_rate, r, para(i, :), t(i)) .* 2 .* PDFVelocityIncrement(L0, disp_rate, r, uL/100 * j), 0, inf);
+% %             lgveldiff(i,j) = integral(@(r) fun(uL/100 * j, r, t(i), para(i, :)), 0, L0);
+%         end
+%     end
+%         strFun(i) = integral2(@(r, del_u) fun(del_u, r, t(i), para(i, :)), 0, inf, 0, inf);
         
         dispersion(i) = integral(@(r) dispersionfun( r, t(i), para(i, :)), 0, inf);
     end
-    fp = CalculateScaling(t, strFun, 1);
-    exponent(p, :) = fp;
+%     fp = CalculateScaling(t, strFun, 1);
+%     exponent(p, :) = fp;
     fp = CalculateScaling(t, dispersion, 1);
     dispersion_scaling(p, :) = fp;
 end
