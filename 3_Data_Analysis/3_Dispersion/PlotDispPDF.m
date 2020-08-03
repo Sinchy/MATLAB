@@ -74,10 +74,10 @@ for i = 1 : num_frame
 %       plot(cr, exp(cn_log), 'Color', colors_p(i, :), 'LineWidth', 1);
 
 %% PDF fitting
-% dp_sm = mean(disp);
-% % pf_Richardson = @(r, a, b, c)  a / (dp_sm^(3/2)) .* exp( b * (r / dp_sm^.5).^c);
-% t = (frame(i) + dt/2) / 4000;
-% pf_Richardson = @(r, a, b, c)  a / (t^(9/2)) .* exp( b * (r / t^(3/2)).^c);
+dp_sm = mean(disp);
+% pf_Richardson = @(r, a, b, c)  a / (dp_sm^(3/2)) .* exp( b * (r / dp_sm^.5).^c);
+t = (frame(i) + dt(i)/2) *.02;
+pf_Richardson = @(r, a, b, c)  a / (t^(9/2)) .* exp( b * (r / t^(3/2)).^c);
 % 
 % i = i;
 

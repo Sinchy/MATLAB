@@ -109,7 +109,7 @@ for i = 1 : num_particles
    delete_particle  = 0;
 % Get the 2D positions around the projected point
     for j = 1 : 4
-        img = imread([image_path 'cam' num2str(j) '/cam' num2str(j) 'frame' num2str(particles(i, 4), '%06.0f') '.tif']);
+        img = imread([image_path 'cam' num2str(j) '/cam' num2str(j) 'frame' num2str(particles(i, 4), '%05.0f') '.tif']);
         [hpix, wpix] = size(img);
         particle_size = 4;
         search_range = particle_size * 3 / 4; % searching range on the image
@@ -162,7 +162,8 @@ for i = 1 : num_particles
     end
     
 % Choose the closest one to the projected particle as the real particle
-    thred_3D = .05; 
+    thred_3D = .05;
+% thred_3D = 50;
     ind = find(error < thred_3D);
     if isempty(ind)
         particles_info(ii, :) = []; % delete the particle since there is no suitable candidate
@@ -542,7 +543,7 @@ for icam = 1:ncams
 end
 
 if (det(M) < 10)
-  det(M)  
+  det(M);  
 end
     % find the point minimizing the distance from all rays
     p = M \ sum(pM,2);  % sums pm x together for all three cameras.  Makes a column vector, then does inv(M)*sum(pM,2)

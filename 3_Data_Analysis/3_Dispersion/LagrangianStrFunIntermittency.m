@@ -82,13 +82,13 @@ for p = 1:1:num_order
 % t = ( t_min: (t_max-t_min)/4 : t_max)';%/4000;
 %     t = (170:(900 - 170)/4:900)'/4000;
 t_min = 100/4000;
-t_max = 10000/4000;
-    % t = ( t_min: (t_max-t_min)/4 : t_max)';%/4000;
+t_max = 1000/4000;
+    t = ( t_min: (t_max-t_min)/4 : t_max)';%/4000;
 
-    del_t = t_max - t_min;
-    t_end = 15000/4000;
-    t_st = t_end - del_t;
-    t = ( t_st: (t_end-t_st)/4 : t_end)';
+%     del_t = t_max - t_min;
+%     t_end = 15000/4000;
+%     t_st = t_end - del_t;
+%     t = ( t_st: (t_end-t_st)/4 : t_end)';
     
     strFun = zeros(num_point, 1);
     dispersion = zeros(num_point, 1);

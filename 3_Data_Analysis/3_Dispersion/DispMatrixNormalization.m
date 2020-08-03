@@ -34,7 +34,7 @@ disp_matrix_n = disp_matrix;
 
 t_max_n = (len_time - 1) / 4000 / t0;
 time_inteval = 0.02; % fixed the interval
-tn_series = 0 : time_inteval : t_max_n; % universal time series for all data sets
+tn_series = time_inteval : time_inteval : t_max_n; % universal time series for all data sets
 
 num_pairs = size(disp_matrix_n, 1);
 len_time_n = length(tn_series);

@@ -1,34 +1,40 @@
 %a / (dp_sm^(3/2)) .* exp( b * (r / dp_sm^.5).^c);
 % t = (150:200:1050)/4000;
 
-% formular of alpha
-t_lo = 100/4000; t_up = 20000/4000;
-exp_lo = 2/3; exp_up = 2;
-% syms t_s
-fun = @(t_s) (t_s - t_lo)/(t_up - t_lo) * (exp_up - exp_lo) + exp_lo;
+% % formular of alpha
+% t_lo = 100/4000; t_up = 20000/4000;
+% exp_lo = 2/3; exp_up = 2;
+% % syms t_s
+% fun = @(t_s) (t_s - t_lo)/(t_up - t_lo) * (exp_up - exp_lo) + exp_lo;
 
 % t = (170:(900 - 170)/4:900)'/4000; % make the time much smaller than TL to minimize the error in the integration
 t_min = 100/4000;
-t_max = 10000/4000;
-% t = ( t_min: (t_max-t_min)/4 : t_max)';%/4000;
+t_max = 1000/4000;
+t = ( t_min: (t_max-t_min)/4 : t_max)';%/4000;
 
-del_t = t_max - t_min;
-t_end = 15000/4000;
-t_st = t_end - del_t;
-t = ( t_st: (t_end-t_st)/4 : t_end)';
-
-exp_p = fun(t);
+% del_t = t_max - t_min;
+% t_end = 15000/4000;
+% t_st = t_end - del_t;
+% t = ( t_st: (t_end-t_st)/4 : t_end)';
+% 
+% exp_p = fun(t);
 
 dp_theo = 0.55*.075*t.^3;
 
 L0 = 0.01;
 % 
-% exp_min = 2/3;
-% exp_max = 2;
+exp_min = .5;
+exp_max = .7;
 
-%assume linear increase
-% exp_p = exp_min: (exp_max-exp_min)/4 : exp_max;
+% assume linear increase
+exp_p = (exp_min: (exp_max-exp_min)/4 : exp_max)';
 
+% using smooth step function
+% exp_p = [];
+% for i = 1 : 5
+%    exp_p(i) =  SmoothStepFunction(t_min, t_max, exp_min, exp_max, t(i));
+% end
+% exp_p = exp_p';
 % inverse parabolic increase
 % exp_p = -1/12 * ([1:5] - 5).^2 + 2;
 
