@@ -3,7 +3,10 @@ function PlotDispPDF(disp_matrix, frame)
 num_frame = length(frame);
 % df = floor(num_frame / num_sect);
 dt = [50 100 150 200 250];
+% dt = [0 0 0 1 1 1 1 1 1 1];
 % dt = 50;
+% dt = 0;
+% dt = 200;
 figure;
 axes1 = axes;
 hold(axes1,'on');
@@ -13,6 +16,8 @@ Markers = {'v','o','>','+','*','x','d','^','s','<','.'};
 red = [1, 0, 0];
 blue = [0.00,0.00,1.00];
 colors_p = [linspace(red(1),blue(1),num_frame)', linspace(red(2),blue(2),num_frame)', linspace(red(3),blue(3),num_frame)'];
+% colors_p = [linspace(red(1),blue(1),9)', linspace(red(2),blue(2),9)', linspace(red(3),blue(3),9)'];
+
 % P = zeros(num_frame, 3);
 for i = 1 : num_frame
     disp = disp_matrix(:, frame(i)- dt(i)/2 : frame(i) + dt(i)/2);
@@ -23,7 +28,7 @@ for i = 1 : num_frame
 % h = histogram((disp / (mean(disp))).^(1/2), 0:0.1:8, 'Normalization', 'probability', 'Visible', 'off');
 %     [cn, cr] = hist((disp / (mean(disp))).^(1/2), 15);
     h = histogram((disp).^(1/2),  'Normalization', 'pdf', 'Visible', 'off');
-%     h = histogram((disp),10.^[-10:0.1:2], 'Normalization', 'probability', 'Visible', 'off');
+%     h = histogram((disp).^(1/2),10.^[-10:0.1:2], 'Normalization', 'probability', 'Visible', 'off');
 %     [cn, cr] = hist((disp / (mean(disp))), 0:.5:10);
 %     [cn, cr] = hist((disp).^(1/2) / 1e3, 15);
 %     [cn, cr] = hist((disp / (mean(disp))).^(1/2), 10.^[-3:0.05:1]);
@@ -49,6 +54,8 @@ for i = 1 : num_frame
 %      h1 = semilogy(cr, cn, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
 %       set(h1, 'markerfacecolor', get(h1, 'color'), 'LineWidth',1);
       h1 = semilogy(h.BinEdges(2:end) / mean(disp).^(1/2), mean(disp).^(1/2) * h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
+% h1 = semilogy(h.BinEdges(2:end) ,  h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
+% h1 = semilogy(h.BinEdges(2:end) / mean(disp).^(1/2), h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
 %       h1 = semilogy(h.BinEdges(2:end) / mean(disp.^2)^.5, mean(disp.^2)^.5 * h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
 %       h1 = semilogy(h.BinEdges(2:end) / mean(disp.^2)^.5,  h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
       set(h1, 'markerfacecolor', get(h1, 'color'), 'LineWidth',1);
