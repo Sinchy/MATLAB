@@ -1,6 +1,6 @@
 function [R, pairs, disp_matrix] = PairDispersion2(data_map, d_0, disp_rate, pathname, pairs)
 % tracks need to be equal frame rate
-
+tic
 % if ~exist('pairs', 'var')
 num_stat = 100;
 pairs_label = zeros(num_stat, 2);
@@ -182,15 +182,17 @@ if ~exist('pairs', 'var') || num_pairs < num_stat
 end
 % end
 
-% % delete repeating tracks
-% pairs = sortrows(pairs, 3);
-% pairs = sortrows(pairs, 2);
-% pairs = sortrows(pairs, 1);
-% pairs_label = [pairs(:,1) + pairs(:,2), pairs(:,1) .* pairs(:,2)];
-% [~, pair_index, ~] = unique(pairs_label, 'rows');
-% pairs = pairs(pair_index, :);
+% delete repeating tracks
+pairs = sortrows(pairs, 3);
+pairs = sortrows(pairs, 2);
+pairs = sortrows(pairs, 1);
+pairs_label = [pairs(:,1) + pairs(:,2), pairs(:,1) .* pairs(:,2)];
+[~, pair_index, ~] = unique(pairs_label, 'rows');
+pairs = pairs(pair_index, :);
 
 pairs(pairs(:,1) == 0, :) = []; 
+% min_pair_len = 100;
+% pairs(pairs(:, 4) < min_pair_len, :) = [];
 % pairs(num_stat + 1:end, :) = []; 
 num_pair = size(pairs, 1);
 trackID = unique([pairs(:,1); pairs(:,2)]);
@@ -198,6 +200,7 @@ tracks = GetSpecificTracksFromData(data_map, trackID);
 
 len = max(tracks(:,4)) - min(tracks(:,4)) + 1;
 disp_matrix = zeros(num_pair, len);
+
 for i = 1 : num_pair
     track1 = tracks(tracks(:,5) == pairs(i, 1), :);
     track2 = tracks(tracks(:,5) == pairs(i, 2), :);
@@ -233,7 +236,7 @@ for i = 1 : len - 1
     end
 end
 R = nonzeros(R);
-
+toc
 % save(pathname, 'pairs', 'disp_matrix', 'R');
 end
 

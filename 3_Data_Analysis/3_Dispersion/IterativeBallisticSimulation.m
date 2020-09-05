@@ -3,10 +3,10 @@ function [R, R_gamma, disp_matrix, track_package, gamma_mark] = IterativeBallist
 disp_rate = disp_rate * 1e6;
 initial_separate(initial_separate==0) = [];
 
-addpath /home/tanshiyong/Documents/Code/MATLAB/0_Math;
+addpath C:\Users\ShiyongTan\Documents\Code\MATLAB\0_Math;
 
 gamma_thred = 0.1;
-alpha = 0.035;
+alpha = 0.05;
 % alpha = 0.01;
 C = 2.1;
 [num_pair, frame] = size(initial_separate);
@@ -118,7 +118,7 @@ for i = 1 : num_pair
     % gamma check
     sep_vel = (track_reorg(2) - track_reorg(1)) / dt; % unit: mm/s
     t_sep = sep_vel^2 / disp_rate;
-    t_eddy = (track_reorg(1,2) ^2 / disp_rate) ^ (1/3);
+    t_eddy = (track_reorg(1) ^2 / disp_rate) ^ (1/3);
 %     t_sep = sep_vel^2 / 1.6e5;
 %     t_eddy = (track_reorg(1,2) ^2 / 1.6e5) ^ (1/3);
     gamma(i) = t_sep / t_eddy;
