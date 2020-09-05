@@ -1,4 +1,4 @@
-function [R, pairs, disp_matrix] = PairDispersion2(data_map, d_0, disp_rate, pathname, pairs)
+function [R, pairs, disp_matrix, IS] = PairDispersion2(data_map, d_0, disp_rate, pathname, pairs)
 % tracks need to be equal frame rate
 tic
 % if ~exist('pairs', 'var')
@@ -201,6 +201,7 @@ tracks = GetSpecificTracksFromData(data_map, trackID);
 len = max(tracks(:,4)) - min(tracks(:,4)) + 1;
 disp_matrix = zeros(num_pair, len);
 
+IS = zeros(num_pairs, 1);
 for i = 1 : num_pair
     track1 = tracks(tracks(:,5) == pairs(i, 1), :);
     track2 = tracks(tracks(:,5) == pairs(i, 2), :);
@@ -212,6 +213,7 @@ for i = 1 : num_pair
     disp_vec = track1(1 : len, 1:3) - track2(1 : len, 1:3);
 %     vel_vec = track1(1 : len, 6:8) - track2(1 : len, 6:8);
     disp_sca = vecnorm(disp_vec, 2, 2) ;
+    IS(i) = disp_sca(1);
     disp_matrix(i, 1 : len - 1) = (disp_sca(2:end) - disp_sca(1)) .^2 ;
 %     disp_matrix(i, 1 : len - 1) = (disp_sca(2:end) - disp_sca(1));
 %     disp_sca = disp_vec * disp_vec(1,:)'; % corelation with the initial separation
@@ -226,6 +228,7 @@ end
 [~,index,~] = unique(disp_matrix(:,1));
 disp_matrix = disp_matrix(index, :);
 pairs = pairs(index, :);
+IS = IS(index);
 
 len = max(tracks(:,4)) - min(tracks(:,4)) + 1;
 R = zeros(len - 1, 1);
