@@ -1,6 +1,6 @@
 % clear all
 addpath('./parfor_progress');
-addpath /home/tanshiyong/Documents/Code/MATLAB/GetDataFromJHU/JohnsHopkins_database_matlab_codes;
+addpath D:\0.Code\MATLAB\2_Data_Extraction\5_GetDataFromJHU\JohnsHopkins_database_matlab_codes;
 
 % authkey =  'edu.psu.aks5577-18c0fbc1';
 authkey = 'edu.yale.nicholas.ouellette-b0c68942';
@@ -15,7 +15,7 @@ FD4Lag4 = 'FD4Lag4';
 % xoff = 2*pi*rand; 
 % yoff = 2*pi*rand;
 % zoff = 2*pi*rand;
-npoints = 125000;
+npoints = 500000;
 
 clear points;
 

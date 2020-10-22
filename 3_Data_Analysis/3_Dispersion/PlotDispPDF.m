@@ -5,7 +5,7 @@ num_frame = length(frame);
 % dt = [0 1 1 1 1 1 1 1 1];
 % dt = [250 250 250 250 250];
 % dt = [50 50 50 50 50];
-dt = [50 100 150 200 250];
+dt = [10 50 100 150 200];
 % dt = [0 0 0 1 1 1 1 1 1 1];
 % dt = 50;
 % dt = 0;
@@ -57,13 +57,11 @@ for i = 1 : num_frame
 %      h1 = semilogy(cr, cn, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
 %       set(h1, 'markerfacecolor', get(h1, 'color'), 'LineWidth',1);
       h1 = semilogy(h.BinEdges(2:end) / mean(disp).^(1/2), mean(disp).^(1/2) * h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
-<<<<<<< HEAD
-%       h1 = semilogy(h.BinEdges(2:end) / mean(disp.^2)^.5,  h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
-=======
+
 % h1 = semilogy(h.BinEdges(2:end) ,  h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
 % h1 = semilogy(h.BinEdges(2:end) / mean(disp).^(1/2), h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
 %       h1 = semilogy(h.BinEdges(2:end) / mean(disp.^2)^.5, mean(disp.^2)^.5 * h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
->>>>>>> a8dd6969efed7f65281e55b616fa8d7390aeeafb
+
 %       h1 = semilogy(h.BinEdges(2:end) / mean(disp.^2)^.5,  h.Values, Markers{i}, 'LineWidth',2, 'Color', colors_p(i,:));
       set(h1, 'markerfacecolor', get(h1, 'color'), 'LineWidth',1);
       

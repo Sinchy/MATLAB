@@ -39,7 +39,7 @@ function [bandwidth,density,X,Y]=kde2d(data,n,MIN_XY,MAX_XY)
 %   % plot the data and the density estimate
 %     contour3(X,Y,density,50), hold on
 %     plot(data(:,1),data(:,2),'r.','MarkerSize',5)
-%
+% %
 % Example (Gaussian mixture with distant modes):
 %
 % clear all

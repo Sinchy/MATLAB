@@ -1,4 +1,8 @@
 function [disp_matrix, pairs] = RemoveWrongSlowPairs(disp_matrix, data_map, pairs)
+% NOTE: this code can only be applied to pairs with small initial
+% separation. 
+
+
 %     disp_dif = disp_matrix(:, 2:end) - disp_matrix(:, 1:end-1);
 %     
 %     for i = 1 : size(disp_dif, 1)
@@ -49,6 +53,7 @@ function [disp_matrix, pairs] = RemoveWrongSlowPairs(disp_matrix, data_map, pair
     
     
     tracks = GetSpecificTracksFromData(data_map, tr_ID);
+    tic
     for i = 1 : size(pairs, 1)
         if ismember(pairs(i, 1), tr_ID_high) || ismember(pairs(i, 2), tr_ID_high)
             ind(i) = false;
@@ -72,7 +77,7 @@ function [disp_matrix, pairs] = RemoveWrongSlowPairs(disp_matrix, data_map, pair
         end
         
     end
-
+    toc
     disp_matrix = disp_matrix(ind, :);
     pairs = pairs(ind, :);
 

@@ -1,21 +1,26 @@
-function [sample_strfun,sample_pairs] = PDFStrFun(data_map,redge_lin)
-[frame_no, ~, ~] = unique(data_map.Data.tracks(:,4),'first');
-
+function [sample_strfun, sample_pairs] = PDFStrFun(particles,redge_lin)
+% [frame_no, ~, ~] = unique(data_map.Data.tracks(:,4),'first');
+[frame_no, ~, ~] = unique(particles(:,4),'first');
 num_frame = length(frame_no);
 seq_frame = randperm(num_frame);
 frame_no = frame_no(seq_frame);
 
 num_bin = length(redge_lin)-1;
-num_sample = 100000;
-max_num_sample_perframe = 1000;
+num_sample = 10000;
+max_num_sample_perframe = 10000;
 sample_count = zeros(num_bin, 1);
 sample_strfun = zeros(num_bin, num_sample);
+% sample_corr_va = zeros(num_bin, num_sample);
 sample_pairs = cell(num_bin,1);
 h = waitbar(0, 'Please wait...');
 for i = 1 : length(frame_no)
-    data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14 5]);
+%     data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14 5]);
+% data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 6:11 5]);
+    data = particles(particles(:,4) == frame_no(i), [1:3 6:8 5]);
+    
     X = data(:, 1:3);
     u = data(:, 4:6);
+%     a = data(:, 7:9);
     trID = data(:,7);
     data = [];
     distd=pdist(X);
@@ -28,24 +33,31 @@ for i = 1 : length(frame_no)
     tmp = []; % free the memory
     
     dr = X(rowIdx,:) - X(colIdx,:);
-%     pairs = [trID(rowIdx), trID(colIdx), frame_no(i) * ones(length(rowIdx), 1)];
+    pairs = [trID(rowIdx), trID(colIdx), frame_no(i) * ones(length(rowIdx), 1)];
     drl = dr./repmat(sqrt(sum(dr.^2,2)),[1 3]);
     dr = []; % free the memory
     
-        % structure function
+    % structure function
     du = u(rowIdx,:) - u(colIdx,:);
     dul = sum(du .* drl, 2) / 1e3;
     drl = [];
 %     dun = sqrt(sum(du .^ 2,2)-dul.^2);
-    du = [];
+    
+    
+    % correlation between relative velocity and relative accleration
+%     da = a(rowIdx,:) - a(colIdx,:); 
+%     corr_u_a = sum(du .* da, 2) / 1e6;
+%     du = [];
+%     da = [];
     
     [~,c_log]=histc(distd',redge_lin);
     c_log(c_log == 0) = num_bin + 1;
 %     hasdata = all(c_log>0, 2);
     
     strfun_gp = accumarray(c_log,dul,[],@(x) {x});
-%     [xx, yy] = ndgrid(c_log,1:size(pairs,2));
-%     pair_gp = accumarray([xx(:) yy(:)], pairs(:), [], @(x) {x});
+%     cor_va_gp = accumarray(c_log,corr_u_a,[],@(x) {x});
+    [xx, yy] = ndgrid(c_log,1:size(pairs,2));
+    pair_gp = accumarray([xx(:) yy(:)], pairs(:), [], @(x) {x});
     for j = 1 : num_bin
         if sample_count(j) > num_sample || sum(c_log == j) == 0
             continue;
@@ -59,8 +71,10 @@ for i = 1 : length(frame_no)
         end
         
         sample_strfun(j, sample_count(j) + 1 : sample_count(j) + num_elements) = strfun_gp{j, 1}(1:num_elements);
-%         sample_pairs{j}(sample_count(j) + 1 : sample_count(j) + num_elements, :) = [pair_gp{j, 1}(1:num_elements), ...
-%             pair_gp{j, 2}(1:num_elements), pair_gp{j, 3}(1:num_elements)];
+        
+%         sample_corr_va(j, sample_count(j) + 1 : sample_count(j) + num_elements) = cor_va_gp{j, 1}(1:num_elements);
+         sample_pairs{j}(sample_count(j) + 1 : sample_count(j) + num_elements, :) = [pair_gp{j, 1}(1:num_elements), ...
+             pair_gp{j, 2}(1:num_elements), pair_gp{j, 3}(1:num_elements)];
         sample_count(j) = sample_count(j) + num_elements;
     end
     waitbar(sum(sample_count) /(num_bin * num_sample), h, 'processing...');
