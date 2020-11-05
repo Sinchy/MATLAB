@@ -1,6 +1,6 @@
 function [R, pairs, disp_matrix, IS, veldiff_matrix, veldiff_pl_matrix, sep_matrix] = PairDispersionCalculation(data_map, pairs, direction)
 tic
-min_pair_len = 100;
+min_pair_len = 1;
 
 if direction == 0
     pairs = sortrows(pairs, 3);

@@ -1,4 +1,4 @@
-function CSearchPairs(data_path, bin, disp_rate)
+function CSearchPairs(data_path, bin, disp_rate, frame_rate, max_pair_len)
 file = matfile(data_path);
 
 tracks = file.filter_data(:, 1:5);
@@ -15,8 +15,8 @@ frame_info = [frame_no, start_index - 1, a_counts]; % start_index - 1 to adjust 
 
 % minimum pair length
 t0 = CalT0(disp_rate, mean(bin, 2));
-pair_len = t0 * 4000 * 10;
-pair_len(pair_len>1000) = 1000;
+pair_len = t0 * frame_rate * 10;
+pair_len(pair_len>max_pair_len) = max_pair_len;
 
 % save path
 pos = strfind(data_path, '\');

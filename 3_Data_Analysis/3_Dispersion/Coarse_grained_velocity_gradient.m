@@ -67,7 +67,7 @@ classdef Coarse_grained_velocity_gradient
             pts = pts - mean(pts);
             
            if np<= 20 || ParticleDistributionCheck(obj, pts(:, 1:3)) < 0.1 % 30-40 particles would be good. 
-                fprintf('Number of particles may not be enough\n');
+%                 fprintf('Number of particles may not be enough\n');
                 du_dx = zeros(3, 3);
                 return;
             end

@@ -27,24 +27,25 @@ points(3,:) = 2*pi*rand(npoints,1);
 % points(3,:) = newpoints(newpoints(:,4) == 798, 3)';
 
 start_time = 0.005;
-end_time = 11;
-dt = 1;
-j = 1;
-% new_points = zeros(3,npoints,ceil((end_time - start_time)/dt) - 1);
- newpoints = zeros(npoints * (ceil((end_time - start_time)/dt) -1 ), 8); % 6-8 for velocity
- 
- %frame 1
-newpoints(npoints * (j - 1) + 1 : npoints * j, 1 : 3) = points';
-newpoints(npoints * (j - 1) + 1 : npoints * j, 4) = j;
-newpoints(npoints * (j - 1) + 1 : npoints * j, 5) = 1 : npoints;
-current_max_track_no = npoints;
-%newpoints(npoints * (j - 1) + 1 : npoints * j, 6 : 8) = vel';
-j = j + 1;
- 
+end_time = 4;
+dt = 0.05;
+% j = 1;
+% % new_points = zeros(3,npoints,ceil((end_time - start_time)/dt) - 1);
+%  newpoints = zeros(npoints * (ceil((end_time - start_time)/dt) -1 ), 8); % 6-8 for velocity
+%  
+%  %frame 1
+% newpoints(npoints * (j - 1) + 1 : npoints * j, 1 : 3) = points';
+% newpoints(npoints * (j - 1) + 1 : npoints * j, 4) = j;
+% newpoints(npoints * (j - 1) + 1 : npoints * j, 5) = 1 : npoints;
+% current_max_track_no = npoints;
+% %newpoints(npoints * (j - 1) + 1 : npoints * j, 6 : 8) = vel';
+% j = j + 1;
+%  
 % newpoints = [newpoints;  zeros(npoints * (ceil((end_time - start_time)/dt) -1 ), 8)];
 % parfor_progress(ceil((end_time - start_time)/dt) - 1);
 % current_max_track_no = max(newpoints(:,5));
-for time = start_time + dt:dt:end_time
+% for time = start_time + dt:dt:end_time
+for time = 3.7550:dt:end_time
 %     parfor_progress(j);
     points = getPosition(authkey, dataset, time - dt, time, dt, Lag4, npoints, points);
 
