@@ -11,6 +11,7 @@ public:
     ~NumMATIO() {};
 
     int WriteData(vector<vector<int>> data);
+    int WriteData(vector<vector<double>> data);
 
     int ReadData(mxDouble*& data, vector<int>& dim); // get the data and its dimension
 

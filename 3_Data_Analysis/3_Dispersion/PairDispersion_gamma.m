@@ -1,5 +1,7 @@
-function [R, pairs, disp_matrix] = PairDispersion_gamma(tracks, d_0, pairs)
+function [R, pairs, disp_matrix] = PairDispersion_gamma(data_map, d_0, pairs)
 % tracks need to be equal frame rate
+trackID = unique([pairs(:,1); pairs(:,2)]);
+tracks = GetSpecificTracksFromData(data_map, trackID);
 
 if ~exist('pairs', 'var')
     gamma_thred = 0.01;

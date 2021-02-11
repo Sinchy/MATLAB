@@ -8,7 +8,7 @@ if ~isstruct(Re_struct)
     b = 4;
 
     % adjust Re
-     Re = (b / C2) ^ (1/2) * Re;
+    Re = (b / C2) ^ (1/2) * Re;
 
     C3 = 1;
     n_tr = (15 * C2)^(3/4);
@@ -67,6 +67,6 @@ else
 end
 % figure;
 % plot(n, k+2);
-
+k = k + 2;
 end
 

@@ -1,6 +1,6 @@
 function [forward, backward, pairs] = PairDispersionCalculationBothDirection(data_map, pairs)
 tic
-min_pair_len = 100;
+min_pair_len = 10;
 
 pairs = sortrows(pairs, 3);
 pairs = sortrows(pairs, 2);
@@ -35,14 +35,14 @@ veldiff_matrix_f = zeros(num_pair, max_pair_len_f);
 veldiff_pl_matrix_f = zeros(num_pair, max_pair_len_f); % velocity difference along the separation direction
 IS_f = zeros(num_pair, 1);
 sep_matrix_f = zeros(num_pair, max_pair_len_f);
-cor_velacc_matrix_f = zeros(num_pair, max_pair_len_f);
+% cor_velacc_matrix_f = zeros(num_pair, max_pair_len_f);
 
 disp_matrix_b= zeros(num_pair, max_pair_len_b);
 veldiff_matrix_b = zeros(num_pair, max_pair_len_b);
 veldiff_pl_matrix_b = zeros(num_pair, max_pair_len_b); % velocity difference along the separation direction
 IS_b = zeros(num_pair, 1);
 sep_matrix_b = zeros(num_pair, max_pair_len_b);
-cor_velacc_matrix_b = zeros(num_pair, max_pair_len_b);
+% cor_velacc_matrix_b = zeros(num_pair, max_pair_len_b);
 for i = 1 : num_pair
 %     track1 = tracks(tracks(:,5) == pairs(i, 1), :);
 %     track2 = tracks(tracks(:,5) == pairs(i, 2), :); % very slow 
@@ -75,9 +75,9 @@ for i = 1 : num_pair
     sep_matrix_f(i, 1:len) = disp_sca;
     disp_matrix_f(i, 1 : len - 1) = (disp_sca(2:end) - disp_sca(1)) .^2 ;
     
-    accdiff_vec = (track1_f(1 : len, 9:11) - track2_f(1 : len, 9:11)) / 1e3;
-    cor_vel_acc = dot(veldiff_vec, accdiff_vec, 2);
-    cor_velacc_matrix_f(i, 1:len) = cor_vel_acc;
+%     accdiff_vec = (track1_f(1 : len, 9:11) - track2_f(1 : len, 9:11)) / 1e3;
+%     cor_vel_acc = dot(veldiff_vec, accdiff_vec, 2);
+%     cor_velacc_matrix_f(i, 1:len) = cor_vel_acc;
     
     % backward
     track1_b = track1(track1(:,4) <= pairs(i, 3), :);
@@ -103,9 +103,9 @@ for i = 1 : num_pair
     sep_matrix_b(i, 1:len) = disp_sca;
     disp_matrix_b(i, 1 : len - 1) = (disp_sca(2:end) - disp_sca(1)) .^2 ;
     
-    accdiff_vec = (track1_b(1 : len, 9:11) - track2_b(1 : len, 9:11)) / 1e3;
-    cor_vel_acc = dot(veldiff_vec, accdiff_vec, 2);
-    cor_velacc_matrix_b(i, 1:len) = cor_vel_acc;
+%     accdiff_vec = (track1_b(1 : len, 9:11) - track2_b(1 : len, 9:11)) / 1e3;
+%     cor_vel_acc = dot(veldiff_vec, accdiff_vec, 2);
+%     cor_velacc_matrix_b(i, 1:len) = cor_vel_acc;
 end
 
 % disp_matrix_b = fliplr(disp_matrix_b);
@@ -151,7 +151,7 @@ forward.veldiff_matrix_f = veldiff_matrix_f(index, :);
 forward.veldiff_pl_matrix_f = veldiff_pl_matrix_f(index, :);
 forward.IS_f = IS_f(index,:);
 forward.sep_matrix_f = sep_matrix_f(index, :);
-forward.cor_velacc_matrix = cor_velacc_matrix_f(index, :);
+% forward.cor_velacc_matrix = cor_velacc_matrix_f(index, :);
 
 R_f = zeros(max_pair_len_f, 1);
 for i = 1 : max_pair_len_f
@@ -171,7 +171,7 @@ backward.veldiff_matrix_b = veldiff_matrix_b(index, :);
 backward.veldiff_pl_matrix_b = veldiff_pl_matrix_b(index, :);
 backward.IS_b = IS_b(index,:);
 backward.sep_matrix_b = sep_matrix_b(index, :);
-backward.cor_velacc_matrix = cor_velacc_matrix_b(index, :);
+% backward.cor_velacc_matrix = cor_velacc_matrix_b(index, :);
 
 R_b = zeros(max_pair_len_b, 1);
 for i = 1 : max_pair_len_b

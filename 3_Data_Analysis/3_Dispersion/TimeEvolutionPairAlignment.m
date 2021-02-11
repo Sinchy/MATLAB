@@ -103,7 +103,7 @@ for i = 1 : num_pair
         [V, D] = eig(strain, 'vector');
         align_matrix1(i, j) = dot(disp_vec,V(:, 1))/(norm(disp_vec)*norm(V(:, 1)));
         align_matrix2(i, j) = dot(disp_vec,V(:, 2))/(norm(disp_vec)*norm(V(:, 2)));
-        align_matrix3(i, j) = dot(disp_vec,V(:, 1))/(norm(disp_vec)*norm(V(:, 3)));
+        align_matrix3(i, j) = dot(disp_vec,V(:, 3))/(norm(disp_vec)*norm(V(:, 3)));
         eigenvalue_matrix(i, j, :) = D';
     end
 end

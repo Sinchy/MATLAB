@@ -1,6 +1,6 @@
 function PlotAlignedPairTracks(tracks, pairs)
 
-addpath ~/Documents/Code/MATLAB/0_Math;
+addpath D:\0.Code\MATLAB\0_Math;
 
 num_pairs = size(pairs, 1);
 
@@ -13,7 +13,7 @@ ylabel({'Y(mm)'});
 
 % Create xlabel
 xlabel({'X(mm)'});
-for i = 1 : num_pairs
+for i = 1 : 1000
     track1 = tracks(tracks(:,5) == pairs(i, 1), :);
     track2 = tracks(tracks(:,5) == pairs(i, 2), :);
     track1 = track1(track1(:,4) >= pairs(i, 3), :);

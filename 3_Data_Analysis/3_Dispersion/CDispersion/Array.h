@@ -16,6 +16,10 @@ public:
 		return *(m_array + col * m_dim[0] + row);
 	};
 
+	void set(int row, int col, double value) { // write a value into an element of row and col
+		*(m_array + col * m_dim[0] + row) = value;
+	}
+
 	vector<double> GetColumn(int col) {
 		vector<double> data;
 		data.reserve(m_dim[0]);

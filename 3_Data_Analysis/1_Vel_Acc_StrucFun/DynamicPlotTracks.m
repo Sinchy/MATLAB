@@ -5,7 +5,7 @@ start_frame = min(tracks(:,4));
 X = 0; Y = 0; Z = 0;
 % frame_no = num2str(0);
 %color = [0, 0, 0];
-% figure
+figure
 h = plot3(X, Y, Z, 'r.', 'XDataSource', 'X', 'YDataSource', 'Y', 'ZDataSource', 'Z', 'markers', 10);
 x_limit_up = ceil(max(tracks(:,1))); x_limit_lo = floor(min(tracks(:,1)));
 y_limit_up = ceil(max(tracks(:,2))); y_limit_lo = floor(min(tracks(:,2)));

@@ -37,6 +37,32 @@ int NumMATIO::WriteData(vector<vector<int>> data) {
 	return 0;
 }
 
+int NumMATIO::WriteData(vector<vector<double>> data) {
+	MATFile* pmat = matOpen(m_file_path, "w");
+
+	int rows = data.size();
+	if (rows == 0) {
+		return 1; // no data to save
+	}
+	int cols = data[0].size();
+
+	mxArray* pa = mxCreateDoubleMatrix(rows, cols, mxREAL);
+
+	double* ddata = new double[rows * cols];
+
+	for (int j = 0; j < cols; ++j)
+		for (int i = 0; i < rows; ++i)
+			ddata[j * rows + i] = data[i][j];  // column first
+
+	memcpy((void*)(mxGetPr(pa)), (void*)ddata, rows * cols * sizeof(double));
+
+	matPutVariableAsGlobal(pmat, m_varname, pa); // save pairs
+
+	mxDestroyArray(pa);
+	matClose(pmat);
+	return 0;
+}
+
 int NumMATIO::ReadData(mxDouble*& data, vector<int>& dim) { // change int to mwSize
 	MATFile* pmat = matOpen(m_file_path, "r");
 	if (pmat == NULL) {

@@ -1,20 +1,20 @@
 ﻿  CDispersion.cpp
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(56,43): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(62,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(64,33): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(126,33): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(139,32): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(170,32): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(67,43): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(73,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(75,33): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(160,33): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(179,32): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(210,32): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(171,32): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(211,32): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(172,36): warning C4244: '=': conversion from '_Ty' to '_Ty', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(212,36): warning C4244: '=': conversion from '_Ty' to '_Ty', possible loss of data
           with
           [
               _Ty=double
@@ -23,23 +23,26 @@ D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(172,36
           [
               _Ty=int
           ]
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(179,22): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(182,28): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(187,50): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(219,22): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(224,28): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(231,50): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(188,39): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(232,39): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\CDispersion.cpp(332,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   NumMATIO.cpp
 D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(17,24): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
 D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(21,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(51,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(115,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(43,24): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(47,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(77,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(141,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\xutility(4142,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\vector(1127): message : see reference to function template instantiation '_OutIt *std::_Copy_unchecked<_Iter,int*>(_InIt,_InIt,_OutIt)' being compiled
           with
@@ -58,12 +61,12 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Iter=const mwSize *
           ]
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(62): message : see reference to function template instantiation 'void std::vector<int,std::allocator<int>>::assign<const mwSize*,0>(_Iter,_Iter)' being compiled
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(88): message : see reference to function template instantiation 'void std::vector<int,std::allocator<int>>::assign<const mwSize*,0>(_Iter,_Iter)' being compiled
           with
           [
               _Iter=const mwSize *
           ]
-D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(62): message : see reference to function template instantiation 'void std::vector<int,std::allocator<int>>::assign<const mwSize*,0>(_Iter,_Iter)' being compiled
+D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\NumMATIO.cpp(88): message : see reference to function template instantiation 'void std::vector<int,std::allocator<int>>::assign<const mwSize*,0>(_Iter,_Iter)' being compiled
           with
           [
               _Iter=const mwSize *
@@ -118,8 +121,7 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
   progressbar.hpp
 x64\Release\progressbar.obj : warning LNK4042: object specified more than once; extras ignored
   Generating code
-  130 of 486 functions (26.7%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    4 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB not found, fall back to full compilation.
+  All 487 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   CDispersion.vcxproj -> D:\0.Code\MATLAB\3_Data_Analysis\3_Dispersion\CDispersion\x64\Release\CDispersion.exe

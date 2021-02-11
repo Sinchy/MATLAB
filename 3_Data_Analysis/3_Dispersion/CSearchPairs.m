@@ -16,7 +16,7 @@ frame_info = [frame_no, start_index - 1, a_counts]; % start_index - 1 to adjust 
 % minimum pair length
 t0 = CalT0(disp_rate, mean(bin, 2));
 pair_len = t0 * frame_rate * 10;
-pair_len(pair_len>max_pair_len) = max_pair_len;
+pair_len(pair_len>max_pair_len / 2) = round(max_pair_len / 2);
 
 % save path
 pos = strfind(data_path, '\');

@@ -1,11 +1,12 @@
 
-function [gama, IS] = CalRatioSepTEddyT(data_map, pairs, direction)
+function gamma = CalRatioSepTEddyT(data_map, pairs, IS, veldiff_matrix, direction)
 %calculate the ratio of the separation time scale to the eddy turn over
 %time scale
 % file = matfile(filepath);
 trackID = unique([pairs(:,1); pairs(:,2)]);
 tracks = GetSpecificTracksFromData(data_map, trackID);
 
+% pairs = pairs(randperm(size(pairs, 1)), :); % shuffle the pairs
 num_pairs = size(pairs, 1);
 gamma = zeros(num_pairs, 1);
 frame_rate = 4000;
