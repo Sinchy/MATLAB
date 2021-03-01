@@ -4,7 +4,7 @@ if ~exist('load_file', 'var')
      good_tracks = PickGoodTracks(tracks, view_size);
 
     % Choose 4000 particles evenly 
-    good_particles = PickParticleEvenly(good_tracks, 8000);
+    good_particles = PickParticleEvenly(good_tracks, 20000);
 
     %start_frame = 0;
     good_particles(:, 4) = good_particles(:, 4) + start_frame - 1;
@@ -32,7 +32,7 @@ CalibMatToTXT(camParaCalib, [image_path 'VSC_Calib_' save_name_label '.txt']);
 save([image_path 'VSC_Calib_' save_name_label '.mat'], 'camParaCalib');
 end
 
-function good_particles = PickParticleEvenly(tracks, num_particles)
+function [good_particles, select_label]= PickParticleEvenly(tracks, num_particles)
 % the number of segments on each axis
 num_seg = 10;
 num_particle_seg = ceil(num_particles / num_seg ^ 3); % number of cubes
@@ -109,10 +109,10 @@ for i = 1 : num_particles
    delete_particle  = 0;
 % Get the 2D positions around the projected point
     for j = 1 : 4
-        img = imread([image_path 'cam' num2str(j) '/cam' num2str(j) 'frame' num2str(particles(i, 4), '%05.0f') '.tif']);
+        img = imread([image_path 'cam_' num2str(j) '/cam' num2str(j) 'frame' num2str(particles(i, 4), '%06.0f') '.tif']);
         [hpix, wpix] = size(img);
         particle_size = 4;
-        search_range = particle_size * 3 / 4; % searching range on the image
+        search_range = particle_size * 6 / 4; % searching range on the image
         img_searcharea = img(max(1, floor(yc(j) - search_range)) : min(hpix, ceil(yc(j) + search_range)), ...
             max(1, floor(xc(j) - search_range)) : min(wpix, ceil(xc(j) + search_range))); % get the search area
         position2D_candidate = Get2DPosOnImage(img_searcharea);
@@ -182,7 +182,54 @@ for i = 1 : num_particles
     end
 end
 
+% check the uniformity of the particles
+uniformity = CheckUniformity(particles, particles_info);
+uniformity = nonzeros(uniformity(:));
+non_uniform = std(uniformity);
+
+if non_uniform > 0.2 % if it is not uniform then select the particles again evenly
+%     uniformity_min = mean(uniformity) - 2 * non_uniform;
+    uniformity = sort(uniformity);
+    uniformity_min = uniformity(floor(length(uniformity) * .05)); 
+    num_sample = ceil(size(particles, 1) * uniformity_min);
+    num_particle_select = size(particles_info, 1);
+    particles_to_select = [zeros(num_particle_select, 1), zeros(num_particle_select, 1), particles_info(:, 1:3)];
+    [~, select_label] = PickParticleEvenly(particles_to_select , num_sample);
+    particles_info = particles_info(select_label == 1, :);
 end
+
+end
+
+function uniformity = CheckUniformity(particles, particles_info)
+% the number of segments on each axis
+num_seg = 10;
+num_particles = size(particles, 1);
+num_particle_seg = ceil(num_particles / num_seg ^ 3); % number of cubes
+x_min = min(min(particles(:, 1))); x_max = max(max(particles(:, 1)));
+y_min = min(min(particles(:, 2))); y_max = max(max(particles(:, 2)));
+z_min = min(min(particles(:, 3))); z_max = max(max(particles(:, 3)));
+uniformity = zeros(num_seg,num_seg,num_seg);
+
+for i = 1 : num_seg
+    for j = 1 :  num_seg
+        for k = 1 : num_seg
+            x_lo = x_min + (i - 1) * (x_max - x_min) / num_seg;
+            y_lo = y_min + (j - 1) * (y_max - y_min) / num_seg;
+            z_lo = z_min + (k - 1) * (z_max - z_min) / num_seg;
+            x_up = x_min + i * (x_max - x_min) / num_seg;
+            y_up = y_min + j * (y_max - y_min) / num_seg;
+            z_up = z_min + k * (z_max - z_min) / num_seg;
+            index = find(particles_info(:, 1) > x_lo & particles_info(:, 1) < x_up & ...
+                particles_info(:, 2) > y_lo & particles_info(:, 2) < y_up & ...
+                particles_info(:, 3) > z_lo & particles_info(:, 3) < z_up);
+            total_num = length(index);
+            uniformity(i, j, k) = total_num / num_particle_seg;
+        end
+    end
+end
+
+end
+
 
 function Xtest_proj = calibProj(camParaCalib, Xtest3D)
 % Use the calibrated camera parameters to predict the particle position

@@ -25,7 +25,9 @@ function varargout = calibGUI(varargin)
 % Last Modified by Ni v1 14-Feb-2017 17:27:47
 % The first version:
 %
-% 
+% V3: we change the db_calib_Tsai_Co_planar.m to initial_calib.m to remove
+% the offset optimization part. It also solves the problem of using local
+% variables globally
 
 % Begin initialization code - DO NOT EDIT
 
@@ -705,7 +707,7 @@ p2d3d(:,3:5) = p2d3d(:,3:5).*gridspace;
 
     
     
-camParaCalib1= db_calib_Tsai_Co_planar(p2d3d(:,1:2), p2d3d(:,3:5), camParaknown);
+camParaCalib1= initial_calib(p2d3d(:,1:2), p2d3d(:,3:5), camParaknown);
 angle1 = rotm2eul(camParaCalib1.R)
 
 if noiterate ==0

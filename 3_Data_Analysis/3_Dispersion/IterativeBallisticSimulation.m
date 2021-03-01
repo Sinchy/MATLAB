@@ -3,10 +3,10 @@ function [R, R_gamma, disp_matrix, track_package, gamma_mark] = IterativeBallist
 disp_rate = disp_rate * 1e6;
 initial_separate(initial_separate==0) = [];
 
-addpath C:\Users\ShiyongTan\Documents\Code\MATLAB\0_Math;
+addpath D:\0.Code\MATLAB\0_Math;
 
 gamma_thred = 0.1;
-alpha = 0.05;
+alpha = 0.01;
 % alpha = 0.01;
 C = 2.1;
 [num_pair, frame] = size(initial_separate);
@@ -28,16 +28,16 @@ gamma_mark = zeros(num_pair, 1);
 integral_length = (integral_time * disp_rate^(1/3))^(3/2);
 r0 = mean(initial_separate(:,1));
 for i = 1 : num_pair
-    if initial_separate(i, 1) < integral_length
-        sigma_disp = sqrt(0.25 * log(integral_length / initial_separate(i, 1)));
-%         sigma_disp = sqrt(0.25 * log(integral_length / r0));
-        mu_disp = 1/2 * sigma_disp ^ 2;
-        disp = disp_rate * randraw('lognorm', [mu_disp, sigma_disp], 1);
-% disp = disp_rate;
-    else
-        disp = disp_rate;
-    end
-%     disp = disp_rate;
+%     if initial_separate(i, 1) < integral_length
+%         sigma_disp = sqrt(0.25 * log(integral_length / initial_separate(i, 1)));
+% %         sigma_disp = sqrt(0.25 * log(integral_length / r0));
+%         mu_disp = 1/2 * sigma_disp ^ 2;
+%         disp = disp_rate * randraw('lognorm', [mu_disp, sigma_disp], 1);
+% % disp = disp_rate;
+%     else
+%         disp = disp_rate;
+%     end
+    disp = disp_rate;
     struct = 11/3 * C * (disp * initial_separate(i, 1)) ^ (2/3);
 %     struct =  C * (disp * initial_separate(i, 1)) ^ (2/3);
     t0 = alpha * struct / (2 * disp);

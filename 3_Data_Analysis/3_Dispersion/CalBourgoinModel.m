@@ -1,5 +1,6 @@
 function [tn, Rn] = CalBourgoinModel(struct_disprate, IS, integral_time)
 %disp_rate: m^2/s^3
+% IS: m
 
 IS(IS == 0) = [];
 r0 = mean(IS);
@@ -15,8 +16,12 @@ end
 
 dt = 1/4000;
 t = dt:dt:integral_time;
-D = (0.55 * disp_rate *(t + ((mean(IS)/1000).^2/(0.55*disp_rate)) .^(1/3)).^3).^.5;
-R = (D-mean(IS)/1e3).^2;
-[tn, Rn] = NormalizePairDispersion(struct_disprate, R, IS/1e3);
+% g = 0.55;
+C = 7.7;
+alpha = .01;
+g = (2 * ( (1 + alpha^2 * C^3 / 4) ^ (1/3) - 1) / alpha / C) ^ 3;
+D = (g * disp_rate *(t + ((mean(IS)).^2/(g*disp_rate)) .^(1/3)).^3).^.5;
+R = (D-mean(IS)).^2;
+[tn, Rn] = NormalizePairDispersion(struct_disprate, R, IS);
 end
 
