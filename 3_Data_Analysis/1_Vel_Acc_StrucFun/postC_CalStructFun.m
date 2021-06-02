@@ -23,13 +23,13 @@ e1_comp = (struct_log(:,3)./(2)).^(3/2)./(struct_log(:,1));
 e2_comp = (struct_log(:,4)./(16/3)).^(3/2)./(struct_log(:,1));
 e3_comp = (struct_log(:,5)./(-4/5))./(struct_log(:,1));
 
-e1_lin = struct_lin(:,3);
-e2_lin = struct_lin(:,4);
-e3_lin = struct_lin(:,5);
-
-e1_comp_lin = (struct_lin(:,3)./(2)).^(3/2)./(struct_lin(:,1));
-e2_comp_lin = (struct_lin(:,4)./(16/3)).^(3/2)./(struct_lin(:,1));
-e3_comp_lin = (struct_lin(:,5)./(-4/5))./(struct_lin(:,1));
+% e1_lin = struct_lin(:,3);
+% e2_lin = struct_lin(:,4);
+% e3_lin = struct_lin(:,5);
+% 
+% e1_comp_lin = (struct_lin(:,3)./(2)).^(3/2)./(struct_lin(:,1));
+% e2_comp_lin = (struct_lin(:,4)./(16/3)).^(3/2)./(struct_lin(:,1));
+% e3_comp_lin = (struct_lin(:,5)./(-4/5))./(struct_lin(:,1));
  %% Plot the structure functions
  
  figure;

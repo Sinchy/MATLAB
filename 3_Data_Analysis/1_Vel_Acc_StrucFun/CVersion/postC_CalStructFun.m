@@ -1,29 +1,42 @@
 corr = struct(:,13:16);
-struct(struct(:,2) == 0, :) = [];
 corr(corr(:,2) == 0, :) = [];
 
+% struct_lin = struct(:,[13 14 17:19]);
+struct_log = struct(:,1:10);
+% struct_lin(struct_lin(:,2) == 0, :) = [];
+struct_log(struct_log(:,2) == 0, :) = [];
+
 %%
-% u_fluc = sqrt((std(velacc(:,12)).^2 + std(velacc(:,13)).^2 + std(velacc(:,14)).^2)/3); % mm
-% u_fluc = u_fluc/1e3;          % m
+u_fluc = sqrt((std(velacc(:,12)).^2 + std(velacc(:,13)).^2 + std(velacc(:,14)).^2)/3); % mm
+u_fluc = u_fluc/1e3;          % m
+
+ux_rms = rms(velacc(:,12))/1e3;
+uy_rms = rms(velacc(:,13))/1e3;
+uz_rms = rms(velacc(:,14))/1e3;
+
+%%
+e1 = struct_log(:,3);
+e2 = struct_log(:,4);
+e3 = struct_log(:,5);
+
+e1_comp = (struct_log(:,3)./(2)).^(3/2)./(struct_log(:,1));
+e2_comp = (struct_log(:,4)./(16/3)).^(3/2)./(struct_log(:,1));
+e3_comp = (struct_log(:,5)./(-4/5))./(struct_log(:,1));
+
+% e1_lin = struct_lin(:,3);
+% e2_lin = struct_lin(:,4);
+% e3_lin = struct_lin(:,5);
 % 
-% ux_rms = rms(velacc(:,12))/1e3;
-% uy_rms = rms(velacc(:,13))/1e3;
-% uz_rms = rms(velacc(:,14))/1e3;
-
-%%
-e1 = struct(:,3);
-e2 = struct(:,4);
-e3 = struct(:,5);
-
-e1_comp = (struct(:,3)./(2)).^(3/2)./(struct(:,1));
-e2_comp = (struct(:,4)./(16/3)).^(3/2)./(struct(:,1));
-e3_comp = (struct(:,5)./(-4/5))./(struct(:,1));
+% e1_comp_lin = (struct_lin(:,3)./(2)).^(3/2)./(struct_lin(:,1));
+% e2_comp_lin = (struct_lin(:,4)./(16/3)).^(3/2)./(struct_lin(:,1));
+% e3_comp_lin = (struct_lin(:,5)./(-4/5))./(struct_lin(:,1));
  %% Plot the structure functions
  
  figure;
-    loglog(struct(:,1),e1./1e6,'r*-');
+    loglog(struct_log(:,1),e1./1e6,'r*-');
     hold on
-    loglog(struct(:,1),e2./1e6,'k*-');
+    loglog(struct_log(:,1),e2./1e6,'k*-');
+    loglog(struct_log(:,1),-e3./1e6,'b*-');
 %     loglog(struct(:,1),e3,'b*-');
 %     loglog(0.3:0.1:100, eps.*ones(998,1),'k--');  
 %     xlim([0.3 100]);
@@ -50,10 +63,10 @@ e3_comp = (struct(:,5)./(-4/5))./(struct(:,1));
     
     %% Plot the compensated structure functions
     figure;
-    loglog(struct(:,1),e1_comp./1e6,'r*-');
+    loglog(struct_log(:,1),e1_comp./1e6,'r*-');
     hold on
-    loglog(struct(:,1),e2_comp./1e6,'k*-');
-    loglog(struct(:,1),e3_comp./1e6,'b*-');
+    loglog(struct_log(:,1),e2_comp./1e6,'k*-');
+    loglog(struct_log(:,1),e3_comp./1e6,'b*-');
 %     loglog(0.3:0.1:100, eps.*ones(998,1),'k--');  
 %     xlim([0.3 100]);
 %     ylim([0.01 0.4]);
@@ -114,9 +127,9 @@ e3_comp = (struct(:,5)./(-4/5))./(struct(:,1));
 
     %% calculating integral length scales Ll and Ln from correlation function
      dummy = isfinite(f_corr);
-     Ll = trapz(struct(dummy,1),f_corr(dummy))/100;
+     Ll = trapz(struct_log(dummy,1),f_corr(dummy))/100;
      dummy = isfinite(g_corr);
-     Ln = trapz(struct(dummy,1),g_corr(dummy))/100;
+     Ln = trapz(struct_log(dummy,1),g_corr(dummy))/100;
      
      %% For isotropic flow G should match g_corr at all scales
      G = f_corr+((corr(:,1).*gradient(f_corr,corr(:,1)))/2);

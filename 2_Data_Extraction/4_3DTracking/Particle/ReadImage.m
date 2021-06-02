@@ -2,7 +2,7 @@ function img = ReadImage(filepath)
 fileID = fopen(filepath,'r');
 formatspec = '%f,';
 img_data = fscanf(fileID, formatspec);
-Npixw = 1024; Npixh = 1024;
+Npixw = 1280; Npixh = 800;
 img = zeros(Npixh, Npixw);
 for i = 2 : Npixh
     for j = 2 :  Npixw

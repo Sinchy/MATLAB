@@ -17,6 +17,7 @@ else
         exit_tracks = ReadTracks(filepath_ET);
 end
 tracks = PackTracks(active_long_tracks, inactive_long_tracks, exit_tracks);
+calibration_file = [dir calibration_file];
 VolumeSelfCalib(tracks, 66, dir, 1, calibration_file, save_name); 
 % addpath OTF_VSC_Version102717/;
 % x_range = [-30, 30];

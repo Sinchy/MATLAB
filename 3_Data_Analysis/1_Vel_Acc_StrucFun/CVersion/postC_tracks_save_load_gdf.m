@@ -2,7 +2,7 @@ addpath 'G:\My Drive\PHD\2019-Spring\Post_processing\Matlab_codes\'
 %% Make a gdf file of tracks from STB
 %tracks: Frame,trkID,x,y,z
 % load 'tracks.mat'
-% write_gdf(or3d(:,[4 5 1:3])','tracks.gdf');
+write_gdf(tracks(:,[4 5 1:3])','tracks.gdf');
 
 %% Read Output from velacc code
 % velacc: x,y,z,trID,frame,vx,vy,vz,ax,ay,az,vx',vy',vz'
@@ -17,8 +17,8 @@ addpath 'G:\My Drive\PHD\2019-Spring\Post_processing\Matlab_codes\'
 % config param: tot_particles, # of tracks, velfiltwidth, velfiltwlen,
 %               accfiltwidth, accfiltlen, nxbin,nybin, nzbin, xmin, ymin, zmin, xbinsize,
 %               ybinsize, zbinsize, first_frm, last_frm
-    output = 'velacc1';
-    velacc = read_gdf([output '_velacc.gdf']); velacc(:,12:14) = read_gdf([output '_velfluc.gdf']); velacc(:,16:18) = read_gdf([output '_accfluc.gdf']);
+    output = 'velacc2';
+    velacc = read_gdf([output '_velacc.gdf']); velacc(:,12:14) = read_gdf([output '_velfluc.gdf']); velacc(:,15:17) = read_gdf([output '_accfluc.gdf']);
     curv = read_gdf([output '_curv.gdf']); 
     curvfield = read_gdf([output '_kfield.gdf']); curvfield = curvfield'; 
     velfield = read_gdf([output '_vfield.gdf']); velfield = velfield'; 

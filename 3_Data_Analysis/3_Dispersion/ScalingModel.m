@@ -4,16 +4,18 @@ if ~isstruct(Re_struct)
     Re_lambda = Re_struct;
     Re = Re_lambda^2 / 10;
     n_max = Re^(3/4);
-    a = 2; 
+%     a = 2; 
+a = 11/3;
     C2 = 2.1;
-    b = 4;
+%     b = 4;
+b = C2;
     c = a;
 
     % adjust Re
     Re = (b / C2) ^ (1/2) * Re;
 
     C3 = 1;
-    n_tr = (15 * C2)^(3/4);
+    n_tr = (11 * C2)^(3/4);
     n1 = n_tr/20 : n_tr/20 : n_tr;
     n2 = n_tr: n_max/100 : n_max;
 
@@ -24,7 +26,8 @@ if ~isstruct(Re_struct)
 %     kapa = 15 * C2 / b;
 %     k1 = 1 + (3/2 * log(kapa) - log(a) - 2 * log(n1)) ./ (1/2 * log(Re) - 1/2 * log(kapa));
 %     k2 = 1 -   log(a * b ^ (3/2)) ./ (1/2 * log(Re) - 2/3 * log(n2) + 1/2 * log(b));
-kapa = 15 * C2 / (b * c);
+% kapa = 15 * C2 / (b * c);
+kapa = 3;
 k1 = 1 + (3/2 * log(kapa) - 2 * log(n1)) ./ (1/2 * log(Re) - 1/2 * log(kapa));
 k2 = 1 -  3/2 * log(a * b) ./ (1/2 * log(Re) - 2/3 * log(n2) + 1/2 * log(a*b));
 

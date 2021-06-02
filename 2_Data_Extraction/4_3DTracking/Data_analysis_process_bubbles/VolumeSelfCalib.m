@@ -18,11 +18,11 @@ else
    load([image_path 'VSCdata_' save_name_label '.mat']);
 end
 
-%     fig = figure;
-%     PlotTracks(good_tracks, fig, 'g.');
-%     hold on
-%     plot3(good_particles(:, 1), good_particles(:, 2), good_particles(:, 3), 'b.');
-%     plot3(particles_info(:, 1), particles_info(:, 2), particles_info(:, 3), 'r*');
+    fig = figure;
+    PlotTracks(good_tracks, fig, 'g.');
+    hold on
+    plot3(good_particles(:, 1), good_particles(:, 2), good_particles(:, 3), 'b.');
+    plot3(particles_info(:, 1), particles_info(:, 2), particles_info(:, 3), 'r*');
 %     pause(1);
 % Do the VSC
 camParaCalib = VSC(particles_info(:, 1:11), calib_path);
@@ -95,20 +95,21 @@ end
 function particles_info = GetParticleInfo(particles, image_path, calib_path)
 num_particles = size(particles, 1);
 load(calib_path);
+ncam = size(camParaCalib, 1);
 particles_info = zeros(num_particles, 16);
 
 ii = 1; % index for particles_info
 for i = 1 : num_particles
 % Project the particle on each image
    xc = zeros(1, 4); yc = zeros(1, 4);
-   for j = 1 : 4
+   for j = 1 : ncam
        X2D = calibProj(camParaCalib(j), particles(i, 1:3));
        xc(j) = X2D(1); yc(j) = X2D(2);
    end
    
    delete_particle  = 0;
 % Get the 2D positions around the projected point
-    for j = 1 : 4
+    for j = 1 : ncam
         img = imread([image_path 'cam_' num2str(j) '/cam' num2str(j) 'frame' num2str(particles(i, 4), '%06.0f') '.tif']);
         [hpix, wpix] = size(img);
         particle_size = 4;
@@ -141,6 +142,7 @@ for i = 1 : num_particles
     end
 
 % Do triangulation for each combination of 2D positions
+if ncam == 4
     len1 = size(position2D_candidate_1, 1); len2 = size(position2D_candidate_2, 1);
     len3 = size(position2D_candidate_3, 1); len4 = size(position2D_candidate_4, 1);
     particle = zeros(len1 * len2 * len3 * len4, 16);
@@ -160,6 +162,25 @@ for i = 1 : num_particles
             end
         end
     end
+elseif  ncam == 3
+        len1 = size(position2D_candidate_1, 1); len2 = size(position2D_candidate_2, 1);
+    len3 = size(position2D_candidate_3, 1);
+    particle = zeros(len1 * len2 * len3, 16);
+    error = zeros(1, len1 * len2 * len3);
+    for j = 1 : len1
+        for k = 1 : len2
+            for m = 1 : len3
+                    position2D = [position2D_candidate_1(j, :), position2D_candidate_2(k, :), ...
+                        position2D_candidate_3(m, :)];
+                    [position3D, e] = Triangulation(camParaCalib, position2D);
+                    error((j - 1) * len2 * len3 + (k - 1) * len3 + m) = e;
+                    particle((j - 1) * len2 * len3 + (k - 1) * len3 + m, :) = ...
+                        [position3D', [position2D 0 0], norm(position3D' - particles(i, 1:3)), particles(i, 1:4)];
+                    % the last one is the distance from the projected particle
+            end
+        end
+    end
+end
     
 % Choose the closest one to the projected particle as the real particle
     thred_3D = .05;
@@ -308,10 +329,11 @@ y = log(double(x));
 end
 
 function [position3D, error] = Triangulation(camParaCalib, position2D) 
+ncam = size(camParaCalib, 1);
 A = zeros(3, 3);
 B = zeros(3, 1);
 D = 0;
-for i = 1 : 4
+for i = 1 : ncam
     % get the world position of the point on the image
     SIpos = Img2World(camParaCalib(i), UnDistort(position2D((i - 1) * 2 + 1 : (i - 1) * 2 + 2), camParaCalib(i))); 
     % get the vector 
@@ -334,7 +356,8 @@ fmin_options.Display = 'iter'; %'final' to display only the final mean distance,
 fmin_options.MaxFunEvals = 3000; %350;
 
 load (calib_path);
-camParaCalib = camParaCalib([1,2,3,4]);
+% camParaCalib = camParaCalib([1,2,3,4]);
+ncams = size(camParaCalib, 1);
 
 %% pick data to shake
 data = particles_info;
@@ -830,14 +853,14 @@ function X3D = Img2World(camParaCalib,X2D)
 end
 
 function CalibMatToTXT(camParaCalib, save_path)
-
+ncam = size(camParaCalib, 1);
 fileID = fopen(save_path,'w');
 fprintf(fileID, '# Camera configuration file\n');
 fprintf(fileID, '# generated %s\n \n', datetime);
 
 fprintf(fileID, '4    # camera number\n');
 
-for i = 1 : 4
+for i = 1 : ncam
     fprintf(fileID, '\n#camera %d\n', i );
     fprintf(fileID,'%d    #Noffh\n',camParaCalib(i).Noffh);
     fprintf(fileID,'%d    #Noffw\n',camParaCalib(i).Noffw);

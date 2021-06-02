@@ -1,6 +1,6 @@
 function [forward, backward, pairs] = PairDispersionCalculationBothDirection(data_map, pairs)
 tic
-min_pair_len = 10;
+min_pair_len = 1000;
 
 pairs = sortrows(pairs, 3);
 pairs = sortrows(pairs, 2);
@@ -60,7 +60,7 @@ for i = 1 : num_pair
     len1 = size(track1_f, 1);
     len2 = size(track2_f, 1);
     len = min(len1, len2);
-    disp_vec = track1_f(1 : len, 1:3) - track2_f(1 : len, 1:3);
+    disp_vec = (track1_f(1 : len, 1:3) - track2_f(1 : len, 1:3))/1e3; %unit: m
     
     veldiff_vec = (track1_f(1 : len, 6:8) - track2_f(1 : len, 6:8)) / 1e3;
     veldiff_sca = vecnorm(veldiff_vec, 2, 2).^2;
@@ -68,7 +68,7 @@ for i = 1 : num_pair
     
     disp_dr = disp_vec ./ vecnorm(disp_vec, 2, 2);
     veldiff_lgtn = dot(veldiff_vec, disp_dr, 2);
-    veldiff_pl_matrix_f(i, 1 : len) = veldiff_lgtn;
+    veldiff_pl_matrix_f(i, 1 : len) = veldiff_lgtn .^ 2;
     
     disp_sca = vecnorm(disp_vec, 2, 2) ;
     IS_f(i) = disp_sca(1);
@@ -88,7 +88,7 @@ for i = 1 : num_pair
     len1 = size(track1_b, 1);
     len2 = size(track2_b, 1);
     len = min(len1, len2);
-    disp_vec = track1_b(1 : len, 1:3) - track2_b(1 : len, 1:3);
+    disp_vec = (track1_b(1 : len, 1:3) - track2_b(1 : len, 1:3))/1e3 ;
     
     veldiff_vec = (track1_b(1 : len, 6:8) - track2_b(1 : len, 6:8)) / 1e3;
     veldiff_sca = vecnorm(veldiff_vec, 2, 2).^2;
@@ -96,7 +96,7 @@ for i = 1 : num_pair
     
     disp_dr = disp_vec ./ vecnorm(disp_vec, 2, 2);
     veldiff_lgtn = dot(veldiff_vec, disp_dr, 2);
-    veldiff_pl_matrix_b(i, 1 : len) = veldiff_lgtn;
+    veldiff_pl_matrix_b(i, 1 : len) = veldiff_lgtn .^ 2;
     
     disp_sca = vecnorm(disp_vec, 2, 2) ;
     IS_b(i) = disp_sca(1);
