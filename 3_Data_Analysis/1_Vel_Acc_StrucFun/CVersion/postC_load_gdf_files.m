@@ -18,7 +18,7 @@
 %               accfiltwidth, accfiltlen, nxbin,nybin, nzbin, xmin, ymin, zmin, xbinsize,
 %               ybinsize, zbinsize, first_frm, last_frm
 
-    output = 'E:\VONSET\20210524\T4\Results\';
+    output = 'E:\VONSET\20210616\T3\Results\';
     velacc = read_gdf([output 'velacc_velacc.gdf']); velacc(:,12:14) = read_gdf([output 'velacc_velfluc.gdf']); %velacc(:,16:18) = read_gdf([output '_accfluc.gdf']);
     curv = read_gdf([output 'velacc_curv.gdf']); 
     curvfield = read_gdf([output 'velacc_kfield.gdf']); curvfield = curvfield'; 
@@ -28,6 +28,7 @@
     trklen = read_gdf([output 'velacc_trklen.gdf']); 
     trkstats = read_gdf([output 'velacc_trackstats.gdf'], 'int32'); 
     config_param = read_gdf([output 'velacc_configparam.gdf'], 'double'); 
+    velacc(:, [4 5]) = velacc(:, [5 4]);
     
     %% creating a copy of velacc output files
 %      write_gdf(velacc(:,1:11)','out_velacc.gdf');

@@ -1,4 +1,4 @@
-velacc(:, 4:5) = velacc(:, [5 4]);
+% velacc(:, 4:5) = velacc(:, [5 4]);
 [C, ia, ic] = unique(velacc(:, 4));
 num_frame = length(C);
 vel_perframe = zeros(num_frame, 1);

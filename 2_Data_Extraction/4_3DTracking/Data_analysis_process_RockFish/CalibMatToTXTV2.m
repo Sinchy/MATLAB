@@ -1,13 +1,13 @@
-function CalibMatToTXT(camParaCalib, save_path)
+function CalibMatToTXTV2(camParaCalib, n, save_path)
+% n is the number of camera
 
-ncams = size(camParaCalib,1);
 fileID = fopen(save_path,'w');
 fprintf(fileID, '# Camera configuration file\n');
 fprintf(fileID, '# generated %s\n \n', datetime);
 
-fprintf(fileID, [num2str(ncams) '    # camera number\n']);
+fprintf(fileID, [num2str(n) '    # camera number\n']);
 
-for i = 1 : ncams
+for i = 1 : n
     fprintf(fileID, '\n#camera %d\n', i );
     fprintf(fileID,'%d    #Noffh\n',camParaCalib(i).Noffh);
     fprintf(fileID,'%d    #Noffw\n',camParaCalib(i).Noffw);
@@ -26,4 +26,5 @@ end
 
 fclose(fileID);
 end
+
 
