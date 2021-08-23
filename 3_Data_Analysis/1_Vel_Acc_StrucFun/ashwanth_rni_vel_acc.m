@@ -29,8 +29,8 @@ function [data, mean_data] = ashwanth_rni_vel_acc(datapath, filterwidth, fitwidt
        % display progress of loop
      addpath SoundZone_Tools-master;
      fprintf('\t Completion for calculating the velocity and acceleration: ');
- %    showTimeToCompletion; startTime=tic;
-%     percent = parfor_progress(num_tracks);
+    showTimeToCompletion; startTime=tic;
+    percent = parfor_progress(num_tracks);
 %      error = zeros(1, num_tracks);
 
     delete_index = zeros(1, num_tracks);
@@ -163,11 +163,11 @@ function [data, mean_data] = ashwanth_rni_vel_acc(datapath, filterwidth, fitwidt
 %     end
     
     %%
-        parfor i= 1 : num_tracks   
+        for i= 1 : num_tracks   
         % display progress of loop
 
-  %      percent = parfor_progress;
-  %      showTimeToCompletion( percent/100, [], [], startTime );
+       percent = parfor_progress;
+       showTimeToCompletion( percent/100, [], [], startTime );
 
         tracks = or3d_map.Data.tracks(or3d_map.Data.tracks(:,5) == c(i),:);
 %          tracks = GetTracks(datapath, c(i));

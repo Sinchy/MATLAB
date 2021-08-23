@@ -353,7 +353,7 @@ function camParaCalib = VSC(particles_info, calib_path)
 % ncams = 4;
 fixcamera=[]; % which camera is fixed. fixcamera=[1,4]; camera 1 and 4 are fixed. fixcamera=[]; all camera can be changed. 
 fmin_options.Display = 'iter'; %'final' to display only the final mean distance, 'iter' to show the steps along the way.
-fmin_options.MaxFunEvals = 2000; %350;
+fmin_options.MaxFunEvals = 3000; %350;
 fmin_options.TolX = 1e-2;
 fmin_options.TolFun = 1e-2;
 
@@ -370,11 +370,20 @@ cam2d = zeros(size(data1,1),2,ncams);
 
 %% organize calibration file
 for icam = 1 : ncams
+    kr = camParaCalib(icam).k1;
     cam2d(:, :, icam) = data1(:,(icam - 1) * 2 + 4 : (icam - 1) * 2 + 5);
     cam2d(:, 1, icam) = (cam2d(:, 1, icam) - camParaCalib(icam).Npixw / 2 ...
         - camParaCalib(icam).Noffw) * camParaCalib(icam).wpix;
     cam2d(:, 2, icam) = (-cam2d(:,2,icam) + camParaCalib(icam).Npixh / 2 ...
         - camParaCalib(icam).Noffh) * camParaCalib(icam).hpix;  %vertical coordinate needed to be switched in sign to make it work--I thought the relection in the rotation matrix took care of this--but it doesn't work without this sign negative
+    
+        if (kr ~= 0)
+        a = cam2d(:, 1, icam) ./ cam2d(:, 2, icam);
+        cam2d(:, 2, icam) = (1 - sqrt(1 - 4 .* cam2d(:, 2, icam).^2 .* kr.*(a.^2 + 1))) ./ (2.* cam2d(:, 2, icam).* kr.* (a.^2 + 1));
+        cam2d(:, 1, icam) = a.*cam2d(:, 2, icam);
+        end
+%     x2D = [X Y];
+    
 end
 
 data2 = data(1 : end, :);
@@ -382,16 +391,30 @@ data2 = data(1 : end, :);
 cam2d_check = zeros(size(data2,1), 2, ncams);
 
 for icam = 1 : ncams
+    kr = camParaCalib(icam).k1;
     cam2d_check(:,:,icam) = data2(:, (icam-1) * 2 + 4 : (icam-1) * 2 + 5);
     cam2d_check(:,1,icam) = (cam2d_check(:, 1, icam) - camParaCalib(icam).Npixw / 2 ...
         - camParaCalib(icam).Noffw) * camParaCalib(icam).wpix;
     cam2d_check(:,2,icam) = (-cam2d_check(:, 2, icam) + camParaCalib(icam).Npixh / 2 ...
         - camParaCalib(icam).Noffh) * camParaCalib(icam).hpix;  %vertical coordinate needed to be switched in sign to make it work--I thought the relection in the rotation matrix took care of this--but it doesn't work without this sign negative
+
+        if (kr ~= 0)
+        a = cam2d_check(:, 1, icam) ./ cam2d_check(:,2,icam);
+        cam2d_check(:, 2, icam) = (1 - sqrt(1 - 4 .* cam2d_check(:, 2, icam).^2 .* kr.*(a.^2 + 1))) ./ (2.* cam2d_check(:, 2, icam).* kr.* (a.^2 + 1));
+        cam2d_check(:, 1, icam) = a.*cam2d_check(:, 2, icam);
+        end
+
 end
 
 calinitial=zeros(8,ncams);
+rot_correction = zeros(1, ncams);
 for icam = 1 : ncams
-    eul = rotm2eul(camParaCalib(icam).R);
+    R = camParaCalib(icam).R;
+    if abs(det(camParaCalib(icam).R) + 1) < 1e-4
+        R = R * diag([1 1 -1]);
+        rot_correction(icam) = 1;
+    end
+    eul = rotm2eul2(R);
     calinitial(1:3,icam) = eul';    
     calinitial(4:6,icam) = camParaCalib(icam).T;
     calinitial(7,icam) = camParaCalib(icam).f_eff;
@@ -420,14 +443,14 @@ end
 
 
 %% remove incorrect ones
-ray3mismatch = ray_mismatch(calnofix, cam2d,  ncams);
+ray3mismatch = ray_mismatch(calnofix, cam2d,  ncams, rot_correction);
 cam2d(isnan(ray3mismatch),:,:) = [];
 
-ray3mismatch = ray_mismatch(calnofix, cam2d_check,  ncams);
+ray3mismatch = ray_mismatch(calnofix, cam2d_check,  ncams, rot_correction);
 cam2d_check(isnan(ray3mismatch),:,:) = [];
 
 %% key step: nonlinear search for the best parameters
-calout = fminsearch(@(x) fitfunc(x,calfix,cam2d,ncams,fixcamera), calnofix, fmin_options);
+calout = fminsearch(@(x) fitfunc(x,calfix,cam2d,ncams, rot_correction,fixcamera), calnofix, fmin_options);
 calarray = calall;
 
 if isempty(fixcamera) == 0
@@ -438,19 +461,19 @@ else
 end
 
 %% Check the quality of the final calibration
-[dist3, dist1, pall] = ray_mismatch(calarray,cam2d,ncams);
+[dist3, dist1] = ray_mismatch(calarray,cam2d,ncams, rot_correction);
 
 figure(5);
 hist(dist3,50);
 title('mismatch distribution after optimization on good matches');
 xlabel('mismatch (mm)')
-allcams = mean(dist3)
+% allcams = mean(dist3)
 cammismatch2 = zeros(ncams);
 for n1 = 1 : ncams
 cammismatch2(n1) = mean(dist1(n1,:));
 end
 
-[dist3, dist1, pall] = ray_mismatch(calnofix, cam2d, ncams);
+dist3= ray_mismatch(calnofix, cam2d, ncams, rot_correction);
 
 figure(6);
 hist(dist3, 50);
@@ -465,7 +488,7 @@ allcams_check_with_mismatches = mean(dist3)
 %     determinant exactly -1, so it changes just a bit.  The new R needs to be kept since the
 %     dynamic calibration was done for this rotation matrix)
 for icam = 1:ncams
-    camParaCalib(icam).R = eul2rotm(calarray(1:3,icam));
+    camParaCalib(icam).R = eul2rotm2(calarray(1:3,icam));
     camParaCalib(icam).Rinv = inv(camParaCalib(icam).R);
     camParaCalib(icam).T = calarray(4:6,icam);
     camParaCalib(icam).Tinv = camParaCalib(icam).Rinv * (-1 * camParaCalib(icam).T);
@@ -481,7 +504,7 @@ end
 % save ([direc 'VSC_calib.mat'] , 'camParaCalib');
 end
 
-function rotm = eul2rotm(eul, sequence)
+function rotm = eul2rotm2(eul, sequence)
     if (size(eul,1) ~= 3)
         error('eul2rotm: %s', WBM.wbmErrorMsg.WRONG_VEC_DIM);
     end
@@ -546,7 +569,7 @@ function rotm = eul2rotm(eul, sequence)
     end
 end
 
-function deviation = fitfunc(calpara, calfix, cam2d, ncams, fixcamera)
+function deviation = fitfunc(calpara, calfix, cam2d, ncams, rot_correction,fixcamera)
 
 % This function is for use with dynamic calibration.  It combines the calibration
 % parameters into a single array and then calls the routine to calculate the distances
@@ -582,52 +605,109 @@ end
 
 
 
-ray3mismatch=ray_mismatch(calarray, cam2d,  ncams);
+ray3mismatch=ray_mismatch(calarray, cam2d,  ncams, rot_correction);
 
 % deviation = abs(mean(ray3mismatch) - 0.03);
 deviation = mean(ray3mismatch);
 end
 
-function [ray3mismatch,h,pall] = ray_mismatch(calarray, cam2d, ncams)
+function [ray3mismatch, h] = ray_mismatch(calarray, cam2d, ncams, rot_correction)
 
 for icam = 1:ncams
-    R(:,:,icam) = eul2rotm(calarray(1:3,icam));
+    R(:,:,icam) = eul2rotm2(calarray(1:3,icam));
+    if rot_correction(icam)
+        R(:,:,icam) = R(:, :, icam) * inv(diag([1 1 -1]));
+    end
     Rinv(:,:,icam) = inv(R(:,:,icam));
     Tinv(:,icam) = Rinv(:,:,icam) * (-1* calarray(4:6,icam));
 end
+
 npoints=size(cam2d,1);
 ray3mismatch=zeros(npoints,1); %average deviation over all cameras
+
 h = zeros(npoints, ncams); %deviation from each camera
-point3D= zeros(npoints,3);
+% point3D= zeros(npoints,3);
 
+%     eul = rotm2eul(camParaCalib(icam).R);
+%     calinitial(1:3,icam) = eul';    
+%     calinitial(4:6,icam) = camParaCalib(icam).T;
+%     calinitial(7,icam) = camParaCalib(icam).f_eff;
+%     calinitial(8,icam) = camParaCalib(icam).k1;
+%%
 for np=1:npoints 
-    M = zeros(3,3);
-    pM = zeros(3,ncams);
-    u = zeros(3, ncams);
-for icam = 1:ncams
-        % then find the unit vector designated by the camera position and
-        % the 2D pixel coordinates. 
-    %u(:,icam) = gv_imgplane2unitvector(calarray(:,icam), Rinv(:,:,icam), cam2d(np,:,icam));
-    u(:,icam) = img2unitv(calarray(:,icam), Rinv(:,:,icam), cam2d(np,:,icam));
-    uM = eye(3) - u(:,icam) * (u(:,icam))';
-    pM(:,icam) = uM * Tinv(:,icam);
-    M = M + uM;
+
+    A = zeros(3, 3);
+    B = zeros(3, 1);
+    D = 0;
+    pos3D = zeros(3, ncams);
+    for icam = 1 : ncams
+
+
+        % get the world position of the point on the image
+    %         s = [size(X2D,1);size(X2D,2)];
+    % %     X2D = [X2D zeros(s(1),1)];
+    %     tmp = X2D.*(camParaCalib.T(3)/camParaCalib.f_eff);
+    %     proj = [tmp(:,1) tmp(:,2) repmat(camParaCalib.T(3),[s(1) 1])]';
+    %     X3D = camParaCalib.Rinv*(proj - camParaCalib.T);
+
+        s = [size(cam2d(np,:,icam), 1); size(cam2d(np,:,icam), 2)];
+        tmp = cam2d(np,:,icam) .* (calarray(6,icam) / calarray(7,icam));
+        proj = [tmp(:,1) tmp(:,2) repmat(calarray(6,icam),[s(1) 1])]';
+        SIpos = Rinv(:,:,icam) * (proj - calarray(4:6,icam));
+        
+        pos3D(:, icam) = SIpos;
+    %     SIpos = Img2World(camParaCalib(i), UnDistort(position2D((i - 1) * 2 + 1 : (i - 1) * 2 + 2), camParaCalib(i))); 
+        % get the vector 
+        sight =  SIpos - Tinv(:,icam); %SIpos - camParaCalib(i).Tinv;
+        sight = sight / norm(sight); 
+        C = eye(3) - sight *  sight';
+        A = A + C;
+        B = B + C * Tinv(:,icam);%B + C * camParaCalib(i).Tinv;
+        D = D + Tinv(:,icam)' * C * Tinv(:,icam); %D + camParaCalib(i).Tinv' * C * camParaCalib(i).Tinv;
+    end
+    position3D = A \ B;
+    ray3mismatch(np) = (position3D' * A * position3D - 2 * position3D' * B + D) ^ .5 / 4;
+    
+    % distance from each camera
+    for icam = 1 : ncams
+        h(np, icam) = point_to_line(position3D, pos3D(:, icam) , Tinv(:,icam));
+    end
+end
+%%
+% for np=1:npoints 
+%     M = zeros(3,3);
+%     pM = zeros(3,ncams);
+%     u = zeros(3, ncams);
+% for icam = 1:ncams
+%         % then find the unit vector designated by the camera position and
+%         % the 2D pixel coordinates. 
+%     %u(:,icam) = gv_imgplane2unitvector(calarray(:,icam), Rinv(:,:,icam), cam2d(np,:,icam));
+%     u(:,icam) = img2unitv(calarray(:,icam), Rinv(:,:,icam), cam2d(np,:,icam));
+%     uM = eye(3) - u(:,icam) * (u(:,icam))';
+%     pM(:,icam) = uM * Tinv(:,icam);
+%     M = M + uM;
+% end
+% 
+% if (det(M) < 10)
+%   det(M)  
+% end
+%     % find the point minimizing the distance from all rays
+%     p = M \ sum(pM,2);  % sums pm x together for all three cameras.  Makes a column vector, then does inv(M)*sum(pM,2)
+%     %find the distances from each ray.
+% 
+%     pall(:,np)=p;
+% for icam = 1:ncams
+%     temp = p - ((p') * u(:,icam)) * u(:,icam) - pM(:,icam);
+%     h(np,icam) = sqrt(temp' *temp);
+% end
+%     ray3mismatch(np) = sqrt(mean(h(np,:).*h(np,:)));
+% end
 end
 
-if (det(M) < 10)
-  det(M);  
-end
-    % find the point minimizing the distance from all rays
-    p = M \ sum(pM,2);  % sums pm x together for all three cameras.  Makes a column vector, then does inv(M)*sum(pM,2)
-    %find the distances from each ray.
-
-    pall(:,np)=p;
-for icam = 1:ncams
-    temp = p - ((p') * u(:,icam)) * u(:,icam) - pM(:,icam);
-    h(np,icam) = sqrt(temp' *temp);
-end
-    ray3mismatch(np) = sqrt(mean(h(np,:).*h(np,:)));
-end
+function d = point_to_line(pt, v1, v2)
+      a = v1 - v2;
+      b = pt - v2;
+      d = norm(cross(a,b)) / norm(a);
 end
 
 function u = img2unitv(calarray, Rinv, dat2din)
@@ -693,7 +773,7 @@ for i=1:L
 end
 end
 
-function eul = rotm2eul(rotm, sequence)
+function eul = rotm2eul2(rotm, sequence)
     if ( (size(rotm,1) ~= 3) || (size(rotm,2) ~= 3) )
         error('rotm2eul: %s', WBM.wbmErrorMsg.WRONG_MAT_DIM);
     end
@@ -789,29 +869,15 @@ function eul = rotm2eul(rotm, sequence)
 end
 
 function x2D = UnDistort(X2D,camParaCalib)
-
-    
-
     kr = camParaCalib.k1;
-
     X = (X2D(:,1) - camParaCalib.Npixw/2)*camParaCalib.wpix;
-
     Y = (-X2D(:,2) + camParaCalib.Npixh/2)*camParaCalib.hpix;
 
-
     if (kr ~= 0)
-
         a = X ./ Y;
-
-
         Y = (1 - sqrt(1 - 4 .* Y.^2 .* kr.*(a.^2 + 1))) / (2.* Y.* kr.* (a.^2 + 1));
-
         X = a.*Y;
-
     end
-
-   
-
     x2D = [X Y];
 
 end

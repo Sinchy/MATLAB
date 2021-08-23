@@ -1,4 +1,4 @@
-function [tn, Rn] = NormalizePairDispersion(veldiffmatrix_dissipat, R, IS)
+function [tn, Rn] = NormalizePairDispersion(veldiffmatrix_dissipat, R, IS, frame_rate)
 %disp_rate: m^2/s^3
 IS(IS == 0) = [];
 r0 = mean(IS);
@@ -23,7 +23,7 @@ end
     t0 = CalT0(disp_rate, r0);
     Rn = R / (t0^2 * S);
 % Rn = R / (S);
-    tn = (1:length(R))/4000/t0;
+    tn = (1:length(R))/frame_rate/t0;
 % tn = (1:length(R))/4000;
 end
 

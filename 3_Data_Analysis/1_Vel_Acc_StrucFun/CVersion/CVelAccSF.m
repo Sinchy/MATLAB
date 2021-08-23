@@ -8,7 +8,7 @@ addpath D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun
 % load('tracks.mat')
 % or3d = sortrows(or3d,5);
 % write_gdf(or3d(:,[4 5 1:3])','tracks.gdf');
-or3d = ReadAllTracks([dataset_path '\Tracks\ConvergedTracks0\']);
+or3d = ReadAllTracks([dataset_path '\Tracks\ConvergedTracks\']);
 [~,~,ic] = unique(or3d(:, 4));
 num_particle = accumarray(ic,1);
 max_part_per_frame = max(num_particle);

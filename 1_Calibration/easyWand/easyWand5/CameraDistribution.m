@@ -1,5 +1,6 @@
 % load camParaCalib4
 function CameraDistribution(camParaCalib)
+figure
 ncams = size(camParaCalib,1);
 camera_parameters=camParaCalib(1:ncams);
 wo=[0 0 0]';

@@ -45,9 +45,9 @@ for dir1 = 1:3
     [~, uxy, uidx] = histcounts(velacc(:,dir1), min_l : dl : max_l);
     uxy = (uxy(1:end - 1) + uxy(2:end)) / 2;
 % [~, ~, uidx] = unique(idx, 'rows');
-avgv1 = accumarray(uidx, velacc(:,12), [], @nanmean);
-avgv2 = accumarray(uidx, velacc(:,13), [], @nanmean);
-avgv3 = accumarray(uidx, velacc(:,14), [], @nanmean);
+avgv1 = accumarray(uidx, abs(velacc(:,12)), [], @nanmean);
+avgv2 = accumarray(uidx, abs(velacc(:,13)), [], @nanmean);
+avgv3 = accumarray(uidx, abs(velacc(:,14)), [], @nanmean);
 mean_map = [uxy', avgv1, avgv2, avgv3];
 
 stdv1 = accumarray(uidx, velacc(:,12), [], @nanstd);

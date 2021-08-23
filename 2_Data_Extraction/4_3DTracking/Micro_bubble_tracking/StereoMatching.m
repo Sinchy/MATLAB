@@ -1,4 +1,4 @@
-function [matches_pos3D, mean_radii, tri_err, matches_pos2D] = StereoMatching(pos2D, radii, camParaCalib)
+function [matches_pos3D, mean_radii, tri_err, matches_pos2D] = StereoMatching(pos2D, radii, camParaCalib, img)
 ncam = size(camParaCalib, 1);
 mindist_2D = .08;
 
@@ -129,7 +129,7 @@ function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, 
 %             plot(xpix_max, ypix, 'r.')
             for xpix = ceil(xpix_min) : ceil(xpix_max)
                 if map(ypix, xpix) > 0
-                    pos2D = pos2D_mm(map(ypix, xpix), :);
+                    pos2D = pos2D_mm(map(ypix, xpix), :)';
                     if abs(dot(pos2D - center_cam1_on_cam2, perp_slop)) < mindist_2D
                         particles_index(n) = map(ypix, xpix);
                         n = n + 1;
@@ -308,7 +308,7 @@ function [pix_min, pix_max] = PixelSearchX(cam, linepara, mindist_2D, pix)
         b_minus = linepara(2) - mindist_2D * ( sin(theta) - linepara(1) * cos(theta));
         pix_min = 0;
         pix_max = 0;
-        if linepara > 0
+        if linepara(1) > 0
             x_a = Xpix1(cam, linepara(1), linepara(2), pix);
             x_b = Xpix1(cam, linepara(1), b_plus, pix);
             x_c = Xpix1(cam, linepara(1), b_minus, pix);

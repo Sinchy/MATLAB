@@ -1,4 +1,4 @@
-function I = Proj2d_IntV2(I, Pos3D,cali_path)
+function I = Proj2d_IntV2(I, Pos3D,cali_path, shift_vibration)
 % global I a0 a1 a2 a3 b0 b1 b2 b3 c0 c1 c2 c3 alpha1 alpha2 alpha3 alpha0 x0 x1 x2 x3 y0 y1 y2 y3 z0 z1 z2 z3;
 load(cali_path);
 Xp = Pos3D(1); Yp = Pos3D(2); Zp = Pos3D(3); 
@@ -32,12 +32,13 @@ particle_rad = 2;
 % xc(4) = temp3(1)*(Cam3(7)/temp3(3)); yc(4) = temp3(2)*(Cam3(7)/temp3(3));
 % [xc(4),yc(4)] = Distort(xc(4),yc(4),Cam3(8));
 
-xc = zeros(size(Pos3D,1),4);
-yc = zeros(size(Pos3D,1),4);
+n_cam = size(camParaCalib, 1);
+xc = zeros(size(Pos3D,1),n_cam);
+yc = zeros(size(Pos3D,1),n_cam);
 
-for i = 1:4
+for i = 1:n_cam
     X2D = calibProj_Tsai(camParaCalib(i),Pos3D);
-    xc(:,i) = X2D(:,1); yc(:,i) = X2D(:,2);
+    xc(:,i) = X2D(:,1) + shift_vibration(1) ; yc(:,i) = X2D(:,2) + shift_vibration(2);
 end
 
 % for i = 1:4
@@ -48,7 +49,7 @@ end
 %2D Intensity projection 
 
 [pixh, pixw,~] = size(I);
-for i = 1:4
+for i = 1:n_cam
     % 3D Interpolation of the OTF parameters
 %     if (i==1)
 %        alpha = interp3(x0,y0,z0,alpha0,Xp,Yp,Zp);

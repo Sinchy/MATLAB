@@ -20,7 +20,7 @@ for i = 2 : rows - 1
             yc = -.5 * (ln1 * (y2 ^ 2 - y3 ^ 2) - ln2 * (y1 ^ 2 - y3 ^ 2) + ln3 * (y1 ^ 2 - y2 ^ 2)) / ...
             (ln1 * (y3 - y2) - ln3 * (y1 - y2) + ln2 * (y1 - y3));
             
-            if (~isinf(xc) && ~isinf(yc))
+            if (~isinf(xc) && ~isinf(yc) && ~isnan(xc) && ~isnan(yc))
                 position2D = [position2D; xc, yc];
             end
         end

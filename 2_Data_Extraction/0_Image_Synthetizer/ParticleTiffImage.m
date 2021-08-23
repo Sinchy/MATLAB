@@ -1,5 +1,5 @@
 % global I a0 a1 a2 a3 b0 b1 b2 b3 c0 c1 c2 c3 alpha1 alpha2 alpha3 alpha0 x0 x1 x2 x3 y0 y1 y2 y3 z0 z1 z2 z3;
-function ParticleTiffImage(tracks, dir)
+function ParticleTiffImage(tracks, dir, calib_path, vibration)
 % dir = '/home/tanshiyong/Documents/Data/Single-Phase/11.03.17/SyntheticData/';
 total_frame = max(tracks(:,4));
 if exist([dir 'pro.txt'], 'file')
@@ -8,6 +8,10 @@ if exist([dir 'pro.txt'], 'file')
     fclose(fileID);
 else
     start_frame = 1;
+end
+
+if ~exist('vibration', 'var')
+    vibration = zeros(total_frame, 2);
 end
 for k = start_frame :  total_frame
     I = zeros(800,1280,4);
@@ -25,7 +29,8 @@ for k = start_frame :  total_frame
 %     [a3,b3,c3,alpha3,x3,y3,z3] = OTFParam(x3Dmin,x3Dmax,y3Dmin,y3Dmax,z3Dmin,z3Dmax,3);
     
     particle_frame = tracks(tracks(:,4) == k, :);
-    load /media/Share2/Projects/10-Vortex_Ring/Processed_Img/20191212/Exp1/VSC_Calib_20191212_2.mat
+    load(calib_path);
+    shift_vibration = vibration(k, :);
     
 %     ind = zeros(size(particle_frame, 1), 4);
 %     for j = 1 : 4
@@ -44,7 +49,7 @@ for k = start_frame :  total_frame
 %     Y = bound(new_points(2,p,k)) * (y3Dmax - y3Dmin)  / (2*pi)  + y3Dmin;
 %     Z = bound(new_points(3,p,k)) * (z3Dmax - z3Dmin)  / (2*pi)  + z3Dmin;
     Pos3D = particle_frame(p, 1:3);
-    I =  Proj2d_IntV2(I, Pos3D, '/media/Share2/Projects/10-Vortex_Ring/Processed_Img/20191212/Exp1/VSC_Calib_20191212_2.mat');
+    I =  Proj2d_IntV2(I, Pos3D, calib_path, shift_vibration);
     end
     
     

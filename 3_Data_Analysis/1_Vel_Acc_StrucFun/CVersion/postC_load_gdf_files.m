@@ -18,7 +18,7 @@
 %               accfiltwidth, accfiltlen, nxbin,nybin, nzbin, xmin, ymin, zmin, xbinsize,
 %               ybinsize, zbinsize, first_frm, last_frm
 
-    output = 'E:\VONSET\20210616\T3\Results\';
+    output = 'E:\VONSET\20210712\T01\S1\Results\';
     velacc = read_gdf([output 'velacc_velacc.gdf']); velacc(:,12:14) = read_gdf([output 'velacc_velfluc.gdf']); %velacc(:,16:18) = read_gdf([output '_accfluc.gdf']);
     curv = read_gdf([output 'velacc_curv.gdf']); 
     curvfield = read_gdf([output 'velacc_kfield.gdf']); curvfield = curvfield'; 

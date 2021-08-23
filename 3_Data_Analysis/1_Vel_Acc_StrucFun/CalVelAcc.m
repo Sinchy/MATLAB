@@ -1,10 +1,16 @@
-function [vel_acc_data, mean_data] = CalVelAcc(datapath)
-datapath = [datapath 'Tracks/ConvergedTracks/'];
-tracks_raw = ReadAllTracks(datapath);
-tracks_raw = tracks_raw(:,[3 4 5 2 1]);
-filterwidth = 3;
-fitwidth = 9;
-framerate = 4000;
-[vel_acc_data, mean_data] = ashwanth_rni_vel_acc(tracks_raw, filterwidth, fitwidth, framerate);
+function tr_vel = CalVelAcc(tracks)
+tracks = sortrows(tracks, 5);
+trID = unique(tracks(:, 5));
+num_tr = length(trID);
+tr_vel = zeros(size(tracks, 1), 3);
+n = 1;
+for i = 1 : num_tr
+    tr = tracks(tracks(:, 5) == trID(i), :);
+    vel = tr(2:end, 1:3) - tr(1:end-1, 1:3);
+    vel = [vel(1,:); vel];
+    m = size(vel, 1);
+    tr_vel(n : n + m -1, :) = vel;
+    n = n + m;
+end
 end
 

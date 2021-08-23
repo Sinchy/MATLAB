@@ -5,7 +5,8 @@ if ~isstruct(Re_struct)
     Re = Re_lambda^2 / 10;
     n_max = Re^(3/4);
 %     a = 2; 
-a = 11/3;
+correction = 0.7;
+a = 11/3 * correction;
     C2 = 2.1;
 %     b = 4;
 b = C2;
@@ -27,7 +28,9 @@ b = C2;
 %     k1 = 1 + (3/2 * log(kapa) - log(a) - 2 * log(n1)) ./ (1/2 * log(Re) - 1/2 * log(kapa));
 %     k2 = 1 -   log(a * b ^ (3/2)) ./ (1/2 * log(Re) - 2/3 * log(n2) + 1/2 * log(b));
 % kapa = 15 * C2 / (b * c);
-kapa = 3;
+% kapa = 3;
+alpha2 = 5 * correction; 
+kapa = 15 *C2 / ( alpha2 * b);
 k1 = 1 + (3/2 * log(kapa) - 2 * log(n1)) ./ (1/2 * log(Re) - 1/2 * log(kapa));
 k2 = 1 -  3/2 * log(a * b) ./ (1/2 * log(Re) - 2/3 * log(n2) + 1/2 * log(a*b));
 
