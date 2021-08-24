@@ -200,7 +200,7 @@ y=y+2;
 uda.handles.loadButton = uicontrol('Parent',uda.handles.easyWandMainPanel,...
   'Units','characters','Position',[5 top-y width-5 2],'Style',...
   'pushbutton','BackgroundColor',buttonColor,'string',...
-  'Load wand points','fontsize',10,'tag','loadButton','callback',...
+  'Load and select save path','fontsize',10,'tag','loadButton','callback',...
   @loadButton_callback);
 
 % Load background points button
@@ -457,25 +457,36 @@ currDir=pwd;
 if isfield(uda,'fPath')
   cd(uda.fPath);
 end
+wandPts = evalin('base','wandpts');
 
-% get the name and path to csv file with the wand points
-[fname1,pname1] = uigetfile( ...
-  {'*.csv','Comma-separated values (*.csv)'},...
-  'Pick the digitized wand points file');
-
-cd(currDir);
-if fname1==0  % User cancelled the file ui
-  disp('No wand points loaded');
-  return
+if isempty(wandPts)
+    msgbox('No wandpts found in workspace!');
+    return;
 end
+% if isempty(wandPts)
+    % get the name and path to csv file with the wand points
+%     [fname1,pname1] = uigetfile( ...
+%       {'*.csv','Comma-separated values (*.csv)'},...
+%       'Pick the digitized wand points file');
 
-% load the data file, check # of rows and columns
-wandPts=importdata([pname1,fname1]);
-if isstruct(wandPts)
-  wandPts=wandPts.data;
-end
-% wandPts header format:
-% |cam1/pt1x | cam1/pt1y | cam2/pt1x | cam2/pt1y | cam1/pt2x | cam1/pt2y | cam2/pt2x | cam2/pt2y|
+%     cd(currDir);
+%     if fname1==0  % User cancelled the file ui
+%       disp('No wand points loaded');
+%       return
+%     end
+% 
+%     % load the data file, check # of rows and columns
+%     wandPts=importdata([pname1,fname1]);
+%     if isstruct(wandPts)
+%       wandPts=wandPts.data;
+%     end
+% % end
+% % wandPts header format:
+% % |cam1/pt1x | cam1/pt1y | cam2/pt1x | cam2/pt1y | cam1/pt2x | cam1/pt2y | cam2/pt2x | cam2/pt2y|
+
+pname1 = uigetdir('E:\');
+fname1 = '\wandpts.mat';
+save([pname1 fname1], 'wandPts');
 
 nPts=sum(isnan(sum(wandPts,2))==false);
 nCams=size(wandPts,2)/4;
@@ -485,7 +496,8 @@ if mod(size(wandPts,2),4)~=0 || size(wandPts,2)<7
   mess='Error - incorrect number of wand point columns';
 else
   mess=sprintf('Success - %.0f wand points shared across %.0f cameras were loaded',nPts,nCams);
-  set(uda.handles.loadButton,'string',['Wand points file: ', fname1]);
+%   set(uda.handles.loadButton,'string',['Wand points file: ', fname1]);
+  set(uda.handles.loadButton,'string',['Save path: ', pname1]);
 end
 
 % check for odd numbers of points in a row - indicative of bad inputs
@@ -2419,8 +2431,8 @@ for i = 1 : nCams
 end
 uda.camParaCalib = camParaCalib;
  figure; CameraDistribution(camParaCalib);
-  save( [uda.fPath, 'camParaCalib.mat'], 'camParaCalib');
-   CalibMatToTXT(camParaCalib,  [uda.fPath, 'camParaCalib.txt']);
+  save( [uda.fPath, '\camParaCalib.mat'], 'camParaCalib');
+   CalibMatToTXT(camParaCalib,  [uda.fPath, '\camParaCalib.txt']);
 
 
 function [] = initializeButton_callback(varargin)

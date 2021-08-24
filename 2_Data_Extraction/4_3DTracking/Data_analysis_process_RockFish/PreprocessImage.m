@@ -1,4 +1,8 @@
-function PreprocessImage(dirr, remove_bubble, skip_frame, save_dir, totalImgs)
+function PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
+if ~exist('calibration_name', 'var')
+    calibration_name= 'camParaCalib';
+end
+
 if ~exist('skip_frame', 'var')
     skip_frame= 1;
 end
@@ -162,6 +166,8 @@ for cam = start:ncams
     fprintf(file_ID, ['cam' num2str(cam) ' has been processed!\n']);
 end
 delete(pp);
+% generate configuration files
+GenerateConfigFileV2(dirr, 1, totalImgs/skip_frame, ncams, calibration_name);
 end
 
 function outImg = LaVision_ImgProcessing(a)

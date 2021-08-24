@@ -29,14 +29,14 @@ ux_rms = rms(filter_data(:,12))/1e3;
 uy_rms = rms(filter_data(:,13))/1e3;
 uz_rms = rms(filter_data(:,14))/1e3;
 
-s_log = size(redges_log,2)-1;
+
 s_lin = size(redges_lin,2)-1;
 
 filter_data = []; % clear the data
 %% STRUCTURE FUNCTIONS
     [statistics_struct, statistics_corr] = rni_findpairs(data_map, redges_log, redges_lin);
     %% Energy dissipation rate from DLL and DLLL
-
+s_log = size(redges_log,2)-1;
     e1 = (statistics_struct(:,1)./statistics_struct(:,4)./2).^(3/2)./redges_log(1:s_log)';
     e2 = (statistics_struct(:,2)./statistics_struct(:,4)./(16/3)).^(3/2)./redges_log(1:s_log)';
     e3 = (statistics_struct(:,3)./statistics_struct(:,4)./(-4/5))./redges_log(1:s_log)';  

@@ -1,4 +1,4 @@
-function [statistics_struct]=rni_findpairs(data_map,redge_log)
+function [statistics_struct]=CalSF(data_map,redge_log)
 % [statistics_struct, statistics_corr]=rni_findpairs(data_map,redge_log,redge_lin)
 % or3d=[or3d,(1:length(or3d))',zeros(length(or3d),1)];
 % r_pairs=zeros(length(or3d).*4,20); %need to modify for large data set
@@ -11,7 +11,11 @@ function [statistics_struct]=rni_findpairs(data_map,redge_log)
 % or3d(1:ia(1),13)=1:(ia(1));
 
 % eulrot=sortrows(eulrot,4);
-[frame_no, ia1, ~] = unique(data_map.Data.tracks(:,4),'first');
+% [frame_no, ia1, ~] = unique(data_map.Data.tracks(:,4),'first');
+[frame_no, start_index, ic] = unique(data_map.Data.tracks(:,4),'first');
+a_counts = accumarray(ic,1);
+frame_info = [frame_no, start_index, a_counts];
+
 % clear or3d; % free the memory
 % eulrot(:, 9:end) = []; % delete rows that would not be used
     
@@ -27,28 +31,30 @@ ALL = zeros(length(redge_log)-1,1);
 % RNN= zeros(length(redge_lin)-1,1);
 
 
-% addpath /home/tanshiyong/Documents/Code/MATLAB/3_Data_Analysis/1_Vel_Acc_StrucFun/SoundZone_Tools-master/;
+ addpath D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun\SoundZone_Tools-master/;
 fprintf('\t Completion for calculating structure function: ');
 showTimeToCompletion; startTime=tic;
 
-total_num = length(ia1)-1;
+% total_num = length(ia1)-1;
 % percent = parfor_progress(total_num);
-%  parpool(4);
+% h = parpool(16);
 % parfor i=1:1:length(ia1)-1
 
-% randomize frame_no
-    num_frame = length(frame_no);
-    seq_frame = randperm(num_frame);
-    frame_no = frame_no(seq_frame);
+% % randomize frame_no
+%     num_frame = length(frame_no);
+%     seq_frame = randperm(num_frame);
+%     frame_no = frame_no(seq_frame);
 
 % for i=1:1:length(frame_no)-1
-percent = parfor_progress(100);
-parfor i=1:1:500
+percent = parfor_progress(length(frame_no));
+h = parpool(8);
+parfor i=1:1:length(frame_no)
 % for i=1:1:1
 %     i
 %     X=data_map.Data.eulrot(ia1(i):ia1(i+1)-1,1:3);
 %     data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14 9:11]);
-    data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 12:14]);
+%     data = data_map.Data.tracks(data_map.Data.tracks(:,4) == frame_no(i), [1:3 5:7]);
+    data = data_map.Data.tracks(frame_info(i, 2) : frame_info(i, 2) + frame_info(i, 3) - 1, [1:3 5:7]);
     X = data(:, 1:3);
     
 %     partID=eulrot(ia1(i):ia1(i+1)-1,5);
@@ -215,6 +221,7 @@ parfor i=1:1:500
     showTimeToCompletion( percent / 100, [], [], startTime );
 
 end
+delete(h);
 % statistics_struct=[DLL,DNN,DLLL,ALL, count_log];
 % statistics_corr=[RLL,RNN,count_lin];
 statistics_struct=[DLL,DNN,DLLL,count_log];

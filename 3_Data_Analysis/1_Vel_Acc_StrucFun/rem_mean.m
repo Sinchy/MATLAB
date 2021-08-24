@@ -13,8 +13,8 @@
 
 function [vel_fluct, mean_info] = rem_mean(filter_data, xmin,xmax,ymin,ymax,zmin,zmax,gridpts)
 
-    addpath 1-Basics/;
-    addpath 2-EStruct/;
+    addpath D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun/1-Basics/;
+    addpath D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun/2-EStruct/;
 
     data = filter_data;
   
