@@ -1,4 +1,4 @@
-function PreprossAllSectionImage(project_path, calibration_file)
+function PreprocessAllSectionImage(project_path, calibration_file)
 d = dir(project_path);
 dfolders = d([d(:).isdir]) ;
 dfolders = dfolders(~ismember({dfolders(:).name},{'.','..', 'results'}));
