@@ -51,7 +51,7 @@ totalImgs_for_background = 2000;
 if totalImgs_for_background > totalImgs
     totalImgs_for_background = totalImgs;
 end
-imgdir = [ dirr 'Cam1\cam1frame000001.tif'];
+imgdir = [ dirr 'Cam1/cam1frame000001.tif'];
 img = imread(imgdir);
 [Npixh, Npixw] = size(img);
 % ncams = 4;
@@ -101,7 +101,7 @@ for cam = start:ncams
     high = 1;
     h_end = 3;
 %     removed = 0;
-    imgdir = [camdir '\cam' num2str(cam) 'frame000001.tif'];
+    imgdir = [camdir '/cam' num2str(cam) 'frame000001.tif'];
     img = imread(imgdir);
     if isa(img, 'uint16')
             img = Convert16bitTo8bit(img);
@@ -129,7 +129,7 @@ for cam = start:ncams
     
  
     parfor I = 1:floor(totalImgs/skip_frame)
-        imgdir = [camdir '\cam' num2str(cam) 'frame' num2str(I * skip_frame,'%06.0f') '.tif'];
+        imgdir = [camdir '/cam' num2str(cam) 'frame' num2str(I * skip_frame,'%06.0f') '.tif'];
 %         imgdir = [camdir 'cam' num2str(cam) 'frame' num2str(I,'%04.0f') 'raw.tif'];
         img = imread(imgdir);
         if isa(img, 'uint16')
