@@ -1,6 +1,6 @@
 function GenerateJobConfiguration(file_path)
 filename = erase(file_path, '/');
-filename = extractAfter(filename, 'VONSET');
+filename = extractAfter(filename, 'V-ONSET');
 file_name = filename(5:end);
 fileID = fopen([file_path '/' file_name '.sh'],'w');
 fprintf(fileID, '#!/bin/bash -l\n');
@@ -23,6 +23,6 @@ txt = [ '/home/stan26/data_rni2/Code/OpenLPT_Shake-The-Box/VisualStudio/ShakeThe
 'EOF\n' ];
 fprintf(fileID,txt);
 fclose(fileID);
-system(['sbatch' file_path '/' file_name '.sh'])
+system(['sbatch ' file_path '/' file_name '.sh'])
 end
 
