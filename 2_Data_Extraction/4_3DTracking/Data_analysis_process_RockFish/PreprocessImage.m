@@ -1,4 +1,5 @@
 function PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
+dirr = [dirr '/'];
 if ~exist('calibration_name', 'var')
     calibration_name= 'camParaCalib';
 end
