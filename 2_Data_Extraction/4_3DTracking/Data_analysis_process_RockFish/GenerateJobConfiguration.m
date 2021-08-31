@@ -1,6 +1,6 @@
 function GenerateJobConfiguration(file_path)
 filename = erase(file_path, '/');
-filename = extractAfter(filename, 'V-ONSET');
+filename = extractAfter(filename, 'VONSET');
 file_name = filename(5:end);
 fileID = fopen([file_path '/' file_name '.sh'],'w');
 fprintf(fileID, '#!/bin/bash -l\n');
