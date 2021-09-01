@@ -17,7 +17,7 @@ if is_windows
     end
 else
     folders = strsplit(dir_left, '/');
-    for i = 1 : size(folders, 2)
+    for i = 2 : size(folders, 2)
         dir_process = [dir_process, '/' folders{i}];
         if ~exist(dir_process, 'dir')
             mkdir(dir_process);
