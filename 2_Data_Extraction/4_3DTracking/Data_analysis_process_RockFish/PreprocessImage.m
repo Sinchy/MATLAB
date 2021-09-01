@@ -1,5 +1,31 @@
 function PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
-dirr = [dirr '/'];
+% dirr = [dirr '/'];
+dir_process = extractBefore(dirr, 'VONSET');
+dir_process = [dir_process, 'ProcessedData'];
+if ~exist(dir_process, 'dir')
+    mkdir(dir_process);
+end
+dir_left = extractAfter(dirr, 'VONSET');
+is_windows = ~contains(dirr, '/');
+if is_windows
+    folders = strsplit(dir_left, '\');
+    for i = 2 : size(folders, 2)
+        dir_process = [dir_process, '\' folders{i}];
+        if ~exist(dir_process, 'dir')
+            mkdir(dir_process);
+        end
+    end
+else
+    folders = strsplit(dir_left, '/');
+    for i = 1 : size(folders, 2)
+        dir_process = [dir_process, '/' folders{i}];
+        if ~exist(dir_process, 'dir')
+            mkdir(dir_process);
+        end
+    end
+end
+dir_process = [dir_process, '/'];
+dirr = [dirr, '/'];
 if ~exist('calibration_name', 'var')
     calibration_name= 'camParaCalib';
 end
@@ -9,7 +35,7 @@ if ~exist('skip_frame', 'var')
 end
 
 if ~exist('save_dir', 'var')
-    save_dir = dirr;
+    save_dir = dir_process;
 end
 
 if ~exist('remove_bubble', 'var')
@@ -31,7 +57,7 @@ for i = 1 : ncams
 end
 print_dir = {['cam_1/'],['cam_2/'],['cam_3/'],['cam_4/'],['cam_5/'],['cam_6/'] }';
 
-log_filepath = [dirr 'Log.txt'];
+log_filepath = [dir_process 'Log.txt'];
 start = 1;
 if exist(log_filepath, 'file')
 if contains(fileread(log_filepath), 'cam1 has been processed!')
@@ -168,7 +194,7 @@ for cam = start:ncams
 end
 delete(pp);
 % generate configuration files
-GenerateConfigFileV2(dirr, 1, totalImgs/skip_frame, ncams, calibration_name);
+GenerateConfigFileV2(dir_process, 1, totalImgs/skip_frame, ncams, calibration_name);
 end
 
 function outImg = LaVision_ImgProcessing(a)

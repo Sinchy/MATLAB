@@ -193,9 +193,9 @@ end
     
     particle = particle(ind, :);
     error = error(ind);
-    [~, index] = min(particle(:, 12) / mean(particle(:, 12)) ...
-        + error' / mean(error)); % combination of goal achieving the minimum distance as well as minimum error
-%     [~, index] = min(error);
+%     [~, index] = min(particle(:, 12) / mean(particle(:, 12)) ...
+%         + error' / mean(error)); % combination of goal achieving the minimum distance as well as minimum error
+    [~, index] = min(error);
     particles_info(ii, :) = particle(index, :);
     ii = ii + 1;
     if ~(mod(i, 100)) 
