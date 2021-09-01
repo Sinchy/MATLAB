@@ -4,15 +4,16 @@ if ~exist(dir_process, 'dir')
     mkdir(dir_process);
 end
 
-dfolders = d([project_path(:).isdir]) ;
+d = dir(project_path);
+dfolders = d([d(:).isdir]) ;
 dfolders = dfolders(~ismember({dfolders(:).name},{'.','..', 'results'}));
 
 for i = 1 : size(dfolders, 1)
-    if exist([project_path '/' dfolders(i) '/Tracks'], 'dir')
-        if ~exit([dir_process '/' dfolders(i)], 'dir')
-            mkdir([dir_process '/' dfolders(i)]);
+    if exist([project_path '/' dfolders(i).name '/Tracks'], 'dir')
+        if ~exist([dir_process '/' dfolders(i).name], 'dir')
+            mkdir([dir_process '/' dfolders(i).name]);
         end
-        copyfile([project_path '/' dfolders(i) '/Tracks'], [dir_process '/' dfolders(i)]);
+        copyfile([project_path '/' dfolders(i).name '/Tracks'], [dir_process '/' dfolders(i).name '/Tracks']);
     end
 end
 
