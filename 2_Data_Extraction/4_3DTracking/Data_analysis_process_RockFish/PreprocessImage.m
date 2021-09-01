@@ -1,4 +1,4 @@
-function PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
+function dir_process = PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
 % dirr = [dirr '/'];
 dir_process = extractBefore(dirr, 'VONSET');
 dir_process = [dir_process, 'VONSET/ProcessedData'];
@@ -195,7 +195,7 @@ end
 delete(pp);
 % generate configuration files
 GenerateConfigFileV2(dir_process, 1, totalImgs/skip_frame, ncams, calibration_name);
-copyfile([dirr  'S01/' calibration_name '.txt'], [dir_process]);
+copyfile([dirr(1:end-4)  'S01/' calibration_name '.txt'], [dir_process]); % for section number smaller than 99
 end
 
 function outImg = LaVision_ImgProcessing(a)
