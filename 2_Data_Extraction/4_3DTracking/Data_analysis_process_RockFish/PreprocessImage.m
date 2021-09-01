@@ -1,7 +1,7 @@
 function PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
 % dirr = [dirr '/'];
 dir_process = extractBefore(dirr, 'VONSET');
-dir_process = [dir_process, 'ProcessedData'];
+dir_process = [dir_process, 'VONSET/ProcessedData'];
 if ~exist(dir_process, 'dir')
     mkdir(dir_process);
 end
