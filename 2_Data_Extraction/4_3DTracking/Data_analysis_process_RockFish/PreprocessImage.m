@@ -195,7 +195,7 @@ end
 delete(pp);
 % generate configuration files
 GenerateConfigFileV2(dir_process, 1, totalImgs/skip_frame, ncams, calibration_name);
-copyfile([dirr(1:end-4)  'S01/' calibration_name '.txt'], [dir_process]); % for section number smaller than 99
+
 end
 
 function outImg = LaVision_ImgProcessing(a)
