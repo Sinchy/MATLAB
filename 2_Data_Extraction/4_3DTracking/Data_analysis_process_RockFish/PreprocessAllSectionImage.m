@@ -5,7 +5,7 @@ dfolders = dfolders(~ismember({dfolders(:).name},{'.','..', 'results'}));
 
 for i = 1 : size(dfolders, 1)
     dir_process = PreprocessImage([project_path  '/' dfolders(i).name], calibration_file);
-    GenerateJobConfiguration([dir_process  '/' dfolders(i).name]);
+    GenerateJobConfiguration([dir_process]);
 %     if i > 1
 %         copyfile([project_path  '/S01/' calibration_file '.txt'], [project_path  '/' dfolders(i).name]);
 %     end
