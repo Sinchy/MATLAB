@@ -195,6 +195,7 @@ end
 delete(pp);
 % generate configuration files
 GenerateConfigFileV2(dir_process, 1, totalImgs/skip_frame, ncams, calibration_name);
+copyfile([dirr  'S01/' calibration_file '.txt'], [dir_process  dfolders(i).name]);
 end
 
 function outImg = LaVision_ImgProcessing(a)
