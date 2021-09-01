@@ -5,7 +5,7 @@ dir_process = [dir_process, 'VONSET/ProcessedData'];
 if ~exist(dir_process, 'dir')
     mkdir(dir_process);
 end
-dir_left = extractAfter(dirr, 'VONSET');
+dir_left = extractAfter(dirr, 'Data');
 is_windows = ~contains(dirr, '/');
 if is_windows
     folders = strsplit(dir_left, '\');
