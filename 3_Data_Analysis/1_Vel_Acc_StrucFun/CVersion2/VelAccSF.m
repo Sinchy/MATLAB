@@ -1,45 +1,53 @@
 function VelAccSF(project_path)
 C_code_path = 'D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun\CVersion2\VelAcc\x64\Release\';
 result_path = [project_path '\results\'];
+
+
 if ~exist(result_path, 'dir')
     mkdir(result_path);
 end
-disp('Filtering tracks...');
+if ~exist([project_path '\results\filter_tracks.mat'], 'file')
+    disp('Filtering tracks...');
 
-d = dir(project_path);
-dfolders = d([d(:).isdir]) ;
-dfolders = dfolders(~ismember({dfolders(:).name},{'.','..', 'results'}));
+    d = dir(project_path);
+    dfolders = d([d(:).isdir]) ;
+    dfolders = dfolders(~ismember({dfolders(:).name},{'.','..', 'results'}));
 
-for i = 1 : size(dfolders, 1)
-    while (~exist([project_path '\' dfolders(i).name '\tracks.gdf'], 'file'))
-        tic
-            system([C_code_path 'VelAcc.exe ' project_path '\' dfolders(i).name '> ' project_path '\results\result.txt']);
-        toc;
+    for i = 1 : size(dfolders, 1)
+        while (~exist([project_path '\' dfolders(i).name '\tracks.gdf'], 'file'))
+            tic
+                system([C_code_path 'VelAcc.exe ' project_path '\' dfolders(i).name '> ' project_path '\results\result.txt']);
+            toc;
+        end
     end
-end
-delete([project_path '\results\result.txt']);
+    delete([project_path '\results\result.txt']);
 
-%% 
-disp('Calculating velocity fluctuation...');
-tic
-addpath D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun;
-for i = 1 : size(dfolders, 1)
-    subtracks = read_gdf([project_path '\' dfolders(i).name '\tracks.gdf'], 'double');
-    delete([project_path '\' dfolders(i).name '\tracks.gdf']);
-    if i == 1
-        tracks = subtracks;
-    else
-        tracks = CombineTracks(tracks, subtracks);
+    %% 
+    disp('Calculating velocity fluctuation...');
+    tic
+    addpath D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun;
+    for i = 1 : size(dfolders, 1)
+        subtracks = read_gdf([project_path '\' dfolders(i).name '\tracks.gdf'], 'double');
+        delete([project_path '\' dfolders(i).name '\tracks.gdf']);
+        if i == 1
+            tracks = subtracks;
+        else
+            tracks = CombineTracks(tracks, subtracks);
+        end
     end
+    pos_max = ceil(max(tracks(:,1:3)));
+    pos_min = floor(min(tracks(:, 1:3)));
+    [vel_fluct, mean_info] = rem_mean(tracks, pos_min(1), pos_max(1), pos_min(2), pos_max(2),pos_min(3), pos_max(3), 10);
+    tracks = [tracks vel_fluct];
+    clear vel_fluct
+    save([project_path '\results\filter_tracks.mat'], 'tracks', 'mean_info', '-v7.3');
+    toc
+else 
+    load([project_path '\results\filter_tracks.mat']);
+        pos_max = ceil(max(tracks(:,1:3)));
+    pos_min = floor(min(tracks(:, 1:3)));
 end
-pos_max = ceil(max(tracks(:,1:3)));
-pos_min = floor(min(tracks(:, 1:3)));
-[vel_fluct, mean_info] = rem_mean(tracks, pos_min(1), pos_max(1), pos_min(2), pos_max(2),pos_min(3), pos_max(3), 10);
-tracks = [tracks vel_fluct];
-clear vel_fluct
-save([project_path '\results\filter_tracks.mat'], 'tracks', 'mean_info', '-v7.3');
 
-toc
 
 %%
 disp('Calculating structure function...');
@@ -48,7 +56,7 @@ tracks = sortrows(tracks, 4); % sort tracks according to frames
 [frame_no, start_index, ic] = unique(tracks(:,4),'first');
 a_counts = accumarray(ic,1);
 frame_info = [frame_no, start_index, a_counts];
-num_frame = 200; % number of frames to calculate SF
+num_frame = 500; % number of frames to calculate SF
 frame_select = frame_no(randperm(numel(frame_no), num_frame)); % randomly select frames
 % prepare frames for calculating SF
 num_total_particles = sum(frame_info(ismember(frame_info(:,1), frame_select), 3));
