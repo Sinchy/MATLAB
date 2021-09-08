@@ -284,7 +284,7 @@ end
 
 function position2D = Get2DPosOnImage(img) 
 [rows, cols] = size(img);
-threshold = 60;
+threshold = 40;
 position2D = [];
 for i = 2 : rows - 1
     for j = 2 : cols - 1

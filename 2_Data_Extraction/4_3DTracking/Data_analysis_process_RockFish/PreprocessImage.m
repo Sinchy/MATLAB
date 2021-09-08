@@ -1,28 +1,32 @@
 function dir_process = PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
 % dirr = [dirr '/'];
 dir_process = extractBefore(dirr, 'VONSET');
-dir_process = [dir_process, 'VONSET/ProcessedData'];
-if ~exist(dir_process, 'dir')
-    mkdir(dir_process);
-end
-dir_left = extractAfter(dirr, 'Data');
-is_windows = ~contains(dirr, '/');
-if is_windows
-    folders = strsplit(dir_left, '\');
-    for i = 2 : size(folders, 2)
-        dir_process = [dir_process, '\' folders{i}];
-        if ~exist(dir_process, 'dir')
-            mkdir(dir_process);
+if ~isempty(dir_process)
+    dir_process = [dir_process, 'VONSET/ProcessedData'];
+    if ~exist(dir_process, 'dir')
+        mkdir(dir_process);
+    end
+    dir_left = extractAfter(dirr, 'Data');
+    is_windows = ~contains(dirr, '/');
+    if is_windows
+        folders = strsplit(dir_left, '\');
+        for i = 2 : size(folders, 2)
+            dir_process = [dir_process, '\' folders{i}];
+            if ~exist(dir_process, 'dir')
+                mkdir(dir_process);
+            end
+        end
+    else
+        folders = strsplit(dir_left, '/');
+        for i = 2 : size(folders, 2)
+            dir_process = [dir_process, '/' folders{i}];
+            if ~exist(dir_process, 'dir')
+                mkdir(dir_process);
+            end
         end
     end
 else
-    folders = strsplit(dir_left, '/');
-    for i = 2 : size(folders, 2)
-        dir_process = [dir_process, '/' folders{i}];
-        if ~exist(dir_process, 'dir')
-            mkdir(dir_process);
-        end
-    end
+    dir_process = dirr;
 end
 dir_process = [dir_process, '/'];
 dirr = [dirr, '/'];
