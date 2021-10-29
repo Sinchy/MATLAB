@@ -30,6 +30,14 @@ camParaCalib = VSC(particles_info(:, 1:11), calib_path);
 % output the calibration file
 CalibMatToTXT(camParaCalib, [image_path 'VSC_Calib_' save_name_label '.txt']);
 save([image_path 'VSC_Calib_' save_name_label '.mat'], 'camParaCalib');
+
+%% calibration directly from the particle info
+for i = 1 : 3
+cam = [particles_info(:, [(i-1)*2 + 4, (i-1)*2 + 5])  particles_info(:, 1:3)];
+camParaCalib(i, :) = TsaiCalibration(800, 1280, 0.02, 0.02, cam);
+end
+CalibMatToTXT(camParaCalib, [image_path 'VSC_Calib_' save_name_label '_d.txt']);
+save([image_path 'VSC_Calib_' save_name_label '_d.mat'], 'camParaCalib');
 end
 
 function [good_particles, select_label]= PickParticleEvenly(tracks, num_particles)
@@ -112,11 +120,26 @@ for i = 1 : num_particles
     for j = 1 : ncam
         img = imread([image_path 'cam_' num2str(j) '/cam' num2str(j) 'frame' num2str(particles(i, 4), '%06.0f') '.tif']);
         [hpix, wpix] = size(img);
-        particle_size = 4;
-        search_range = particle_size * 6 / 4; % searching range on the image
+        particle_size = 3;
+        search_range = particle_size * 3 / 2; % searching range on the image
         img_searcharea = img(max(1, floor(yc(j) - search_range)) : min(hpix, ceil(yc(j) + search_range)), ...
             max(1, floor(xc(j) - search_range)) : min(wpix, ceil(xc(j) + search_range))); % get the search area
         position2D_candidate = Get2DPosOnImage(img_searcharea);
+        % if there are particles that are too close (less than 2 pixel),
+        % then dumping this particles, because there are overlapping
+        % particles.
+        for k  = 1 : size(position2D_candidate, 1)
+            for l = k + 1 : size(position2D_candidate, 1)
+                d_pixel = norm(position2D_candidate(k, :) - position2D_candidate(l, :));
+                if d_pixel <= 2
+                    delete_particle  = 1;
+                end
+            end
+        end
+        if delete_particle == 1
+            break;
+        end
+        
         if ~isempty(position2D_candidate)
             position2D_candidate(:, 1) = position2D_candidate(:,1) + max(1, floor(xc(j) - search_range)) - 1;
             position2D_candidate(:, 2) = position2D_candidate(:,2) + max(1, floor(yc(j) - search_range))- 1;
@@ -284,7 +307,7 @@ end
 
 function position2D = Get2DPosOnImage(img) 
 [rows, cols] = size(img);
-threshold = 40;
+threshold = 60;
 position2D = [];
 for i = 2 : rows - 1
     for j = 2 : cols - 1

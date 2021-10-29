@@ -28,7 +28,7 @@ for i = start_frame : num_frame
     end
     data = tracks(start : ed, 1 : 3);
     if exist('slice', 'var')
-        slice_thick = 1;
+        slice_thick = 5;
         if slice == 'XY' 
             data(abs(data(:,3)) > slice_thick, :) = 0;
         elseif slice == 'XZ'

@@ -56,7 +56,7 @@ tracks = sortrows(tracks, 4); % sort tracks according to frames
 [frame_no, start_index, ic] = unique(tracks(:,4),'first');
 a_counts = accumarray(ic,1);
 frame_info = [frame_no, start_index, a_counts];
-num_frame = 500; % number of frames to calculate SF
+num_frame = 2000; % number of frames to calculate SF
 frame_select = frame_no(randperm(numel(frame_no), num_frame)); % randomly select frames
 % prepare frames for calculating SF
 num_total_particles = sum(frame_info(ismember(frame_info(:,1), frame_select), 3));
@@ -85,7 +85,7 @@ end
      clear tracks_SF;
      
 max_pos = max(pos_max) - min(pos_min);
-redges_log = 10.^(0:0.05:ceil(log10(max_pos))); 
+redges_log = 10.^(-2:0.1:ceil(log10(max_pos))); 
 statistics_struct = CalSF(data_map,redges_log);
 save([project_path '\results\SF.mat'], 'statistics_struct','redges_log', '-v7.3');
 clear data_map;

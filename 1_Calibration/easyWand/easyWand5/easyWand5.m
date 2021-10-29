@@ -458,6 +458,7 @@ if isfield(uda,'fPath')
   cd(uda.fPath);
 end
 wandPts = evalin('base','wandpts');
+wandpts = wandPts;
 
 if isempty(wandPts)
     msgbox('No wandpts found in workspace!');
@@ -486,7 +487,7 @@ end
 
 pname1 = uigetdir('E:\');
 fname1 = '\wandpts.mat';
-save([pname1 fname1], 'wandPts');
+save([pname1 fname1], 'wandpts');
 
 nPts=sum(isnan(sum(wandPts,2))==false);
 nCams=size(wandPts,2)/4;
@@ -2429,7 +2430,12 @@ for i = 1 : nCams
     cam = [[ptMat(:, 2 * i - 1 : 2 * i); ptMat(:, 2 * i - 1 + nCams * 2 : 2 * i + nCams * 2)] xyz]; 
     camParaCalib(i, :) = TsaiCalibration(hpix(i), wpix(i), pixel_width, pixel_width, cam);
 end
-uda.camParaCalib = camParaCalib;
+uda.camParaCalib = camParaCalib;         
+yesno=questdlg('Would you like to allign the axis to one of the camera?', ...
+            'Optimize origin?','Yes','No','No');
+ if strcmp(yesno,'Yes')
+     [camParaCalib, ~] = CoordinateAdjust(camParaCalib);
+ end
  figure; CameraDistribution(camParaCalib);
   save( [uda.fPath, '\camParaCalib.mat'], 'camParaCalib');
    CalibMatToTXT(camParaCalib,  [uda.fPath, '\camParaCalib.txt']);

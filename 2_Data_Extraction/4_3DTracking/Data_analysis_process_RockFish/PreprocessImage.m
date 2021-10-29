@@ -50,6 +50,7 @@ if ~exist('totalImgs', 'var')
     a = dir([dirr  'Cam1/*.tif']);
     totalImgs = numel(a); 
 end
+% totalImgs = 1000
 totalImgs = totalImgs - 2;
 %% Inputs
 camsave_dir = {[save_dir 'cam_1/'],[save_dir 'cam_2/'],[save_dir 'cam_3/'],[save_dir 'cam_4/'], [save_dir 'cam_5/'],[save_dir 'cam_6/'] }';

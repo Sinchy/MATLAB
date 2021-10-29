@@ -14,12 +14,13 @@ cdz=[0 0 100]';
 % figure;
 for cam=1:ncams
 
-plot3([wo(1);wx(1)],[wo(2);wx(2)],[wo(3);wx(3)],'b','LineWidth',4);hold on
-plot3([wo(1);wy(1)],[wo(2);wy(2)],[wo(3);wy(3)],'k','LineWidth',4);hold on
-plot3([wo(1);wz(1)],[wo(2);wz(2)],[wo(3);wz(3)],'r','LineWidth',4);hold on
+plot3([wo(1);wx(1)],[wo(2);wx(2)],[wo(3);wx(3)],'b','LineWidth',4);hold on %x axis
+plot3([wo(1);wy(1)],[wo(2);wy(2)],[wo(3);wy(3)],'k','LineWidth',4);hold on %y axis
+plot3([wo(1);wz(1)],[wo(2);wz(2)],[wo(3);wz(3)],'r','LineWidth',4);hold on % z axis
 
 cow=camera_parameters(cam).R\(co-camera_parameters(cam).T);
 plot3([cow(1);wo(1)],[cow(2);wo(2)],[cow(3);wo(3)],'k');hold on
+text(cow(1), cow(2), cow(3), ['cam' num2str(cam)]);
 
 cdxw=camera_parameters(cam).R\(cdx-camera_parameters(cam).T);
 plot3([cow(1);cdxw(1)],[cow(2);cdxw(2)],[cow(3);cdxw(3)],'b','LineWidth',4);hold on
