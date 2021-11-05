@@ -1,7 +1,7 @@
 function CSearchPairs(data_path, bin, disp_rate, frame_rate, max_pair_len)
 file = matfile(data_path);
 
-tracks = file.filter_data(:, 1:5);
+tracks = file.tracks(:, 1:5);
 % get track info
 [trackID, start_index, ic] = unique(tracks(:,5) );
 a_counts = accumarray(ic,1);
@@ -17,7 +17,7 @@ frame_info = [frame_no, start_index - 1, a_counts]; % start_index - 1 to adjust 
 t0 = CalT0(disp_rate, mean(bin, 2));
 pair_len = t0 * frame_rate * 10;
 pair_len(pair_len>max_pair_len / 2) = round(max_pair_len / 2);
-
+bin = bin * 1e3; % m to mm
 % save path
 pos = strfind(data_path, '\');
 save_path = [data_path(1:pos(end))  'pairs\data.mat'];

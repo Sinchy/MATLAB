@@ -1,4 +1,4 @@
-function [R, pairs, disp_matrix, IS, veldiff_matrix, veldiff_pl_matrix, sep_matrix] = PairDispersionCalculation(data_map, pairs, min_pair_len, direction)
+function [R, pairs, disp_matrix, IS, veldiff_matrix, veldiff_pl_matrix, sep_matrix] = PairDispersionCalculation(tracks, pairs, min_pair_len, direction)
 tic
 %  min_pair_len = 1;
 
@@ -27,7 +27,7 @@ end
 % pairs(num_stat + 1:end, :) = []; 
 num_pair = size(pairs, 1);
 trackID = unique([pairs(:,1); pairs(:,2)]);
-tracks = GetSpecificTracksFromData(data_map, trackID);
+% tracks = GetSpecificTracksFromData(data_map, trackID);
 
 [trackID, start_index, ic] = unique(tracks(:,5) );
 a_counts = accumarray(ic,1);
