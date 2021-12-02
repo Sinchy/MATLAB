@@ -25,12 +25,12 @@ if color
 % col = tracks(:,8);
 %  col = abs(tracks(:,14));
      col_st = nonzeros(col);
-     col_st(isoutlier(col_st,'gesd')) = [];
+%      col_st(isoutlier(col_st,'gesd')) = [];
     col_m = mean(nonzeros(col_st));
     col_e = std(nonzeros(col_st));
     col((col - col_m) > 2 * col_e) = col_m + 2 * col_e;
     col((col - col_m) < -2 * col_e) = col_m - 2 * col_e;
-    scatter3(tracks(:,1),tracks(:,2),tracks(:,3),5,col,'filled');
+    scatter3(tracks(:,1),tracks(:,2),tracks(:,3),2,col,'filled');
     colormap(jet);
     colorbar;
 % Create zlabel

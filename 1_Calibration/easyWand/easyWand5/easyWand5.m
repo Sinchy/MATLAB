@@ -781,26 +781,29 @@ uda=get(h1,'userdata');
 % clear the figure window
 cla(uda.handles.axes1);
 
-currDir=pwd;
-if isfield(uda,'fPath')
-  cd(uda.fPath);
-end
-
-% get the name and path to csv file with the wand points
-[fname1,pname1] = uigetfile( ...
-  {'*.csv','Comma-separated values (*.csv)'},...
-  'Pick the digitized axis points file');
-cd(currDir);
-if fname1==0
-  disp('No axis points loaded');
-  return
-end
+% currDir=pwd;
+% if isfield(uda,'fPath')
+%   cd(uda.fPath);
+% end
+% 
+% % get the name and path to csv file with the wand points
+% [fname1,pname1] = uigetfile( ...
+%   {'*.csv','Comma-separated values (*.csv)'},...
+%   'Pick the digitized axis points file');
+% cd(currDir);
+% if fname1==0
+%   disp('No axis points loaded');
+%   return
+% end
 
 % load the data file, check # of rows and columns
-axisPts=importdata([pname1,fname1]);
-if isstruct(axisPts)
-  axisPts=axisPts.data;
-end
+% axisPts=importdata([pname1,fname1]);
+% if isstruct(axisPts)
+%   axisPts=axisPts.data;
+% end
+
+axisPts = evalin('base','axisPts');
+
 adx=find(sum(isfinite(axisPts),2)>0);
 axisPts=axisPts(adx(1):adx(end),:);
 if size(axisPts,2)~=uda.nCams*2 || size(axisPts,1)<2
@@ -818,8 +821,8 @@ uda.bkrmpts=uda.bkrmpts(1:end-size(uda.axisPts,1),:);
 uda.axisPts=axisPts;
 uda.backgroundPts=[uda.backgroundPts; axisPts];
 uda.bkrmpts=[uda.bkrmpts; false(size(axisPts,1),1)];
-uda.axisPtsFile=fname1;
-uda.fPath=pname1;
+% uda.axisPtsFile=fname1;
+% uda.fPath=pname1;
 
 
 % check for gravity and get additional inputs
@@ -856,9 +859,9 @@ if numel(goodRows)>4
 end
 
 mess=sprintf('Loaded axis points file.');
-set(uda.handles.loadAxisButton,'string',['Axis points file: ', fname1]);
+% set(uda.handles.loadAxisButton,'string',['Axis points file: ', fname1]);
 msgbox(mess);
-
+save( [uda.fPath, '\axispoints.mat'], 'axisPts');
 % pass back userdata
 set(h1,'userdata',uda);
 
