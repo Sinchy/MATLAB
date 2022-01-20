@@ -1,7 +1,10 @@
-function VelAccSF(project_path)
+function VelAccSF(project_path, frame_rate,skip_str)
 C_code_path = 'D:\0.Code\MATLAB\3_Data_Analysis\1_Vel_Acc_StrucFun\CVersion2\VelAcc\x64\Release\';
 result_path = [project_path '\results\'];
 
+if ~exist('skip_str', 'var')
+    skip_str = 0;
+end
 
 if ~exist(result_path, 'dir')
     mkdir(result_path);
@@ -16,7 +19,7 @@ if ~exist([project_path '\results\filter_tracks.mat'], 'file')
     for i = 1 : size(dfolders, 1)
         while (~exist([project_path '\' dfolders(i).name '\tracks.gdf'], 'file'))
             tic
-                system([C_code_path 'VelAcc.exe ' project_path '\' dfolders(i).name '> ' project_path '\results\result.txt']);
+                system([C_code_path 'VelAcc.exe ' project_path '\' dfolders(i).name ' ' num2str(frame_rate) ' > ' project_path '\results\result.txt']);
             toc;
         end
     end
@@ -48,7 +51,9 @@ else
     pos_min = floor(min(tracks(:, 1:3)));
 end
 
-
+if skip_str == 1
+    return;
+end
 %%
 disp('Calculating structure function...');
 tic

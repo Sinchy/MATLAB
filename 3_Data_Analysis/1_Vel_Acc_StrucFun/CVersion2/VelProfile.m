@@ -19,13 +19,16 @@ mean_map = [uxy', avgv1, avgv2, avgv3];
 % stdv1 = accumarray(uidx, velacc(:,6), [], @nanstd);
 % stdv2 = accumarray(uidx, velacc(:,7), [], @nanstd);
 % stdv3 = accumarray(uidx, velacc(:,8), [], @nanstd);
-time = accumarray(uidx, velacc(:,4), [], @(x) {x});
-u1 = accumarray(uidx, velacc(:,6), [], @(x) {x});
-stdv1 = TemporalSTD(time, u1) * 2;
-u2 = accumarray(uidx,velacc(:,7), [], @(x) {x});
-stdv2 = TemporalSTD(time, u2) * 2;
-u3 = accumarray(uidx,velacc(:,8), [], @(x) {x});
-stdv3 = TemporalSTD(time, u3) * 2;
+stdv1 = accumarray(uidx, velacc(:,6), [], @FitNormal);
+stdv2 = accumarray(uidx, velacc(:,7), [], @FitNormal);
+stdv3 = accumarray(uidx, velacc(:,8), [], @FitNormal);
+% time = accumarray(uidx, velacc(:,4), [], @(x) {x});
+% u1 = accumarray(uidx, velacc(:,6), [], @(x) {x});
+% stdv1 = TemporalSTD(time, u1) * 2;
+% u2 = accumarray(uidx,velacc(:,7), [], @(x) {x});
+% stdv2 = TemporalSTD(time, u2) * 2;
+% u3 = accumarray(uidx,velacc(:,8), [], @(x) {x});
+% stdv3 = TemporalSTD(time, u3) * 2;
 std_map = [uxy', stdv1, stdv2, stdv3];
 
 figure(dir1)
@@ -67,13 +70,16 @@ mean_map = [uxy', avgv1, avgv2, avgv3];
 % stdv1 = accumarray(uidx, u_s(:,1), [], @nanstd).^.5;
 % stdv2 = accumarray(uidx, u_s(:,2), [], @nanstd).^.5;
 % stdv3 = accumarray(uidx, u_s(:,3), [], @nanstd).^.5;
-time = accumarray(uidx, velacc(:,4), [], @(x) {x});
-u1 = accumarray(uidx,u_s(:,1), [], @(x) {x});
-stdv1 = TemporalSTD(time, u1);
-u2 = accumarray(uidx,u_s(:,2), [], @(x) {x});
-stdv2 = TemporalSTD(time, u2);
-u3 = accumarray(uidx,u_s(:,3), [], @(x) {x});
-stdv3 = TemporalSTD(time, u3);
+stdv1 = accumarray(uidx, u_s(:,1), [], @FitNormal).^.5;
+stdv2 = accumarray(uidx, u_s(:,2), [], @FitNormal).^.5;
+stdv3 = accumarray(uidx, u_s(:,3), [], @FitNormal).^.5;
+% time = accumarray(uidx, velacc(:,4), [], @(x) {x});
+% u1 = accumarray(uidx,u_s(:,1), [], @(x) {x});
+% stdv1 = TemporalSTD(time, u1);
+% u2 = accumarray(uidx,u_s(:,2), [], @(x) {x});
+% stdv2 = TemporalSTD(time, u2);
+% u3 = accumarray(uidx,u_s(:,3), [], @(x) {x});
+% stdv3 = TemporalSTD(time, u3);
 std_map = [uxy', stdv1, stdv2, stdv3];
 
         figure(dir1)
@@ -102,6 +108,12 @@ leg=legend('$u_{\textrm{rms}}$','$v_{\textrm{rms}}$','$w_{\textrm{rms}}$');
         set(leg,'NumColumns',3)
         ytickvals=[ -.5  -.25  0  .25  .5 ];
 end
+end
+
+function fitpara = FitNormal(x)
+pd = fitdist(x, 'Normal');
+ci =  paramci(pd);
+fitpara = (ci(2, 1) - ci(1, 1))/2;
 end
 
 function stdv = TemporalSTD(time, u)

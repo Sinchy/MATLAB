@@ -10,19 +10,20 @@ figure;
 [h,f]=hist(data(:,12),100);
 semilogy(f./std(data(idx,12)),h./trapz(f./std(data(idx,12)),h),'cs');
 hold on;
+h1 = chi2gof(data(:, 12))
 
 % mean_value = mean(data(:,13));
 % deviation = std(data(:,13));
 % xbins = mean_value - 4 * deviation : 8 * deviation / 100 : mean_value + 4 * deviation;
 [h,f]=hist(data(:,13),100);
 semilogy(f./std(data(idx,13)),h./trapz(f./std(data(idx,13)),h),'ro');
-
+h2 = chi2gof(data(:, 13))
 % mean_value = mean(data(:,14));
 % deviation = std(data(:,14));
 % xbins = mean_value - 4 * deviation : 8 * deviation / 100 : mean_value + 4 * deviation;
 [h,f]=hist(data(:,14),100);
 semilogy(f./std(data(idx,14)),h./trapz(f./std(data(idx,14)),h),'b^');
-
+h3 = chi2gof(data(:, 14))
 xx=-6:0.1:6;
 yy=exp(-xx.^2/2);
 semilogy(xx,yy./trapz(xx,yy),'k--');

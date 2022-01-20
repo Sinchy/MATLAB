@@ -6,8 +6,8 @@ seq_frame = randperm(num_frame);
 frame_no = frame_no(seq_frame);
 
 num_bin = length(redge_lin)-1;
-num_sample = 10000;
-max_num_sample_perframe = 10000;
+num_sample = 1000000;
+max_num_sample_perframe = 1000;
 sample_count = zeros(num_bin, 1);
 sample_strfun = zeros(num_bin, num_sample);
 % sample_corr_va = zeros(num_bin, num_sample);

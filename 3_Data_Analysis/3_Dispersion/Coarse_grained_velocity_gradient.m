@@ -122,25 +122,31 @@ classdef Coarse_grained_velocity_gradient
             end
         end
         
-        function du_dx_field = Cal_CGVG_field2(obj, particles, filter_length)
+        function du_dx_field = Cal_CGVG_field2(obj, particles, filter_length, domain_size)
 %             particles = obj.data_map.Data.tracks(obj.data_map.Data.tracks(:, 4) == frame, :);
-            max_x = max(particles(:, 1)); min_x = min(particles(:, 1));
-            max_y = max(particles(:, 2)); min_y = min(particles(:, 2));
-            max_z = max(particles(:, 3)); min_z = min(particles(:, 3));
+            if ~exist('domain_size', 'var')
+                max_x = max(particles(:, 1)); min_x = min(particles(:, 1));
+                max_y = max(particles(:, 2)); min_y = min(particles(:, 2));
+                max_z = max(particles(:, 3)); min_z = min(particles(:, 3));
+            else
+                min_x = domain_size(1,1); max_x = domain_size(1,2);
+                min_y = domain_size(2,1); max_y = domain_size(2,2);
+                min_z = domain_size(3,1); max_z = domain_size(3,2);
+            end
             
-            x_grid =min_x + filter_length / 2 : filter_length/2 : max_x - filter_length / 2;
-            y_grid =min_y + filter_length / 2 : filter_length/2 : max_y - filter_length / 2;
-            z_grid =min_z + filter_length / 2 : filter_length/2 : max_z - filter_length / 2;
+            x_grid =min_x + filter_length / 2 : filter_length : max_x - filter_length / 2;
+            y_grid =min_y + filter_length / 2 : filter_length : max_y - filter_length / 2;
+            z_grid =min_z + filter_length / 2 : filter_length : max_z - filter_length / 2;
             
             n_x = length(x_grid);
             n_y = length(y_grid);
             n_z = length(z_grid);
             du_dx_field = zeros(n_x * n_y * n_z, 12);
-            h = waitbar(0, 'processing...');
+%             h = waitbar(0, 'processing...');
             for i = 1 : n_x
                 for j = 1 : n_y
                     for k = 1 : n_z
-                        waitbar( ((i - 1)* n_y * n_z+ (j - 1)* n_z+ k) / ( n_x * n_y * n_z), h, 'processing...');
+%                         waitbar( ((i - 1)* n_y * n_z+ (j - 1)* n_z+ k) / ( n_x * n_y * n_z), h, 'processing...');
                         du_dx = Cal_CGVG_LSF(obj, particles, [x_grid(i), y_grid(j), z_grid(k)], filter_length);
                         du_dx_field( (i - 1)* n_y * n_z+ (j - 1)* n_z+ k, :) = [x_grid(i), y_grid(j), z_grid(k), reshape(du_dx, [1 9])];
                     end

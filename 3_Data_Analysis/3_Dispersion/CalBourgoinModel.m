@@ -22,6 +22,6 @@ alpha = .01;
 g = (2 * ( (1 + alpha^2 * C^3 / 4) ^ (1/3) - 1) / alpha / C) ^ 3;
 D = (g * disp_rate *(t + ((mean(IS)).^2/(g*disp_rate)) .^(1/3)).^3).^.5;
 R = (D-mean(IS)).^2;
-[tn, Rn] = NormalizePairDispersion(struct_disprate, R, IS);
+[tn, Rn] = NormalizePairDispersion(struct_disprate, R, IS/1e3, 5000);
 end
 

@@ -1,4 +1,4 @@
-function [img_bubble, img_overlap] = GetImageOnTracks(imgdir, track, camParaCalib, skip_frame)
+function [img_bubble, img_overlap] = GetImageOnTracks(imgdir, track, bubble_size,camParaCalib, skip_frame)
 ncam = size(camParaCalib, 1);
 
 % cam = cell(ncam, 1);
@@ -10,16 +10,16 @@ end
 frame = track(1, 4);
 img = imread([imgdir 'cam_1/cam1frame' num2str(frame,'%06.0f') '.tif']);
 [hpix, wpix] = size(img);
-[centers, radii] = ObtainBubble2DCenterSize(img);
-pos2D_mm =cam(1).WorldToImage(track(1, 1:3)');
-pos2D = cam(1).Distort(pos2D_mm);
-dist = vecnorm(centers - pos2D(1:2), 2, 2);
-
-[dist_min, index]= min(dist);
-if dist_min > radii(index)
-    warning('The found particle may be wrong.');
-end
-bubble_size = radii(index);
+% [centers, radii] = ObtainBubble2DCenterSize(img);
+% pos2D_mm =cam(1).WorldToImage(track(1, 1:3)');
+% pos2D = cam(1).Distort(pos2D_mm);
+% dist = vecnorm(centers - pos2D(1:2), 2, 2);
+% 
+% [dist_min, index]= min(dist);
+% if dist_min > radii(index)
+%     warning('The found particle may be wrong.');
+% end
+% bubble_size = radii(index);
 image_size = round(bubble_size * 3);
 
 %% 

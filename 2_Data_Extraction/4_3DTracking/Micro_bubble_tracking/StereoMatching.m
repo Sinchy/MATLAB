@@ -1,6 +1,6 @@
-function [matches_pos3D, mean_radii, tri_err, matches_pos2D] = StereoMatching(pos2D, radii, camParaCalib, img)
+function [matches_pos3D, mean_radii, std_radii, tri_err, matches_pos2D] = StereoMatching(pos2D, radii, camParaCalib)
 ncam = size(camParaCalib, 1);
-mindist_2D = .08;
+mindist_2D = .06;
 
 % cam = cell(ncam, 1);
 for i = 1 : ncam
@@ -75,11 +75,13 @@ end
 matches_pos3D = zeros(num_match, 3);
 tri_err = zeros(num_match, 1);
 mean_radii = zeros(num_match, 1);
+std_radii  = zeros(num_match, 1);
 for i = 1 : num_match
     [position3D, error] = Triangulation(cam, matches_pos2D(i, :));
     matches_pos3D(i, :) = position3D;
     tri_err(i) = error;
     mean_radii(i) = mean([radii{1}(matches(i, 1)), radii{2}(matches(i, 2)),  radii{3}(matches(i, 3)), radii{4}(matches(i, 4))]);
+    std_radii(i) = std([radii{1}(matches(i, 1)), radii{2}(matches(i, 2)),  radii{3}(matches(i, 3)), radii{4}(matches(i, 4))]);
 end
 end
 
@@ -179,9 +181,12 @@ function particles_index = ParticleFinder2To1(cam1, cam2, cam3, pos1, pos2, mind
         angle = 360 - angle;
     end
     mindist = abs(mindist_2D / sin(pi *  angle / 360));
-    if mindist > 1200 * 0.04
-        mindist = 1200 * 0.04;
-    end
+%     if mindist > 1200 * 0.04
+%         mindist = 1200 * 0.04;
+%     end
+if (mindist > mindist * 3) 
+		mindist = mindist * 3;
+end
     
     % the intersection point
     x = (b2 - b1) / (a1 - a2);
@@ -247,9 +252,12 @@ function is_candidate = ParticleCheck2To1(cam1, cam2, cam3, pos1, pos2, pos3, mi
         angle = 360 - angle;
     end
     mindist = abs(mindist_2D / sin(pi *  angle / 360));
-    if mindist > 1200 * 0.04
-        mindist = 1200 * 0.04;
-    end
+%     if mindist > 1200 * 0.04
+%         mindist = 1200 * 0.04;
+%     end
+    if (mindist > mindist * 3) 
+		mindist = mindist * 3;
+end
     
         % the intersection point
     x = (b2 - b1) / (a1 - a2);
