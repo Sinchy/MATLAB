@@ -124,6 +124,10 @@ public:
 
 	void Processed() { processed = true; };
 	bool IsProcessed() { return processed; };
+	void SetTrID(int id) { trID = id; };
+	int GetTrID() { return trID; };
+	void SetR(vector<double> r) { radius = r; };
+	vector<double> GetR() { return radius; };
 
 private:
 	std::deque<Position> pos;
@@ -131,6 +135,8 @@ private:
 	std::deque<Position> acc;
 	std::deque<Position> vel_fluc;
 	std::deque<int> time;	// the time (as an integer frame number)
+	int trID = 0;
+	vector<double> radius;
 
 	bool processed = false;
 	int occluded = 0; // a counter keeping track of the number of frames this 

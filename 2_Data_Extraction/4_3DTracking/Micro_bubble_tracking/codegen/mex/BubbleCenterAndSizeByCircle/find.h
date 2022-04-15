@@ -12,15 +12,15 @@
 #pragma once
 
 /* Include files */
+#include "BubbleCenterAndSizeByCircle_types.h"
+#include "rtwtypes.h"
+#include "covrt.h"
+#include "emlrt.h"
+#include "mex.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "covrt.h"
-#include "rtwtypes.h"
-#include "BubbleCenterAndSizeByCircle_types.h"
 
 /* Function Declarations */
 void eml_find(const emlrtStack *sp, const emxArray_boolean_T *x,

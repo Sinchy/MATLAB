@@ -9,7 +9,7 @@ eul = rotm2eul(camParaCalib.R);
 angles = eul';
 
 %params = [angles camParaCalib.T' camParaCalib.f_eff camParaCalib.k1 camParaCalib.Noffw camParaCalib.Noffh];
-params = [angles camParaCalib.T' camParaCalib.f_eff camParaCalib.k1];
+params = [angles' camParaCalib.T' camParaCalib.f_eff camParaCalib.k1];
 params_const = [camParaCalib.wpix, camParaCalib.hpix, camParaCalib.Npixw, camParaCalib.Npixh];
     
 x=params;
@@ -34,7 +34,7 @@ params=x;
     mu=params(3);
     angles=params(1:3);
     
-    if size(angles,1)~=3
+    if ~(size(angles,1)~=3)
         angles=angles';
     end
     rotm = eul2rotm(angles);

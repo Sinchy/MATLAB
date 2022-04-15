@@ -16,6 +16,18 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+deque<string> SplitFilename(const std::string& str)
+{
+	deque<string> path_file;
+	//std::cout << "Splitting: " << str << '\n';
+	std::size_t found = str.find_last_of("/\\");
+	//std::cout << " path: " << str.substr(0, found) << '\n';
+	//std::cout << " file: " << str.substr(found + 1) << '\n';
+	path_file.push_back(str.substr(0, found));
+	path_file.push_back(str.substr(found + 1));
+	return path_file;
+}
+
 void LoadTrackFromTXT(string path, deque<Track>& tracks) noexcept {
 	NumDataIO<double> data_io;
 	data_io.SetFilePath(path);
@@ -23,11 +35,14 @@ void LoadTrackFromTXT(string path, deque<Track>& tracks) noexcept {
 	unsigned int total_len = total_num / 5;
 	data_io.SetTotalNumber(total_num);
 	double* track_data = new double[total_num];
+	int num_previous_tracks = tracks.size();
 	if (total_len != 0) {
 		data_io.ReadData((double*)track_data);
 		for (unsigned int i = 0; i < total_num; ) {
-			unsigned int track_no = track_data[i];
+			int track_no = (int) track_data[i];
+			//cout << track_no << endl;
 			Track track;
+			//track.SetTrID(track_no);
 			while (track_data[i] == track_no) { // for the same track
 				++i;
 				int time = track_data[i];
@@ -42,6 +57,7 @@ void LoadTrackFromTXT(string path, deque<Track>& tracks) noexcept {
 				track.AddNext(pos, time);
 			}
 			tracks.push_back(track);
+			(tracks.end() - 1)->SetTrID(track_no + num_previous_tracks);
 			
 
 			// after getting the track
@@ -58,7 +74,37 @@ void LoadTrackFromTXT(string path, deque<Track>& tracks) noexcept {
 		
 	}
 	delete[] track_data;
+
+	//int num_load_track = tracks.size() - num_previous_tracks;
+
+		// Read radius if there are radius files
+	deque<string> path_file = SplitFilename(path);
+	string radius_path = path_file[0] + "/Radius" + path_file[1];
+	if (std::filesystem::exists(radius_path)) {
+		data_io.SetFilePath(radius_path);
+		unsigned int total_num = data_io.GetTotalNumber();
+		int num_tracks = tracks.size() - num_previous_tracks;
+		//unsigned int total_len = num_load_track;
+		unsigned int num_cam = total_num / num_tracks - 1;
+		data_io.SetTotalNumber(total_num);
+		double* radius_data = new double[total_num];
+		
+		if (num_tracks != 0 ) {
+			data_io.ReadData((double*)radius_data);
+			
+			for (unsigned int i = 0; i < num_tracks; ++ i) {
+				vector<double> r;
+				for (unsigned int j = 0; j < num_cam; ++j) {
+					r.push_back(radius_data[(num_cam + 1) * i + j + 1]);
+				}
+				tracks[num_previous_tracks + i].SetR(r);
+			}
+		}
+		delete[] radius_data;
+	}
+
 }
+
 
 void SaveTrackToTXT(deque<Track>& tracks, string address) {
 	//size_t num_track = tracks.size(); // number of tracks
@@ -215,6 +261,7 @@ void SaveTrackToGDF(deque<Track>& tracks, string address) {
 		if (it->IsProcessed()) {
 			unsigned int len = it->Length();
 			unsigned int start_time = it->GetTime(0);
+			int trID = it->GetTrID();
 			for (unsigned int j = 0; j < len; ++j) {
 				Position pos = it->GetPos(j);
 				double val = pos.X();
@@ -222,7 +269,7 @@ void SaveTrackToGDF(deque<Track>& tracks, string address) {
 				val = pos.Y(); outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
 				val = pos.Z(); outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
 				val = j + start_time; outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
-				val = i; outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
+				val = trID; outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
 
 				Position vel = it->GetVel(j);
 				val = vel.X(); outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
@@ -251,6 +298,109 @@ void SaveTrackToGDF(deque<Track>& tracks, string address) {
 
 	//delete[] track_data;
 }
+
+void SaveRadiusToGDF(deque<Track>& tracks, string address) {
+	//size_t num_track = tracks.size(); // number of tracks
+	//unsigned int total_len = 0; // Total length of all the tracks
+	//for (unsigned int i = 0; i < num_track; ++i) {
+	//	total_len = total_len + tracks.at(i).Length();
+	//}
+	//double* track_data = new double[total_len * 5];
+
+	//unsigned int index = 0;
+	//for (unsigned int i = 0; i < num_track; ++i) {
+	//	unsigned int len = tracks.at(i).Length();
+	//	unsigned int start_time = tracks.at(i).GetTime(0);
+	//	for (unsigned int j = 0; j < len; ++j) {
+	//		track_data[index] = i; // the track NO.
+	//		++index;
+	//		track_data[index] = j + start_time; // the current frame
+	//		++index;
+	//		track_data[index] = tracks.at(i)[j].X();
+	//		++index;
+	//		track_data[index] = tracks.at(i)[j].Y();
+	//		++index;
+	//		track_data[index] = tracks.at(i)[j].Z();
+	//		++index;
+	//	}
+	//}
+	ofstream outfile;
+
+	int num_track = tracks.size(); // number of tracks
+	unsigned int total_len = 0; // Total length of all the tracks
+	for (unsigned int i = 0; i < num_track; ++i) {
+		if (tracks[i].IsProcessed())
+			total_len ++;
+	}
+	int num_cam = tracks.begin()->GetR().size();
+	int num_element = 1 + num_cam; // track ID, radius for num_cam cameras
+
+	// Header file
+	outfile.open(address, ios::out | ios::trunc | ios::binary);
+	int magic = 82991;  // file ID as a track file
+	outfile.write(reinterpret_cast<const char*>(&magic), 4);
+	// number of dimensions
+	int tmpi = 2;
+	outfile.write(reinterpret_cast<const char*>(&tmpi), 4);
+	// number of columns
+	//tmpi = 6;
+	outfile.write(reinterpret_cast<const char*>(&num_element), 4);
+	// number of rows: we don't know this yet!
+	//tmpi = 0;
+	outfile.write(reinterpret_cast<const char*>(&total_len), 4);
+	// a 4 means floating point numbers
+	tmpi = sizeof(double);
+	outfile.write(reinterpret_cast<const char*>(&tmpi), 4);
+	// number of total points
+	tmpi = num_element * total_len;
+	outfile.write(reinterpret_cast<const char*>(&tmpi), 4);
+
+
+	//MATFile* matfile_w = matOpen(address, "w");
+	//mxArray* array_w = mxCreateDoubleMatrix(total_len, num_element, mxREAL);
+	//size_t dims[2] = { total_len, num_element };
+	//mxArray* array_w = mxCreateNumericArray(2, dims, mxDOUBLE_CLASS, mxREAL);
+
+	//double* tr_data = (double*)(mxGetPr(array_w));
+	//double* track_data = tr_data;
+	//double* track_data = new double[total_len * num_element];
+	//unsigned int index = 0;
+	int i = 0;
+	deque<Track>::iterator it = tracks.begin();
+	//std::cout << "Moving data to mat file buffer." << endl;
+	for (;it != tracks.end(); it++) {
+		if (it->IsProcessed()) {
+			//unsigned int len = it->Length();
+			//unsigned int start_time = it->GetTime(0);
+			int trID = it->GetTrID();
+			double val = trID; 
+			outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
+			vector<double> r = it->GetR();
+			for (int j = 0; j < r.size(); ++j) {
+				val = r[j];
+				outfile.write(reinterpret_cast<const char*>(&val), sizeof(double));
+			}
+			
+			//index = index + len;
+			i++;
+		}
+		
+		//it = tracks.erase(it); // destroy while saving
+	}
+
+	outfile.close();
+
+	//std::cout << "Saving buffer to data." << endl;
+
+
+	//NumDataIO<double> data_io;
+	//data_io.SetFilePath(address);
+	//data_io.SetTotalNumber(total_len * num_element);
+	//data_io.WriteData((double*)track_data);
+
+	//delete[] track_data;
+}
+
 
 //int SaveTrackToMat(deque<Track>& tracks, char* address) {
 //
@@ -461,7 +611,9 @@ void main(int argc, char** argv) {
 	std::cout << "Loading txt track files ..." << endl;
 	for (const auto& entry : fs::directory_iterator(track_path)) {
 		string file_name = entry.path().string();
-		if (file_name.find("ActiveShortTracks") != std::string::npos || file_name.find(".txt") == std::string::npos)
+		if (file_name.find("ActiveShortTracks") != std::string::npos ||
+			file_name.find("Radius") != std::string::npos ||
+			file_name.find(".txt") == std::string::npos)
 			continue;
 		cout << "Reading:" << file_name << endl;
 		LoadTrackFromTXT((string)file_name, tracks);
@@ -626,7 +778,16 @@ void main(int argc, char** argv) {
 
 	std::strcat(save_file, "/tracks.gdf");
 	cout << "Saving data to: " << save_file << endl;
+	// save radius before tracks!
+	if (tracks[0].GetR().size() > 0) {
+		char* save_file2 = new char[strlen(track_path)];
+		std::strcpy(save_file2, file_path);
+		std::strcat(save_file2, "/radius.gdf");
+		SaveRadiusToGDF(tracks, save_file2);
+	} 
 	SaveTrackToGDF(tracks, save_file);
+	
+		
 	std::cout << "Save done." << endl;
 }
 

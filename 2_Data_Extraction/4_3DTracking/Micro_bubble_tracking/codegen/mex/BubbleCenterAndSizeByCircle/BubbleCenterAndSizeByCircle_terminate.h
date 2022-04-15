@@ -12,18 +12,18 @@
 #pragma once
 
 /* Include files */
+#include "rtwtypes.h"
+#include "covrt.h"
+#include "emlrt.h"
+#include "mex.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "covrt.h"
-#include "rtwtypes.h"
-#include "BubbleCenterAndSizeByCircle_types.h"
 
 /* Function Declarations */
 void BubbleCenterAndSizeByCircle_atexit(void);
+
 void BubbleCenterAndSizeByCircle_terminate(void);
 
 /* End of code generation (BubbleCenterAndSizeByCircle_terminate.h) */

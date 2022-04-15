@@ -709,8 +709,10 @@ p2d3d(:,3:5) = p2d3d(:,3:5).*gridspace;
     
 camParaCalib1= initial_calib(p2d3d(:,1:2), p2d3d(:,3:5), camParaknown);
 angle1 = rotm2eul(camParaCalib1.R)
+% camParaCalib1.f_eff = 16;
 
 if noiterate ==0
+
     if offseton==1
     [camParaCalib, angles] = iterate_calib(p2d3d(:,1:2), p2d3d(:,3:5), camParaCalib1);
     else 

@@ -12,7 +12,7 @@ for i = frame_range(1):skip_frame:frame_range(2)
     img1 = max(img1,c);
 end
 img1 =  uint8(img1);
- figure; 
+%  figure; 
 %  imshow(uint8(img1(494:567, 755:821)));
 imshow(uint8(img1));
 load([path beforeVSCpath]);
@@ -22,7 +22,7 @@ load([path beforeVSCpath]);
 tracks_interest = tracks( tracks(:, 4) >= frame_range(1) & tracks(:, 4) <= frame_range(2), :);
 pos2d_old = calibProj_Tsai(camParaCalib(cam), tracks_interest(:,1:3));
 hold on
-plot(pos2d_old(:,1), pos2d_old(:,2), 'r.', 'MarkerSize',2);
+plot(pos2d_old(:,1), pos2d_old(:,2), 'r.', 'MarkerSize',4);
 % plot(pos2d_old(:,1) - 755, pos2d_old(:,2) -494, 'b*', 'MarkerSize',12);
 % plot(pos2d_old(1,1), pos2d_old(1,2), 'y*');
 if exist('afterVSCpath', 'var')
@@ -31,6 +31,8 @@ if exist('afterVSCpath', 'var')
     plot(pos2d_new(:,1), pos2d_new(:,2), 'r.', 'MarkerSize',12);
 end
 hold off;
+frame_h = get(handle(gcf),'JavaFrame');
+set(frame_h,'Maximized',1);
 % fig = figure;
 % PlotTracks(tracks, fig, 'r.');
 end

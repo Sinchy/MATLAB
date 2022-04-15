@@ -163,7 +163,7 @@ function [data, mean_data] = ashwanth_rni_vel_acc(datapath, filterwidth, fitwidt
 %     end
     
     %%
-        for i= 1 : num_tracks   
+        parfor i= 1 : num_tracks   
         % display progress of loop
 
        percent = parfor_progress;

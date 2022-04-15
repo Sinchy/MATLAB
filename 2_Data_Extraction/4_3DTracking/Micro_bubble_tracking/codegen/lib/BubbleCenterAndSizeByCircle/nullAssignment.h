@@ -1,29 +1,31 @@
 //
-//  Academic License - for use in teaching, academic research, and meeting
-//  course requirements at degree granting institutions only.  Not for
-//  government, commercial, or other organizational use.
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
 //
-//  nullAssignment.h
+// nullAssignment.h
 //
-//  Code generation for function 'nullAssignment'
+// Code generation for function 'nullAssignment'
 //
-
 
 #ifndef NULLASSIGNMENT_H
 #define NULLASSIGNMENT_H
 
 // Include files
+#include "rtwtypes.h"
+#include "coder_array.h"
+#include "omp.h"
 #include <cstddef>
 #include <cstdlib>
-#include "rtwtypes.h"
-#include "omp.h"
-#include "BubbleCenterAndSizeByCircle_types.h"
-#define MAX_THREADS                    omp_get_max_threads()
 
 // Function Declarations
-extern void nullAssignment(coder::array<float, 2U> &x, const coder::array<bool,
-  2U> &idx);
+namespace coder {
+namespace internal {
+void nullAssignment(::coder::array<float, 2U> &x,
+                    const ::coder::array<bool, 2U> &idx);
+
+}
+} // namespace coder
 
 #endif
-
 // End of code generation (nullAssignment.h)

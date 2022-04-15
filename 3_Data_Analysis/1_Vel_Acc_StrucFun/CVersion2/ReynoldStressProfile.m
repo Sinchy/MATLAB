@@ -26,6 +26,7 @@ for dir1 = 1:3
 % stdv1  = accumarray(uidx, uv, [], @nanstd);
 
 mean_map = [uxy', avgv1, avgv2, avgv3];
+std(avgv2)
 
 % time = accumarray(uidx, velacc(:,4), [], @(x) {x});
 % u1 = accumarray(uidx, uv, [], @(x) {x});

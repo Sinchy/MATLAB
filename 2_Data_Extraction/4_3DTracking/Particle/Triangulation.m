@@ -2,7 +2,8 @@ function [position3D, error] = Triangulation(camParaCalib, position2D)
 A = zeros(3, 3);
 B = zeros(3, 1);
 D = 0;
-for i = 1 : 4
+n_cam = size(camParaCalib, 1);
+for i = 1 : n_cam
     % get the world position of the point on the image
     SIpos = Img2World(camParaCalib(i), UnDistort(position2D((i - 1) * 2 + 1 : (i - 1) * 2 + 2), camParaCalib(i))); 
     % get the vector 

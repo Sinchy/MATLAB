@@ -61,28 +61,35 @@ for i = 1 : num_pair
     len = min(len1, len2);
     disp_vec = (track1(1 : len, 1:3) - track2(1 : len, 1:3)) / 1e3; % change the unit to m
     
-    veldiff_vec = (track1(1 : len, 6:8) - track2(1 : len, 6:8)) / 1e3;
-    veldiff_sca = vecnorm(veldiff_vec, 2, 2).^2;
-    veldiff_matrix(i, 1 : len ) = veldiff_sca;
-    
-    disp_dr = disp_vec ./ vecnorm(disp_vec, 2, 2);
-    veldiff_lgtn = dot(veldiff_vec, disp_dr, 2);
-    veldiff_pl_matrix(i, 1 : len) = veldiff_lgtn;
-
     disp_sca = vecnorm(disp_vec, 2, 2);
     IS(i) = disp_sca(1);
     sep_matrix(i, 1:len) = disp_sca;
     disp_matrix(i, 1 : len - 1) = (disp_sca(2:end) - disp_sca(1)) .^2 ;
+    if size(tracks, 2) > 8
+        veldiff_vec = (track1(1 : len, 6:8) - track2(1 : len, 6:8)) / 1e3;
+        veldiff_sca = vecnorm(veldiff_vec, 2, 2).^2;
+        veldiff_matrix(i, 1 : len ) = veldiff_sca;
+
+        disp_dr = disp_vec ./ vecnorm(disp_vec, 2, 2);
+        veldiff_lgtn = dot(veldiff_vec, disp_dr, 2);
+        veldiff_pl_matrix(i, 1 : len) = veldiff_lgtn;
+
+
+    else
+        veldiff_matrix = []; veldiff_pl_matrix =[]; sep_matrix =[];
+    end
 end
 
 %remove repeated pair
 [~,index,~] = unique(disp_matrix(:,1));
 disp_matrix = disp_matrix(index, :);
 pairs = pairs(index, :);
-veldiff_matrix = veldiff_matrix(index, :);
-veldiff_pl_matrix = veldiff_pl_matrix(index, :);
 IS = IS(index);
-sep_matrix = sep_matrix(index, :);
+if size(tracks, 2) > 8
+    veldiff_matrix = veldiff_matrix(index, :);
+    veldiff_pl_matrix = veldiff_pl_matrix(index, :);
+    sep_matrix = sep_matrix(index, :);
+end
 
 R = zeros(max_pair_len, 1);
 for i = 1 : max_pair_len

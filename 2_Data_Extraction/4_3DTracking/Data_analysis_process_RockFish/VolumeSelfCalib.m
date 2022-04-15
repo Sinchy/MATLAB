@@ -4,7 +4,7 @@ if ~exist('load_file', 'var')
      good_tracks = PickGoodTracks(tracks, view_size);
 
     % Choose 4000 particles evenly 
-    good_particles = PickParticleEvenly(good_tracks, 20000);
+    good_particles = PickParticleEvenly(good_tracks, 40000);
 
     %start_frame = 0;
     good_particles(:, 4) = good_particles(:, 4) + start_frame - 1;

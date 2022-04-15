@@ -145,7 +145,9 @@ if sum(abs(Xp3D(:,1))) == 0
             warning('calib_Tsai: singular value of A2 < minsv, probably A2 is singular');
         end
     end
+%     a = a * 16/a(1);
     f_eff = a(1);
+% f_eff = 16;
     Tz = a(2);
     if f_eff < 0
         r1(1) = -r1(1);
@@ -184,6 +186,7 @@ if sum(abs(Xp3D(:,1))) == 0
         f_eff = a(1);
         Tz = a(2);
         k1 = sum((Xc(:,1)*f_eff - X.*(Xc(:,3)+Tz)).*(X.*(Xc(:,3)+Tz).*rdsq))/sum((X.*(Xc(:,3)+Tz).*rdsq).^2);
+        k1 =0;
         iter = iter+1;
     end
 

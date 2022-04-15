@@ -5,13 +5,13 @@ data_Lav = sortrows(data_Lav, 5);
 frame_inc = data_Lav(2 : end, 4) - data_Lav(1 : end -1, 4);
 trackid_inc = data_Lav(2 : end, 5) - data_Lav(1 : end - 1, 5);
 data_Lav(1,5) = 1;
-for i = 1 : size(frame_inc)
-    if frame_inc(i) ~= 1 || trackid_inc(i) ~= 0
-        data_Lav(i + 1, 5) = data_Lav(i, 5) + 1;
-    else
-        data_Lav(i + 1, 5) = data_Lav(i, 5);
-    end
-end
+% for i = 1 : size(frame_inc)
+%     if frame_inc(i) ~= 1 || trackid_inc(i) ~= 0
+%         data_Lav(i + 1, 5) = data_Lav(i, 5) + 1;
+%     else
+%         data_Lav(i + 1, 5) = data_Lav(i, 5);
+%     end
+% end
 
 no_tracks = unique(data_Lav(:,5));
 num_tracks = length(no_tracks);

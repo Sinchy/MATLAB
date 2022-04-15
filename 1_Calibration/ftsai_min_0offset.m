@@ -6,7 +6,7 @@ function f = ftsai_min_0offset(params, params_const, Xtest3D, Ximg)
 % unpack the params 
     angles=params(1:3);
     
-    if size(angles,1)~=3
+    if ~(size(angles,1)~=3)
         angles=angles';
     end
     rotm = eul2rotm(angles);

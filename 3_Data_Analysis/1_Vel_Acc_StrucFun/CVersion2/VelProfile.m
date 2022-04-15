@@ -16,6 +16,7 @@ avgv2 = accumarray(uidx, velacc(:,7), [], @nanmean);
 avgv3 = accumarray(uidx, velacc(:,8), [], @nanmean);
 mean_map = [uxy', avgv1, avgv2, avgv3];
 
+
 % stdv1 = accumarray(uidx, velacc(:,6), [], @nanstd);
 % stdv2 = accumarray(uidx, velacc(:,7), [], @nanstd);
 % stdv3 = accumarray(uidx, velacc(:,8), [], @nanstd);
@@ -37,17 +38,17 @@ hold on
 errorbar(mean_map(:,1),mean_map(:,3)./1e3,std_map(:,3)./1e3./sqrt(1),'bo-','LineWidth',2.0,'MarkerSize',10.0);
 errorbar(mean_map(:,1),mean_map(:,4)./1e3,std_map(:,4)./1e3./sqrt(1),'ko-','LineWidth',2.0,'MarkerSize',10.0);
 
-xlabel([direction(dir1) ' (mm)'],'fontsize',30,'fontname','Times New Roman','Interpreter','latex');
-ylabel('$u_{mean}$ (m/s)','fontsize',30,'fontname','Times New Roman','Interpreter','latex');
+xlabel([direction(dir1) ' (mm)'],'fontsize',20,'fontname','Times New Roman','Interpreter','latex');
+ylabel('$u_{mean}$ (m/s)','fontsize',20,'fontname','Times New Roman','Interpreter','latex');
 set(gca, 'LineWidth', 2.0 );
-set(gca, 'fontsize', 24.0 );
+set(gca, 'fontsize', 20.0 );
 set(gca, 'XMinorTick', 'on');
 set(gca, 'YMinorTick', 'on');
 xlim([-30 30])
 ylim([-.5 .5])
 % legend('u','v','w')        
 end
-
+m_fluc = zeros(3,3);
 for dir1 = 1:3
     max_l = max(velacc(:, dir1));
     min_l = min(velacc(:, dir1));
@@ -63,7 +64,7 @@ avgv1 = accumarray(uidx, u_s(:,1), [], @nanmean) .^.5;
 avgv2 = accumarray(uidx, u_s(:,2), [], @nanmean) .^.5;
 avgv3 = accumarray(uidx, u_s(:,3), [], @nanmean) .^.5;
 mean_map = [uxy', avgv1, avgv2, avgv3];
-
+m_fluc(dir1, :) = mean(mean_map(:, 2:4))
 % stdv1 = accumarray(uidx, velacc(:,12), [], @nanstd);
 % stdv2 = accumarray(uidx, velacc(:,13), [], @nanstd);
 % stdv3 = accumarray(uidx, velacc(:,14), [], @nanstd);
@@ -88,10 +89,10 @@ std_map = [uxy', stdv1, stdv2, stdv3];
         errorbar(mean_map(:,1),mean_map(:,3)./1e3,std_map(:,3)./1e3./sqrt(1),'b^--','LineWidth',2.0,'MarkerSize',10.0);
         errorbar(mean_map(:,1),mean_map(:,4)./1e3,std_map(:,4)./1e3./sqrt(1),'k^--','LineWidth',2.0,'MarkerSize',10.0);
 
-        xlabel([direction(dir1) ' (mm)'],'fontsize',30,'fontname','Times New Roman','Interpreter','latex');
-        ylabel('$u$ (m/s)','fontsize',30,'fontname','Times New Roman','Interpreter','latex');
+        xlabel([direction(dir1) ' (mm)'],'fontsize',20,'fontname','Times New Roman','Interpreter','latex');
+        ylabel('$u$ (m/s)','fontsize',20,'fontname','Times New Roman','Interpreter','latex');
         set(gca, 'LineWidth', 2.0 );
-        set(gca, 'fontsize', 26.0 );
+        set(gca, 'fontsize', 20.0 );
         set(gca, 'XMinorTick', 'on');
         set(gca, 'Ticklength', [0.03;0.01] );
         set(gca, 'YMinorTick', 'on');
@@ -101,16 +102,25 @@ std_map = [uxy', stdv1, stdv2, stdv3];
         ylim([-.5 .5])
         
 %         leg=legend('$\langle u_1 \rangle$','$\langle u_2 \rangle$','$\langle u_3 \rangle$','$u_1$','$u_2$','$u_3$');
-leg=legend('$u_{\textrm{rms}}$','$v_{\textrm{rms}}$','$w_{\textrm{rms}}$');
+leg=legend('$\langle U_1 \rangle$','$\langle U_2\rangle$','$\langle U_3 \rangle$', '$u_1''$','$u_2''$','$u_3''$');
         set(leg,'Interpreter','latex')
-        set(leg, 'fontsize', 18.0 ); 
+        set(leg, 'fontsize', 15.0 ); 
         set(leg, 'box','off');
-        set(leg,'NumColumns',3)
+        set(leg,'NumColumns',3, 'Orientation', 'horizontal')
+        
         ytickvals=[ -.5  -.25  0  .25  .5 ];
 end
+
+mm_fluc = vecnorm(m_fluc, 2, 1);
+ratio = mm_fluc(2) / mm_fluc(1)
+
 end
 
 function fitpara = FitNormal(x)
+if length(x) <= 1
+    fitpara = 0;
+    return;
+end
 pd = fitdist(x, 'Normal');
 ci =  paramci(pd);
 fitpara = (ci(2, 1) - ci(1, 1))/2;

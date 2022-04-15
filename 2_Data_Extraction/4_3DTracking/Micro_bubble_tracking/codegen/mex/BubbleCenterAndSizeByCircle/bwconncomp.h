@@ -12,20 +12,20 @@
 #pragma once
 
 /* Include files */
+#include "BubbleCenterAndSizeByCircle_types.h"
+#include "rtwtypes.h"
+#include "covrt.h"
+#include "emlrt.h"
+#include "mex.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "covrt.h"
-#include "rtwtypes.h"
-#include "BubbleCenterAndSizeByCircle_types.h"
 
 /* Function Declarations */
 void bwconncomp(const emlrtStack *sp, const emxArray_boolean_T *varargin_1,
-                real_T *CC_Connectivity, real_T CC_ImageSize[2], real_T
-                *CC_NumObjects, emxArray_real_T *CC_RegionIndices,
+                real_T *CC_Connectivity, real_T CC_ImageSize[2],
+                real_T *CC_NumObjects, emxArray_real_T *CC_RegionIndices,
                 emxArray_int32_T *CC_RegionLengths);
 
 /* End of code generation (bwconncomp.h) */

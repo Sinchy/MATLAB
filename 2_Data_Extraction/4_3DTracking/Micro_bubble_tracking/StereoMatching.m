@@ -1,6 +1,6 @@
-function [matches_pos3D, mean_radii, std_radii, tri_err, matches_pos2D] = StereoMatching(pos2D, radii, camParaCalib)
+function [matches_pos3D, mean_radii, std_radii, tri_err, matches_pos2D] = StereoMatching(pos2D, radii, camParaCalib, img)
 ncam = size(camParaCalib, 1);
-mindist_2D = .06;
+mindist_2D = .05;
 
 % cam = cell(ncam, 1);
 for i = 1 : ncam
@@ -23,7 +23,7 @@ for i = 1 : size(pos2D_mm{1}, 1)
     pos1_3D = cam(1).ImageToWorld(pos1');
 %     radii_mm = norm(cam(1).UnDistort([radii{1}(i) + 1, 1, 0]) - cam(1).UnDistort([1, 1, 0])); 
 %     mindist_2D = radii_mm * 2;
-    part_candidate_cam2 = ParticleFinder1To1(cam(1), cam(2), pos1_3D, mindist_2D, map{2}, pos2D_mm{2});
+    part_candidate_cam2 = ParticleFinder1To1(cam(1), cam(2), pos1_3D, mindist_2D, map{2}, pos2D_mm{2}, img{2});
     if isempty(part_candidate_cam2)
         continue;
     end
@@ -31,7 +31,7 @@ for i = 1 : size(pos2D_mm{1}, 1)
     for ii = 1 :  length(part_candidate_cam2)
         pos2 = pos2D_mm{2}(part_candidate_cam2(ii), :);
         pos2_3D = cam(2).ImageToWorld(pos2');
-        part_candidate_cam3 = ParticleFinder2To1(cam(1), cam(2), cam(3), pos1_3D, pos2_3D, mindist_2D, map{3}, pos2D_mm{3});
+        part_candidate_cam3 = ParticleFinder2To1(cam(1), cam(2), cam(3), pos1_3D, pos2_3D, mindist_2D, map{3}, pos2D_mm{3}, img{3});
         if isempty(part_candidate_cam3)
             continue;
         end
@@ -42,7 +42,12 @@ for i = 1 : size(pos2D_mm{1}, 1)
             % projecting them back to cam1 and cam2 and check
             if ParticleCheck2To1(cam(2), cam(3), cam(1), pos2_3D, pos3_3D, pos1, mindist_2D) && ...
                     ParticleCheck2To1(cam(1), cam(3), cam(2), pos1_3D, pos3_3D, pos2, mindist_2D)
-                part_candidate_cam4 = ParticleFinder2To1(cam(2), cam(3), cam(4), pos2_3D, pos3_3D, mindist_2D, map{4}, pos2D_mm{4});
+                if (ncam < 4) 
+                    matches(n, :) = [i, part_candidate_cam2(ii), part_candidate_cam3(iii), 0];
+                    n = n + 1;
+                    continue;
+                end
+                part_candidate_cam4 = ParticleFinder2To1(cam(2), cam(3), cam(4), pos2_3D, pos3_3D, mindist_2D, map{4}, pos2D_mm{4}, img{4});
                 if isempty(part_candidate_cam4)
                     continue;
                 end
@@ -80,8 +85,8 @@ for i = 1 : num_match
     [position3D, error] = Triangulation(cam, matches_pos2D(i, :));
     matches_pos3D(i, :) = position3D;
     tri_err(i) = error;
-    mean_radii(i) = mean([radii{1}(matches(i, 1)), radii{2}(matches(i, 2)),  radii{3}(matches(i, 3)), radii{4}(matches(i, 4))]);
-    std_radii(i) = std([radii{1}(matches(i, 1)), radii{2}(matches(i, 2)),  radii{3}(matches(i, 3)), radii{4}(matches(i, 4))]);
+    mean_radii(i) = mean([radii{1}(matches(i, 1)), radii{2}(matches(i, 2)),  radii{3}(matches(i, 3))]); %radii{4}(matches(i, 4))]);
+    std_radii(i) = std([radii{1}(matches(i, 1)), radii{2}(matches(i, 2)),  radii{3}(matches(i, 3))]);%, radii{4}(matches(i, 4))]);
 end
 end
 
@@ -100,7 +105,8 @@ function map = ParticlePositionMap(cam, pos2D)
     end
 end
 
-function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, pos2D_mm)
+function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, pos2D_mm, img)
+
     center_cam1_on_cam2 = cam2.WorldToImage(cam1.Center());
     pos_3D_on_cam2 = cam2.WorldToImage(pos);
     slope_lineofsight = pos_3D_on_cam2 - center_cam1_on_cam2;
@@ -110,7 +116,13 @@ function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, 
     a = (center_cam1_on_cam2(2) - pos_3D_on_cam2(2)) / (center_cam1_on_cam2(1) - pos_3D_on_cam2(1));
     b = pos_3D_on_cam2(2) - a * pos_3D_on_cam2(1);
     linepara = [a, b];
-    
+%     figure;
+%     imshow(img);
+%     p1 = [-50 a*(-50) + b 0]; p2 = [50 a * 50 + b 0];
+%     p1 = cam2.Distort(p1); p2 = cam2.Distort(p2);
+%     p = [p1; p2];
+%     hold on
+%     plot(p(:,1), p(:,2), 'r-');
     if abs(a) >= 1
         npix = cam2.camParaCalib.Npixh;
     else
@@ -158,20 +170,49 @@ function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, 
             end            
         end
     end
+    
+%     pos2D = pos2D_mm(particles_index, :);
+%         pos2D_pixel = [];
+%     for i = 1:size(pos2D,1)
+%         pos2D_pixel(i, :) = cam2.Distort(pos2D(i, :));
+%     end
+%     hold on;
+%     if ~isempty(pos2D_pixel)
+%     plot(pos2D_pixel(:,1), pos2D_pixel(:,2), 'go');
+%     end
+%     
+%     for i = 1:size(pos2D_mm,1)
+%         pos2D_pixel(i, :) = cam2.Distort(pos2D_mm(i, :));
+%     end
+%      plot(pos2D_pixel(:,1), pos2D_pixel(:,2), 'y.');
+%     hold off;
 end
 
-function particles_index = ParticleFinder2To1(cam1, cam2, cam3, pos1, pos2, mindist_2D, map, pos2D_mm)
+function particles_index = ParticleFinder2To1(cam1, cam2, cam3, pos1, pos2, mindist_2D, map, pos2D_mm, img)
 % pos1 from cam1 onto cam3
     center_cam1_on_cam3 = cam3.WorldToImage(cam1.Center());
     pos1_3D_on_cam3 = cam3.WorldToImage(pos1);
     a1 = (center_cam1_on_cam3(2) - pos1_3D_on_cam3(2)) / (center_cam1_on_cam3(1) - pos1_3D_on_cam3(1));
     b1 = pos1_3D_on_cam3(2) - a1 * pos1_3D_on_cam3(1);
     
+%         imshow(img);
+%     p1 = [-50 a1*(-50) + b1 0]; p2 = [50 a1 * 50 + b1 0];
+%     p1 = cam2.Distort(p1); p2 = cam2.Distort(p2);
+%     p = [p1; p2];
+%     hold on
+%     plot(p(:,1), p(:,2), 'r-');
+    
 % pos2 from cam2 onto cam3
     center_cam2_on_cam3 = cam3.WorldToImage(cam2.Center());
     pos2_3D_on_cam3 = cam3.WorldToImage(pos2);
     a2 = (center_cam2_on_cam3(2) - pos2_3D_on_cam3(2)) / (center_cam2_on_cam3(1) - pos2_3D_on_cam3(1));
     b2 = pos2_3D_on_cam3(2) - a2 * pos2_3D_on_cam3(1);
+    
+%         p1 = [-50 a2*(-50) + b2 0]; p2 = [50 a2 * 50 + b2 0];
+%     p1 = cam2.Distort(p1); p2 = cam2.Distort(p2);
+%     p = [p1; p2];
+%     hold on
+%     plot(p(:,1), p(:,2), 'r-');
     
     % the angle between two lines, the mindist depends on the angle
     theta1 = atan(a1) * (180 / pi);
@@ -229,6 +270,15 @@ end
             end
         end
     end
+%     pos2D = pos2D_mm(particles_index, :);
+%     pos2D_pixel = [];
+%     for i = 1:size(pos2D,1)
+%         pos2D_pixel(i, :) = cam2.Distort(pos2D(i, :));
+%     end
+%     hold on;
+%     if ~isempty(pos2D_pixel)
+%     plot(pos2D_pixel(:,1), pos2D_pixel(:,2), 'go');
+%     end
 end
 
 function is_candidate = ParticleCheck2To1(cam1, cam2, cam3, pos1, pos2, pos3, mindist_2D)
@@ -293,7 +343,7 @@ function [position3D, error] = Triangulation(cam, position2D)
 A = zeros(3, 3);
 B = zeros(3, 1);
 D = 0;
-for i = 1 : 4
+for i = 1 : size(cam,2)
     % get the world position of the point on the image
     %SIpos = Img2World(camParaCalib(i), UnDistort(position2D((i - 1) * 2 + 1 : (i - 1) * 2 + 2), camParaCalib(i))); 
     SIpos = cam(i).UnDistort([position2D((i - 1) * 2 + 1 : (i - 1) * 2 + 2), 0]);

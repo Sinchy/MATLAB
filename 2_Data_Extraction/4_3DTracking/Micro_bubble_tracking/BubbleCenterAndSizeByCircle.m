@@ -1,5 +1,5 @@
-function [centers,radii]  = BubbleCenterAndSizeByCircle(img, rmin, rmax, sense)
-%     s = regionprops(img,'Centroid','MajorAxisLength','MinorAxisLength');
- [centers,radii] = imfindcircles(img, [ rmin, rmax], 'Method', 'TwoStage','Sensitivity',  sense,'ObjectPolarity', 'bright');
+function [centers,radii,metrics]  = BubbleCenterAndSizeByCircle(img, rmin, rmax, sense)
+ [centers,radii,metrics] = imfindcircles(img, [ rmin, rmax], 'Sensitivity',  sense);
+
 end
 

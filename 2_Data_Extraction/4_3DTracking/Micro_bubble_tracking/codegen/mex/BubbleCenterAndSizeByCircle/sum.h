@@ -12,17 +12,19 @@
 #pragma once
 
 /* Include files */
+#include "BubbleCenterAndSizeByCircle_types.h"
+#include "rtwtypes.h"
+#include "covrt.h"
+#include "emlrt.h"
+#include "mex.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "covrt.h"
-#include "rtwtypes.h"
-#include "BubbleCenterAndSizeByCircle_types.h"
 
 /* Function Declarations */
-real_T sum(const emlrtStack *sp, const emxArray_real_T *x);
+real_T b_sum(const emlrtStack *sp, const emxArray_real_T *x);
+
+real_T sum(const real_T x[256]);
 
 /* End of code generation (sum.h) */

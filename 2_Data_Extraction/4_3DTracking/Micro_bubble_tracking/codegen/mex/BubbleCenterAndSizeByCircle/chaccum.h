@@ -12,19 +12,19 @@
 #pragma once
 
 /* Include files */
+#include "BubbleCenterAndSizeByCircle_types.h"
+#include "rtwtypes.h"
+#include "covrt.h"
+#include "emlrt.h"
+#include "mex.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "covrt.h"
-#include "rtwtypes.h"
-#include "BubbleCenterAndSizeByCircle_types.h"
 
 /* Function Declarations */
-void chaccum(const emlrtStack *sp, const emxArray_boolean_T *varargin_1, const
-             real_T varargin_2_data[], const int32_T varargin_2_size[2],
+void chaccum(const emlrtStack *sp, const emxArray_uint8_T *varargin_1,
+             const real_T varargin_2_data[], const int32_T varargin_2_size[2],
              emxArray_creal_T *accumMatrix, emxArray_real32_T *gradientImg);
 
 /* End of code generation (chaccum.h) */

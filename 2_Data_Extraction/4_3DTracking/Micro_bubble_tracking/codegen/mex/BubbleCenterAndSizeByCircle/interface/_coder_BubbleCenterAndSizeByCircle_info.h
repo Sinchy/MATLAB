@@ -5,7 +5,7 @@
  *
  * _coder_BubbleCenterAndSizeByCircle_info.h
  *
- * Code generation for function '_coder_BubbleCenterAndSizeByCircle_info'
+ * Code generation for function 'BubbleCenterAndSizeByCircle'
  *
  */
 

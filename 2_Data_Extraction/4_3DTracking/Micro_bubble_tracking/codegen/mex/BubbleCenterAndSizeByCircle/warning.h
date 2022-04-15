@@ -12,22 +12,28 @@
 #pragma once
 
 /* Include files */
+#include "rtwtypes.h"
+#include "covrt.h"
+#include "emlrt.h"
+#include "mex.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "covrt.h"
-#include "rtwtypes.h"
-#include "BubbleCenterAndSizeByCircle_types.h"
 
 /* Function Declarations */
 void b_warning(const emlrtStack *sp);
+
 void c_warning(const emlrtStack *sp);
+
 void d_warning(const emlrtStack *sp);
+
 void e_warning(const emlrtStack *sp);
+
 void f_warning(const emlrtStack *sp);
+
+void g_warning(const emlrtStack *sp);
+
 void warning(const emlrtStack *sp, const mxArray *varargin_6);
 
 /* End of code generation (warning.h) */
