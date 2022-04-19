@@ -62,6 +62,6 @@ overlap_last = tr_last(:, 12:14);
 ind_out = sum(overlap_last(:, 1:3) < 0, 2) >= 1;
 overlap_last(ind_out, :) = [];
 tr_last(ind_out, :) = [];
-overlap_last = sum(overlap_last, 2) / 3;
+overlap_last_m = sum(overlap_last, 2) / 3;
 
 

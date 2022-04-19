@@ -12,7 +12,7 @@ function ReynoldStressProfile(velacc)
 for dir1 = 1:3
     max_l = max(velacc(:, dir1));
     min_l = min(velacc(:, dir1));
-    dl = (max_l - min_l) / 10;
+    dl = (max_l - min_l) / 60;
     [~, uxy, uidx] = histcounts(velacc(:,dir1), min_l : dl : max_l);
     uxy = (uxy(1:end - 1) + uxy(2:end)) / 2;
     avgv1 = accumarray(uidx, uv, [], @nanmean);

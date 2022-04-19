@@ -2,7 +2,7 @@
 fileID = fopen("C:\Users\ShiyongTan\Documents\Data_processing\20220310\T2\S1\Debug\imgcor.txt",'r');
 formatspec = '%f,';
 r_map = fscanf(fileID, formatspec);
-dim = [32, 32];
+% dim = [27, 26];
 % r_map = reshape(r_map, [length(r_map)^.5 length(r_map)^.5]);
 r_map = reshape(r_map, dim);
 r_map(r_map(:)<0) = 0;
@@ -13,7 +13,7 @@ view(0, 90)
 set(gca,  'Ydir', 'reverse');
 
 %% Read augresimg
-dim = [32, 32];
+% dim = [28, 28];
  augresimg = ReadBubbleImage("C:\Users\ShiyongTan\Documents\Data_processing\20220310\T2\S1\Debug\augresimg.txt", dim);
  
  %% Read origin image
