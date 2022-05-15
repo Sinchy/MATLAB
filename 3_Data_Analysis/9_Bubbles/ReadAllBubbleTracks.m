@@ -1,4 +1,4 @@
-function [tracks, radius] = ReadAllBubbleTracks(track_dir)
+function [tracks, radius] = ReadAllBubbleTracks(track_dir, n_cam)
 file_active_long = dir([track_dir 'ActiveLongTrack*.txt']);
 num_active_long = size(file_active_long, 1);
 active_long_tracks = [];
@@ -8,7 +8,7 @@ if num_active_long ~= 0
     filename_active_long = natsortfiles(filename_active_long);
     for i = 1 : num_active_long
         track = ReadTracks([track_dir filename_active_long{i}]);
-        radius = ReadRadius([track_dir 'Radius' filename_active_long{i}]);
+        radius = ReadRadius([track_dir 'Radius' filename_active_long{i}], n_cam);
         active_long_tracks = CombineTracks(active_long_tracks, track);
         radius_active_long_tracks  = CombineRadius(radius_active_long_tracks, radius);
     end
@@ -23,7 +23,7 @@ if num_inactive_long ~= 0
     filename_inactive_long = natsortfiles(filename_inactive_long);
     for i = 1 : num_inactive_long
         track = ReadTracks([track_dir filename_inactive_long{i}]);
-        radius = ReadRadius([track_dir 'Radius' filename_inactive_long{i}]);
+        radius = ReadRadius([track_dir 'Radius' filename_inactive_long{i}], n_cam);
         inactive_long_tracks = CombineTracks(inactive_long_tracks, track);
         radius_inactive_long_tracks  = CombineRadius(radius_inactive_long_tracks, radius);
     end
@@ -38,7 +38,7 @@ if num_exit ~= 0
     filename_exit = natsortfiles(filename_exit);
     for i = 1 : num_exit
         track = ReadTracks([track_dir filename_exit{i}]);
-        radius = ReadRadius([track_dir 'Radius' filename_exit{i}]);
+        radius = ReadRadius([track_dir 'Radius' filename_exit{i}], n_cam);
         exit_tracks = CombineTracks(exit_tracks, track);
         radius_exit_tracks  = CombineRadius(radius_exit_tracks, radius);
     end
@@ -77,7 +77,7 @@ end
 fclose(fileID);
 end
 
-function radius = ReadRadius(filepath)
+function radius = ReadRadius(filepath, n_cam)
 fileID = fopen(filepath,'r');
 formatspec = '%f,';
 if fileID < 0
@@ -86,7 +86,7 @@ if fileID < 0
 end
 radius = fscanf(fileID, formatspec);
 total_len = length(radius);
-radius = reshape(radius, [4, total_len / 4])';
+radius = reshape(radius, [n_cam + 1, total_len / (n_cam + 1)])';
 fclose(fileID);
 end
 

@@ -4,6 +4,9 @@ function VelProfile(velacc)
 % dl = (max_l - min_l) / 10;
  direction = 'xyz';
 
+ f(1) = figure;
+ f(2) = figure;
+ f(3) = figure;
 for dir1 = 1:3
     max_l = max(velacc(:, dir1));
     min_l = min(velacc(:, dir1));
@@ -11,9 +14,9 @@ for dir1 = 1:3
     [~, uxy, uidx] = histcounts(velacc(:,dir1), min_l : dl : max_l);
     uxy = (uxy(1:end - 1) + uxy(2:end)) / 2;
 % [~, ~, uidx] = unique(idx, 'rows');
-avgv1 = accumarray(uidx, velacc(:,6), [], @nanmean);
-avgv2 = accumarray(uidx, velacc(:,7), [], @nanmean);
-avgv3 = accumarray(uidx, velacc(:,8), [], @nanmean);
+avgv1 = accumarray(uidx, velacc(:,6), [], @(x)mean(x, 'omitnan'));
+avgv2 = accumarray(uidx, velacc(:,7), [], @(x)mean(x, 'omitnan'));
+avgv3 = accumarray(uidx, velacc(:,8), [], @(x)mean(x, 'omitnan'));
 mean_map = [uxy', avgv1, avgv2, avgv3];
 
 
@@ -32,7 +35,7 @@ stdv3 = accumarray(uidx, velacc(:,8), [], @FitNormal);
 % stdv3 = TemporalSTD(time, u3) * 2;
 std_map = [uxy', stdv1, stdv2, stdv3];
 
-figure(dir1)
+figure(f(dir1))
 errorbar(mean_map(:,1),mean_map(:,2)./1e3,std_map(:,2)./1e3./sqrt(1),'ro-','LineWidth',2.0,'MarkerSize',10.0);
 hold on
 errorbar(mean_map(:,1),mean_map(:,3)./1e3,std_map(:,3)./1e3./sqrt(1),'bo-','LineWidth',2.0,'MarkerSize',10.0);
@@ -60,11 +63,11 @@ u_s = velacc(:, 12:14) .^ 2;
 % avgv1 = accumarray(uidx, abs(velacc(:,12)), [], @nanmean);
 % avgv2 = accumarray(uidx, abs(velacc(:,13)), [], @nanmean);
 % avgv3 = accumarray(uidx, abs(velacc(:,14)), [], @nanmean);
-avgv1 = accumarray(uidx, u_s(:,1), [], @nanmean) .^.5;
-avgv2 = accumarray(uidx, u_s(:,2), [], @nanmean) .^.5;
-avgv3 = accumarray(uidx, u_s(:,3), [], @nanmean) .^.5;
+avgv1 = accumarray(uidx, u_s(:,1), [], @(x)mean(x, 'omitnan')) .^.5;
+avgv2 = accumarray(uidx, u_s(:,2), [], @(x)mean(x, 'omitnan')) .^.5;
+avgv3 = accumarray(uidx, u_s(:,3), [], @(x)mean(x, 'omitnan')) .^.5;
 mean_map = [uxy', avgv1, avgv2, avgv3];
-m_fluc(dir1, :) = mean(mean_map(:, 2:4))
+m_fluc(dir1, :) = mean(mean_map(:, 2:4));
 % stdv1 = accumarray(uidx, velacc(:,12), [], @nanstd);
 % stdv2 = accumarray(uidx, velacc(:,13), [], @nanstd);
 % stdv3 = accumarray(uidx, velacc(:,14), [], @nanstd);
@@ -83,7 +86,7 @@ stdv3 = accumarray(uidx, u_s(:,3), [], @FitNormal).^.5;
 % stdv3 = TemporalSTD(time, u3);
 std_map = [uxy', stdv1, stdv2, stdv3];
 
-        figure(dir1)
+        figure(f(dir1))
         errorbar(mean_map(:,1),mean_map(:,2)./1e3,std_map(:,2)./1e3./sqrt(1),'r^--','LineWidth',2.0,'MarkerSize',10.0);
         hold on
         errorbar(mean_map(:,1),mean_map(:,3)./1e3,std_map(:,3)./1e3./sqrt(1),'b^--','LineWidth',2.0,'MarkerSize',10.0);
@@ -112,7 +115,7 @@ leg=legend('$\langle U_1 \rangle$','$\langle U_2\rangle$','$\langle U_3 \rangle$
 end
 
 mm_fluc = vecnorm(m_fluc, 2, 1);
-ratio = mm_fluc(2) / mm_fluc(1)
+ratio = mm_fluc(3) / mm_fluc(1)
 
 end
 

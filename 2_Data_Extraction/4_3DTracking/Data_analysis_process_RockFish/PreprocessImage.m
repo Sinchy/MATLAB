@@ -1,4 +1,4 @@
-function dir_process = PreprocessImage(dirr, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
+function dir_process = PreprocessImage(dirr, rotate_image, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
 % dirr = [dirr '/'];
 dir_process = extractBefore(dirr, 'VONSET');
 if ~isempty(dir_process)
@@ -30,6 +30,11 @@ else
 end
 dir_process = [dir_process, '/'];
 dirr = [dirr, '/'];
+
+if (~exist('rotate_image', 'var'))
+    rotate_image = 0;
+end
+
 if ~exist('calibration_name', 'var')
     calibration_name= 'camParaCalib';
 end
@@ -54,7 +59,7 @@ end
 totalImgs = totalImgs - 2;
 %% Inputs
 camsave_dir = {[save_dir 'cam_1/'],[save_dir 'cam_2/'],[save_dir 'cam_3/'],[save_dir 'cam_4/'], [save_dir 'cam_5/'],[save_dir 'cam_6/'] }';
-ncams = 3;
+ncams = 4;
 for i = 1 : ncams
     if ~exist(camsave_dir{i}, 'dir')
         mkdir(camsave_dir{i});
@@ -84,6 +89,9 @@ if totalImgs_for_background > totalImgs
 end
 imgdir = [ dirr 'Cam1/cam1frame000001.tif'];
 img = imread(imgdir);
+    if (rotate_image)
+            img = img';
+    end
 [Npixh, Npixw] = size(img);
 % ncams = 4;
 % Npixh = 1024;
@@ -99,6 +107,10 @@ for cam = start : ncams
         if (mod(I,20) == 1)
             imgdir = [camdir 'cam' num2str(cam) 'frame' num2str(I,'%06.0f') '.tif'];
             img = imread(imgdir);
+            if (rotate_image)
+                img = img';
+            end
+
             if isa(img, 'uint16')
                 img = Convert16bitTo8bit(img);
             end
@@ -134,6 +146,10 @@ for cam = start:ncams
 %     removed = 0;
     imgdir = [camdir '/cam' num2str(cam) 'frame000001.tif'];
     img = imread(imgdir);
+    if (rotate_image)
+            img = img';
+    end
+
     if isa(img, 'uint16')
             img = Convert16bitTo8bit(img);
     end
@@ -163,6 +179,9 @@ for cam = start:ncams
         imgdir = [camdir '/cam' num2str(cam) 'frame' num2str(I * skip_frame,'%06.0f') '.tif'];
 %         imgdir = [camdir 'cam' num2str(cam) 'frame' num2str(I,'%04.0f') 'raw.tif'];
         img = imread(imgdir);
+        if (rotate_image)
+            img = img';
+        end
         if isa(img, 'uint16')
                 img = Convert16bitTo8bit(img);
         end

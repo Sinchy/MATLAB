@@ -1,5 +1,8 @@
-function [wandpts, radius] = WandPoints(imgdir, r_range, frame_range, skip_frame)
-ncams = 3;
+function [wandpts, radius] = WandPoints(imgdir, r_range, frame_range, ncams, skip_frame, rotate_image)
+% ncams = 3;
+if (~exist('rotate_image', 'var'))
+    rotate_image = 0;
+end
 num_frame = round( (frame_range(2) - frame_range(1)) / skip_frame);
 % wandpts = zeros(num_frame, ncams * 4);
 % radius = zeros(num_frame, ncams * 2);
@@ -15,8 +18,12 @@ parfor i = frame_range(1) : skip_frame: frame_range(2)
     is_zero = 0;
     for j = 1:ncams
         img = imread([imgdir '\Cam' num2str(j) '\cam' num2str(j) 'frame' num2str(i, '%06.0f' ) '.tif']);
+        if (rotate_image)
+            img = img';
+        end  
+        
         img = uint8(255) - img;
-        [centers, radii] = imfindcircles(img, r_range, 'Sensitivity', .85);
+        [centers, radii] = imfindcircles(img, r_range, 'Sensitivity', .9);
         if length(radii) ~=2
             is_zero = 1;
             break;

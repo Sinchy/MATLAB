@@ -6,7 +6,7 @@ formatspec = '%f,';
 particles = fscanf(fileID, formatspec);
 l = length(particles);
 centers = reshape(particles, [2 l/2]);
-centers = centers' +[1 1];
+centers = centers' + [1, 1];
 fclose(fileID);
 filepath = extractBefore(filepath, '.txt');
 filepath = [filepath  '_r.txt'];

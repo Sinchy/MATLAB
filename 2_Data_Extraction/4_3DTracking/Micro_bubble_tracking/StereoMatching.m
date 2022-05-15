@@ -60,7 +60,11 @@ for i = 1 : size(pos2D_mm{1}, 1)
                             if ParticleCheck2To1(cam(3), cam(4), cam(1), pos3_3D, pos4_3D, pos1, mindist_2D) && ...
                                     ParticleCheck2To1(cam(3), cam(4), cam(2), pos3_3D, pos4_3D, pos2, mindist_2D) && ...
                                     ParticleCheck2To1(cam(1), cam(4), cam(3), pos1_3D, pos4_3D, pos3, mindist_2D) && ...
-                                    ParticleCheck2To1(cam(1), cam(2), cam(4), pos1_3D, pos2_3D, pos4, mindist_2D)
+                                    ParticleCheck2To1(cam(1), cam(2), cam(4), pos1_3D, pos2_3D, pos4, mindist_2D) && ...
+                                    ParticleCheck2To1(cam(2), cam(4), cam(1), pos2_3D, pos4_3D, pos1, mindist_2D) && ...
+                                    ParticleCheck2To1(cam(1), cam(4), cam(2), pos1_3D, pos4_3D, pos2, mindist_2D) && ...
+                                    ParticleCheck2To1(cam(2), cam(4), cam(3), pos2_3D, pos4_3D, pos3, mindist_2D) && ...
+                                    ParticleCheck2To1(cam(1), cam(3), cam(4), pos1_3D, pos3_3D, pos4, mindist_2D) 
                                 matches(n, :) = [i, part_candidate_cam2(ii), part_candidate_cam3(iii), part_candidate_cam4(iiii)];
                                 n = n + 1;
                             end
@@ -106,7 +110,9 @@ function map = ParticlePositionMap(cam, pos2D)
 end
 
 function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, pos2D_mm, img)
-
+    
+%     [linepara, perp_slop] = ParameterOfProjectingLine(pos, cam1.Center(), cam2); 
+%     a = linepara(1); b = linepara(2);
     center_cam1_on_cam2 = cam2.WorldToImage(cam1.Center());
     pos_3D_on_cam2 = cam2.WorldToImage(pos);
     slope_lineofsight = pos_3D_on_cam2 - center_cam1_on_cam2;
@@ -116,8 +122,18 @@ function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, 
     a = (center_cam1_on_cam2(2) - pos_3D_on_cam2(2)) / (center_cam1_on_cam2(1) - pos_3D_on_cam2(1));
     b = pos_3D_on_cam2(2) - a * pos_3D_on_cam2(1);
     linepara = [a, b];
-%     figure;
-%     imshow(img);
+    figure;
+    imshow(img);
+    px = -50:.01:50;
+    py = a * px + b;
+    p = [px' py'];
+    p(:, 3) = 0;
+    p_p = p;
+    for i  = 1 : length(px)
+        p_p(i, :) = cam2.Distort(p(i, :));
+    end
+    hold on
+    plot(p_p(:,1), p_p(:,2), 'y.');
 %     p1 = [-50 a*(-50) + b 0]; p2 = [50 a * 50 + b 0];
 %     p1 = cam2.Distort(p1); p2 = cam2.Distort(p2);
 %     p = [p1; p2];
@@ -139,8 +155,8 @@ function particles_index = ParticleFinder1To1(cam1, cam2, pos, mindist_2D, map, 
                 continue;
              end
 %              hold on
-%             plot(xpix_min, ypix, 'r.')
-%             plot(xpix_max, ypix, 'r.')
+%             plot(xpix_min, ypix, 'y.')
+%             plot(xpix_max, ypix, 'y.')
             for xpix = ceil(xpix_min) : ceil(xpix_max)
                 if map(ypix, xpix) > 0
                     pos2D = pos2D_mm(map(ypix, xpix), :)';
@@ -307,7 +323,7 @@ function is_candidate = ParticleCheck2To1(cam1, cam2, cam3, pos1, pos2, pos3, mi
 %     end
     if (mindist > mindist * 3) 
 		mindist = mindist * 3;
-end
+    end
     
         % the intersection point
     x = (b2 - b1) / (a1 - a2);
@@ -409,10 +425,11 @@ function [pix_min, pix_max] = PixelSearchY(cam, linepara, mindist_2D, pix)
 function x =Xpix1(cam, a, b, pix)
         Y = (-pix + cam.camParaCalib.Npixh / 2 - cam.camParaCalib.Noffh) * cam.camParaCalib.hpix;
         if cam.camParaCalib.k1 == 0
-            x = -b + Y / a;
+            x = (-b + Y) / a; %??
         else
             c = b * (a^2 - 4 * Y^2 * cam.camParaCalib.k1 * ( 1 + a^2 + cam.camParaCalib.k1 * b^2) + 4 * Y * b * cam.camParaCalib.k1 * a) ^.5;
             x = (-b * a + 2 * Y * a - c) / (2 * (cam.camParaCalib.k1 * b^2 + a^2));
+%             x = (-b * a + 2 * Y  - c) / (2 * a * (cam.camParaCalib.k1 * b^2 + a^2));
         end
         x = (cam.camParaCalib.Npixw / 2 - cam.camParaCalib.Noffw) + x / cam.camParaCalib.wpix;
     end
@@ -420,10 +437,11 @@ function x =Xpix1(cam, a, b, pix)
 function x =Xpix2(cam, a, b, pix)
         Y = (-pix + cam.camParaCalib.Npixh / 2 - cam.camParaCalib.Noffh) * cam.camParaCalib.hpix;
         if cam.camParaCalib.k1 == 0
-            x = -b + Y / a;
+            x = (-b + Y) / a;
         else
             c = b * (a^2 - 4 * Y^2 * cam.camParaCalib.k1 * ( 1 + a^2 + cam.camParaCalib.k1 * b^2) + 4 * Y * b * cam.camParaCalib.k1 * a) ^.5;
             x = (-b * a + 2 * Y * a + c) / (2 * (cam.camParaCalib.k1 * b^2 + a^2));
+%             x = (-b * a + 2 * Y + c) / (2 * a * (cam.camParaCalib.k1 * b^2 + a^2));
         end
         x = (cam.camParaCalib.Npixw / 2 - cam.camParaCalib.Noffw) + x / cam.camParaCalib.wpix;
     end
@@ -437,4 +455,27 @@ function y = Ypix1(cam, a, b, pix)
             y = (b + 2 * X * a + c) / (2 * (cam.camParaCalib.k1 * b^2 + 1));
         end
         y = (cam.camParaCalib.Npixh / 2 - cam.camParaCalib.Noffh) - y / cam.camParaCalib.hpix;       
-    end
+end
+
+function [linepara,perp_slop] = ParameterOfProjectingLine(pos3D, center, cam) 
+% line in 3D: (x - x1)/(x2 - x1) = (y - y1)/ (y2 - y1) = (z - z1) / (z2 -
+% z1)
+
+% pick two point in view area
+x1 = 0; x2 = 1;
+y1 = (x1 - center(1)) / ( pos3D(1) - center(1)) * (pos3D(2) - center(2)) + center(2);
+y2 = (x2 - center(1)) / ( pos3D(1) - center(1)) * (pos3D(2) - center(2)) + center(2);
+z1 = (x1 - center(1)) / ( pos3D(1) - center(1)) * (pos3D(3) - center(3)) + center(3);
+z2 = (x2 - center(1)) / ( pos3D(1) - center(1)) * (pos3D(3) - center(3)) + center(3);
+p1 = [x1 y1 z1]';
+p2 = [x2 y2 z2]';
+p1_cam = cam.WorldToImage(p1);
+p2_cam = cam.WorldToImage(p2);
+a = (p1_cam(2) - p2_cam(2)) / (p1_cam(1) - p2_cam(1));
+b = p1_cam(2) - a * p1_cam(1);
+linepara = [a, b];
+
+slope_lineofsight = p1_cam - p2_cam;
+slope_lineofsight = slope_lineofsight / norm(slope_lineofsight);
+perp_slop = [slope_lineofsight(2), -slope_lineofsight(1), 0];
+end

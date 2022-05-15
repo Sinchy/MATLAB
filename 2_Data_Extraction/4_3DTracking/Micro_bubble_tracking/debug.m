@@ -1,5 +1,5 @@
 %% Read correlation map
-fileID = fopen("C:\Users\ShiyongTan\Documents\Data_processing\20220310\T2\S1\Debug\imgcor.txt",'r');
+fileID = fopen("D:\1.Projects\Bubble_Particles\DataProcessing\Synthetic5\Debug\imgcor.txt",'r');
 formatspec = '%f,';
 r_map = fscanf(fileID, formatspec);
 % dim = [27, 26];
@@ -14,7 +14,8 @@ set(gca,  'Ydir', 'reverse');
 
 %% Read augresimg
 % dim = [28, 28];
- augresimg = ReadBubbleImage("C:\Users\ShiyongTan\Documents\Data_processing\20220310\T2\S1\Debug\augresimg.txt", dim);
+ augresimg = ReadBubbleImage("D:\1.Projects\Bubble_Particles\DataProcessing\Synthetic5\Debug\augresimg.txt", dim);
+ %% 
  
  %% Read origin image
  img = ReadBubbleImage("C:\Users\ShiyongTan\Documents\Data_processing\20220310\T2\S1\Debug\img.txt");

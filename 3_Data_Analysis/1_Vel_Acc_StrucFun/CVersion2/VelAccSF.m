@@ -68,7 +68,7 @@ tracks = sortrows(tracks, 4); % sort tracks according to frames
 [frame_no, start_index, ic] = unique(tracks(:,4),'first');
 a_counts = accumarray(ic,1);
 frame_info = [frame_no, start_index, a_counts];
-num_frame =800; % number of frames to calculate SF
+num_frame = 2000; % number of frames to calculate SF
 frame_select = frame_no(randperm(numel(frame_no), num_frame)); % randomly select frames
 % prepare frames for calculating SF
 num_total_particles = sum(frame_info(ismember(frame_info(:,1), frame_select), 3));
@@ -97,22 +97,28 @@ end
      clear tracks_SF;
      
 max_pos = max(pos_max) - min(pos_min);
-% redges_log = 10.^(-2:0.1:ceil(log10(max_pos))); 
-% statistics_struct = CalSF(data_map,redges_log);
-redges_log = 0 : max_pos / 200 : max_pos;
-x = (redges_log(1:end-1) + redges_log(2:end))/2;
-statistics_L = CalL(data_map,redges_log);
+% calculating structure function
+if ~exist([project_path '\results\SF.mat'], 'file') 
+    redges_log = 10.^(-2:0.1:ceil(log10(max_pos))); 
+    statistics_struct = CalSF(data_map,redges_log);
+    
+    save([project_path '\results\SF.mat'], 'statistics_struct','redges_log','-v7.3');
+end
+% calculating integral correlation function
+redges_linear = 0 : max_pos / 200 : max_pos;
+x = (redges_linear(1:end-1) + redges_linear(2:end))/2;
+statistics_L = CalL(data_map,redges_linear);
 
 % L_L = max(cumtrapz(x, statistics_L(:,1)));
 % L_T = max(cumtrapz(x, statistics_L(:,2)));
 statistics_L(isnan(statistics_L)) = 0; %
-ind = find(statistics_L(:,1) < 0, 1);
-if isempty(ind)
-    ind = size(statistics_L, 1);
-end
-L_L = trapz(x(1:ind - 1), statistics_L(1:ind - 1,1));
-L_T = trapz(x(1:ind - 1), statistics_L(1:ind - 1,2));
-save([project_path '\results\L.mat'], 'statistics_L','x','L_L', 'L_T', '-v7.3');
+% ind = find(statistics_L(:,1) < 0, 1);
+% if isempty(ind)
+%     ind = size(statistics_L, 1);
+% end
+% L_L = trapz(x(1:ind - 1), statistics_L(1:ind - 1,1));
+% L_T = trapz(x(1:ind - 1), statistics_L(1:ind - 1,2));
+save([project_path '\results\L.mat'], 'statistics_L','x','-v7.3');
 clear data_map;
 delete([result_path 'filter_data_bin.mat']);
 toc

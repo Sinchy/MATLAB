@@ -27,8 +27,8 @@ for i =  frame_range(1)  : frame_range(2)
     hold on
     plot(pos2d_old(:,1), pos2d_old(:,2), 'g.', 'MarkerSize',10);
     r = radius(ismember(radius(:,1), tracks_interest(:, 5)), 2) ;
-%     [~, ind] = ColorCollision(tracks_interest(:, 1:3), r);
-%     plot(pos2d_old(ind,1), pos2d_old(ind,2), 'r.', 'MarkerSize',10, 'LineWidth', 2);
+    [~, ind] = ColorCollision(tracks_interest(:, 1:3), r);
+    plot(pos2d_old(ind,1), pos2d_old(ind,2), 'r.', 'MarkerSize',10, 'LineWidth', 2);
 %     C = ColorCollision(tracks_interest(:, 1:3), r);
 %     scatter(pos2d_old(:,1), pos2d_old(:,2), 4, C);
 end

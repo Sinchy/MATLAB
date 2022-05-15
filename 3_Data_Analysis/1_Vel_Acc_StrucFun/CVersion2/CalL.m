@@ -49,7 +49,7 @@ showTimeToCompletion; startTime=tic;
 
 % for i=1:1:length(frame_no)-1
 percent = parfor_progress(length(frame_no));
-  h = parpool(8);
+  h = parpool;
 parfor i=1:1:length(frame_no)
 % for i=1:1:1
 %     i

@@ -1,4 +1,4 @@
-function [R, pairs, disp_matrix, IS, veldiff_matrix, veldiff_pl_matrix, sep_matrix] = PairDispersionCalculation(tracks, pairs, min_pair_len, direction)
+function [R, R_ci, pairs, disp_matrix, IS, veldiff_matrix, veldiff_pl_matrix, sep_matrix] = PairDispersionCalculation(tracks, pairs, min_pair_len, direction)
 tic
 %  min_pair_len = 1;
 
@@ -92,13 +92,16 @@ if size(tracks, 2) > 8
 end
 
 R = zeros(max_pair_len, 1);
+R_ci = zeros(max_pair_len, 2);
 for i = 1 : max_pair_len
     disp = nonzeros(disp_matrix(:, i));
     if ~isempty(disp)
         R(i) = mean(disp);
+        R_ci(i) = 1.96 * std(disp) / (size(disp, 1))^.5;
     end
 end
 
 R = nonzeros(R);
+R_ci = R_ci(1:length(R));
 toc
 

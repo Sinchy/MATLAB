@@ -1,9 +1,15 @@
-function axisPts = AxisPoints(imgdir, r_range)
-ncams = 3;
+function axisPts = AxisPoints(imgdir, r_range, ncams, rotate_image)
+%ncams = 3;
+if (~exist('rotate_image', 'var'))
+    rotate_image = 0;
+end
 
 axispoints = zeros(4, ncams * 2);
  for j = 1:ncams
         img0 = imread([imgdir '\S1\Cam' num2str(j) '\cam' num2str(j) 'frame000000.tif']);
+        if (rotate_image)
+            img0 = img0';
+        end  
         img = uint8(255) - img0;
         sensitivity = .95;
         [centers, radii] = imfindcircles(img, r_range, 'Sensitivity', sensitivity);
@@ -59,9 +65,9 @@ axispoints = zeros(4, ncams * 2);
         text(centers(5, 1) + 10, centers(5, 2) + 10, 'Z');
         X = str2double(inputdlg('Pick a point in positive X (a point without a hole)?', 'Positive X'));
         Y= str2double(inputdlg('Pick a point in positive Y(a point without a hole)?', 'Positive Y'));
-%         Z = str2double(inputdlg('Pick a point in positive Z(a point without a hole)?', 'Positive Z'));
-        [~,  Z] = min(centers(5:6, 2));
-        Z = Z + 4;
+        Z = str2double(inputdlg('Pick a point in positive Z(a point without a hole)?', 'Positive Z'));
+%         [~,  Z] = min(centers(5:6, 2));
+%         Z = Z + 4;
         axispoints(1, (j - 1) * 2 + 1 :  (j - 1) * 2 + 2) = origin;
         axispoints(2, (j - 1) * 2 + 1:  (j - 1) * 2 + 2) = centers(X, :);
         axispoints(3, (j - 1) * 2 + 1:  (j - 1) * 2 + 2) = centers(Y, :);
