@@ -1260,6 +1260,12 @@ uda.handles.removeOutliersButton = uicontrol('Parent',uda.handles.editMain,...
   'Remove selected','fontsize',14,'tag','removeOutliersButton',...
   'callback',@removeOutliersButton_callback,'Enable','on');
 
+% Remove outliers button
+uda.handles.removeOutliersButton = uicontrol('Parent',uda.handles.editMain,...
+  'Units','characters','Position',[width+6 screentop-3 70 3],'Style',...
+  'pushbutton','BackgroundColor',[0.75 .75 .75],'string',...
+  'Remove points based on wand len','fontsize',14,'tag','removeOutliersButton',...
+  'callback',@removeOutliersBWandLenButton_callback,'Enable','on');
 
 ptMat=uda.wandPts;
 ptMat2=uda.backgroundPts;
@@ -1495,6 +1501,43 @@ if strcmp(yesno,'Yes')
   msgbox('Selected points were removed, recalibration complete');
 else
   msgbox('Selected points were not removed');
+end
+
+return
+
+function removeOutliersBWandLenButton_callback(varargin)
+yesno=questdlg('Remove points that are larger or smaller than wand length','Continue?','Yes','No','Yes');
+if strcmp(yesno,'Yes')
+    err =  str2double(cell2mat(inputdlg('The tolerance for wand length:')));
+    h1=findobj('Tag','easyWandMain');
+    h2=findobj('Tag','editMain');
+    uda=get(h2,'UserData');
+
+    % Get data from the table
+    data=get(uda.handles.editTable,'Data');
+    rmpts=uda.rmpts;
+    n = 0;
+    for i = 1 : size(data, 1)
+        if abs(data{i, 5} - uda.wandLen) > err
+            data{i,6} = 1;
+            fr=data{i,1};
+            frame=floor(fr);
+            col=ceil(fr-floor(fr))+1;
+            rmpts(frame,col)=logical(data{i,6});
+            n = n + 1;
+        end
+    end
+    msgbox(['Remove ' num2str(n) ' points'], 'Outlier removal');
+    % store and return
+    uda.rmpts=rmpts;
+
+    set(h1,'UserData',uda);
+    close(uda.handles.editMain);
+    clbk=get(uda.handles.computeCalibrationButton,'Callback');  %Compute calibration callback
+    clbk(uda.handles.computeCalibrationButton,[]);
+    msgbox('Selected points were removed, recalibration complete');
+else
+    msgbox('Selected points were not removed');
 end
 
 return

@@ -1,4 +1,4 @@
-function dir_process = PreprocessImage(dirr, rotate_image, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
+function dir_process = PreprocessImage(dirr, rotate_image, bubble_image, calibration_name, remove_bubble, skip_frame, save_dir, totalImgs)
 % dirr = [dirr '/'];
 dir_process = extractBefore(dirr, 'VONSET');
 if ~isempty(dir_process)
@@ -33,6 +33,10 @@ dirr = [dirr, '/'];
 
 if (~exist('rotate_image', 'var'))
     rotate_image = 0;
+end
+
+if (~exist('bubble_image', 'var'))
+    bubble_image = 0;
 end
 
 if ~exist('calibration_name', 'var')
@@ -218,8 +222,11 @@ for cam = start:ncams
 end
 delete(pp);
 % generate configuration files
-GenerateConfigFileV2(dir_process, 1, totalImgs/skip_frame, ncams, calibration_name);
-
+if (~bubble_image)
+    GenerateConfigFileV2(dir_process, 1, totalImgs/skip_frame, ncams, calibration_name);
+else 
+    GenerateConfigFile_bubble(dir_process, 1, totalImgs/skip_frame, ncams, calibration_name);
+end
 end
 
 function outImg = LaVision_ImgProcessing(a)
