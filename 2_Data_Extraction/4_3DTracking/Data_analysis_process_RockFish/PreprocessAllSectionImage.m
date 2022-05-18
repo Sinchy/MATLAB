@@ -13,7 +13,7 @@ end
 for i = start : size(dfolders, 1)
     dir_process = PreprocessImage([project_path  '/' dfolders(i).name], rotate_image, bubble_image, calibration_file);
     
-    if ~bubbe_image
+    if ~bubble_image
         GenerateJobConfiguration([dir_process]);
     else
         GenerateJobConfiguration_bubble([dir_process]);
